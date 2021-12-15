@@ -202,20 +202,19 @@ def cnn_output_shape(height, width, block):
 # (Multi-dim) one-hot encoding
 def one_hot(x, num_classes):
     x = x.long()
-    assert x.shape[-1] == 1
-    shape = x.shape[:-1]
+    shape = x.shape[:-1] if x.shape[-1] == 1 else x.shape
     zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
     return zeros.scatter(len(shape), x, 1)
 
 
 # Differentiable one_hot
 def rone_hot(x, num_classes):
-    return x - (x - one_hot(x, num_classes)).detach()
+    return x - (x - one_hot(x, num_classes))
 
 
 # Differentiable clamp
 def rclamp(x, min, max):
-    return x - (x - torch.clamp(x, min, max)).detach()
+    return x - (x - torch.clamp(x, min, max))
 
 
 # (Multi-dim) indexing

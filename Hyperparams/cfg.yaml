@@ -34,7 +34,7 @@ root_path: ???  # To be specified later
 device: cuda
 RL: ??? # To be specified later
 # Experiment
-Agent: Agents.DQNDPGAgent
+Agent: Agents.DPGAgent
 seed: 1
 experiment: experiment_name
 
