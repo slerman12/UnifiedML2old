@@ -1,0 +1,6 @@
+defaults:
+  - easy
+  - _self_
+
+suite: atari
+task_name: MsPacman

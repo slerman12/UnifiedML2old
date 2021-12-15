@@ -1,0 +1,104 @@
+defaults:
+  - _self_
+  - task@_global_: atari/krull
+  - override hydra/launcher: submitit_local
+
+# Environment
+frame_stack: 3
+action_repeat: 2
+# Agent
+obs_shape: ???  # To be specified later
+action_shape: ??? # To be specified later
+feature_dim: 50
+lr: 1e-4
+discrete: ??? # To be specified later
+# Replay
+obs_spec: ??? # To be specified later
+action_spec: ??? # To be specified later
+nstep: 3
+batch_size: 256
+discount: 0.99
+# Training
+seed_steps: 2000
+update_per_steps: 2
+# Evaluating
+evaluate_per_steps: 5000
+evaluate_episodes: 10
+# Saving
+save_session: false
+# Logging
+log_video: false
+log_tensorboard: false
+# Misc
+root_path: ???  # To be specified later
+device: cuda
+RL: ??? # To be specified later
+# Experiment
+Agent: Agents.DQNDPGAgent
+seed: 1
+experiment: experiment_name
+
+environment:
+  _target_: Datasets.Environments.Environment.Environment
+  task_name: ${task_name}
+  frame_stack: ${frame_stack}
+  action_repeat: ${action_repeat}
+  max_episode_frames: null
+  truncate_episode_frames: 1000
+  seed: ${seed}
+  suite: ${suite}
+
+agent:
+  _target_: ${Agent}
+  obs_shape: ${obs_shape}
+  action_shape: ${action_shape}
+  feature_dim: ${feature_dim}
+  hidden_dim: 1024
+  explore_steps: 2000
+  stddev_schedule: ${stddev_schedule} # Specified in task/easy,medium,hard
+  stddev_clip: 0.3
+  lr: ${lr}
+  target_tau: 0.01
+  discrete: ${discrete}
+  device: ${device}
+  log: ${log_tensorboard}
+
+replay:
+  _target_: Datasets.Experiences.ExperienceReplay.ExperienceReplay
+  root_path: ${root_path}
+  obs_spec: ${obs_spec}
+  action_spec: ${action_spec}
+  capacity: 1000000
+  batch_size: ${batch_size}
+  num_workers: 4
+  nstep: ${nstep}
+  discount: ${discount}
+  save: false
+
+logger:
+  _target_: Logger.Logger
+  root_path: ${root_path}
+  experiment: ${experiment}
+  agent: ${Agent}
+  task: ${task_name}
+  seed: ${seed}
+
+vlogger:
+  _target_: Vlogger.Vlogger
+  root_path: ${root_path}
+  fps: 20
+
+hydra:
+  run:
+    dir: ./exp_local/${now:%Y.%m.%d}/${now:%H%M%S}_${hydra.job.override_dirname}
+  sweep:
+    dir: ./exp/${now:%Y.%m.%d}/${now:%H%M}_${agent_cfg.experiment}
+    subdir: ${hydra.job.num}
+  launcher:
+    timeout_min: 4300
+    cpus_per_task: 10
+    gpus_per_node: 1
+    tasks_per_node: 1
+    mem_gb: 160
+    nodes: 1
+    submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm

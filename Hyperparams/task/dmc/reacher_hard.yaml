@@ -1,0 +1,13 @@
+defaults:
+  - medium
+  - _self_
+
+task_name: reacher_hard
+
+suite: dmc
+hydra:
+  job:
+    env_set:
+      # Environment variables for MuJoCo
+      MKL_SERVICE_FORCE_INTEL: '1'
+      MUJOCO_GL: 'egl'
