@@ -65,6 +65,8 @@ class DPGAgent(torch.nn.Module):
 
                 # Explore phase
                 if self.step < self.explore_steps and self.training:
+                    print(action.shape)
+                    print(action)
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
