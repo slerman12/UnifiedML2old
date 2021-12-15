@@ -67,7 +67,8 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     td_error = sum([F.mse_loss(q, target_q) for q in Q.Qs])
 
     # Entropy
-    entropy = entropy_temp * Q.stddev.mean()
+    # entropy = entropy_temp * Q.stddev.mean()
+    entropy = entropy_temp * Q.entropy().mean()
 
     if logs is not None:
         assert isinstance(logs, dict)

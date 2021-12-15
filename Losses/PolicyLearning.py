@@ -7,7 +7,7 @@ import torch
 import Utils
 
 
-def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, exploit_schedule=1, Pi=None, logs=None):
+def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, exploit_temp=1, Pi=None, logs=None):
     if Pi is None:
         Pi = actor(obs, step)
 
@@ -20,9 +20,7 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, e
     q = Q.rsample() if sample_q else Q.mean
 
     # Exploitation-exploration tradeoff
-    exploit_factor = 1 - Utils.schedule(actor.stddev_schedule if exploit_schedule is None
-                                        else exploit_schedule, step)
-    u = exploit_factor * q + (1 - exploit_factor) * Q.stddev
+    u = exploit_temp * q + (1 - exploit_temp) * Q.stddev
 
     exploit_explore_loss = -torch.mean(u)
 
