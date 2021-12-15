@@ -201,9 +201,12 @@ def cnn_output_shape(height, width, block):
 
 # (Multi-dim) one-hot encoding
 def one_hot(x, num_classes):
+    print(x.shape)
     x = x.long().squeeze(-1).unsqueeze(-1)
+    print(x.shape)
     shape = x.shape[:-1]
     zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
+    print(zeros.scatter(len(shape), x, 1).shape)
     return zeros.scatter(len(shape), x, 1)
 
 
