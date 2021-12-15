@@ -68,7 +68,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
 
     # Entropy
     # entropy = entropy_temp * Q.stddev.mean()
-    entropy = entropy_temp * Q.entropy().mean()
+    entropy = entropy_temp * Q.entropy().mean()  # Can also use this in deepPolicyGradient and Creator
 
     if logs is not None:
         assert isinstance(logs, dict)

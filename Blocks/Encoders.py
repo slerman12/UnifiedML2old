@@ -13,7 +13,7 @@ from Blocks.Architectures.Residual import ResidualBlock, Residual
 
 
 # TODO no need for inheritance, give main encoder some CNN options
-class BaseCNNEncoder(nn.Module):
+class _BaseCNNEncoder(nn.Module):
     """
     Basic CNN encoder.
     """
@@ -93,7 +93,7 @@ class BaseCNNEncoder(nn.Module):
         return self.neck(h)
 
 
-class BasicCNNEncoder(BaseCNNEncoder):
+class CNNEncoder(_BaseCNNEncoder):
     """
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
@@ -107,7 +107,7 @@ class BasicCNNEncoder(BaseCNNEncoder):
                       pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
 
 
-class ResidualBlockEncoder(BaseCNNEncoder):
+class ResidualBlockEncoder(_BaseCNNEncoder):
     """
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
@@ -128,7 +128,7 @@ class ResidualBlockEncoder(BaseCNNEncoder):
                       pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
 
 
-class ResidualBlockEncoder(BaseCNNEncoder):
+class ResidualBlockEncoder(_BaseCNNEncoder):
     """
     Residual block-based CNN encoder,
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
@@ -166,7 +166,7 @@ Generative models that plan, forecast, and imagine.
 """
 
 
-class IsotropicCNNEncoder(BaseCNNEncoder):
+class IsotropicCNNEncoder(_BaseCNNEncoder):
     """
     Isotropic (no bottleneck / dimensionality conserving) CNN encoder,
     e.g., SPR(?) (https://arxiv.org/pdf/2007.05929.pdf).
@@ -205,7 +205,7 @@ class IsotropicCNNEncoder(BaseCNNEncoder):
         assert obs_shape[-1] == self.repr_shape[2]
 
 
-class IsotropicResidualBlockEncoder(BaseCNNEncoder):
+class IsotropicResidualBlockEncoder(_BaseCNNEncoder):
     """
     Isotropic (no bottleneck / dimensionality conserving) residual block-based CNN encoder,
     e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf)

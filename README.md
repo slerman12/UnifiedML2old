@@ -101,8 +101,8 @@ The majority of DrQ-v2 is licensed under the MIT license, however portions of th
 
 If you have not yet, please consider donating. We are a nonprofit, single-PhD student team whose bank account is quickly hemmoraging.
 
-If you are an investor wishing to invest more seriously, please contact 
+If you are an investor wishing to invest more seriously, [please contact **agi.\__init\__**](mailto:agi.init@gmail.com).
 
-Mark Zuckerburg, if you're looking for an heir... (not joking)
+Mark Zuckerburg, if you're looking for an heir... (not joking).
 
 [comment]: <> (Me: Yann LeCunn, heir apparent... I do share a publication with Henry Kautz, my first advisor, who left to run the NSF...)
