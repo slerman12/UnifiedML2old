@@ -81,7 +81,7 @@ class EnsembleQCritic(nn.Module):
                 action = torch.arange(self.action_dim).expand_as(Qs[0])  # [b, n]
             else:
                 # Q values for a discrete action
-                Qs = torch.stack([Utils.gather_index(Q, action) for Q in Qs])  # [e, b, 1]
+                Qs = Utils.gather_index(Qs, action)  # [e, b, 1]
         else:
             assert action is not None and \
                    action.shape[-1] == self.action_dim, f'action with dim={self.action_dim} needed for continuous space'
@@ -96,7 +96,7 @@ class EnsembleQCritic(nn.Module):
             Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
 
         # Dist
-        print(Qs.shape)
+        print(Qs.mean(0).shape, Qs.std(0).shape)
         Q = Normal(Qs.mean(0), Qs.std(0))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
