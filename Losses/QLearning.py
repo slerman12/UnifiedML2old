@@ -5,6 +5,8 @@
 import torch
 import torch.nn.functional as F
 
+import Utils
+
 
 def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
                       num_actions=5, Q_reduction='min', entropy_temp=0, logs=None):
@@ -31,6 +33,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         else:
             if actor.discrete:
                 # One-hots
+                action = Utils.one_hot(action, actor.action_dim)
                 next_actions = torch.eye(actor.action_dim, device=obs.device).repeat(obs.shape[0], 1, 1)
                 next_Pi_log_probs = 1
             else:
