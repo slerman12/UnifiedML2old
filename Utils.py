@@ -206,7 +206,7 @@ def one_hot(x, num_classes):
     x = x.long()
     shape = x.shape[:-1]
     zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
-    return zeros.scatter(len(shape), x, 1)
+    return zeros.scatter(len(shape), x, 1).float()
 
 
 # Differentiable one_hot

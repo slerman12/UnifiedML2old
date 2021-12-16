@@ -88,8 +88,8 @@ class EnsembleQCritic(nn.Module):
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
             shape = action.shape[:-1]  # Preserve leading dims
-            obs = obs.flatten(end_dim=len(shape))
-            action = action.flatten(end_dim=len(shape))
+            obs = obs.flatten(end_dim=len(shape) - 1)
+            action = action.flatten(end_dim=len(shape) - 1)
 
             h = self.trunk(obs)
 
