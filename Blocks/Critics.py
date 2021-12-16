@@ -77,13 +77,13 @@ class EnsembleQCritic(nn.Module):
         # Ensemble
         if self.discrete:
             # All actions' Q-values
-            Qs = tuple(Q_net(h, context) for Q_net in self.Q_head)  # [b, n]
+            Qs = torch.stack([Q_net(h, context) for Q_net in self.Q_head])  # [e, b, n]
 
             if action is None:
                 action = torch.arange(self.action_dim).expand_as(Qs[0])  # [b, n]
             else:
                 # Q values for a discrete action
-                Qs = tuple(Utils.gather_index(Q, action) for Q in Qs)  # [b, 1]
+                Qs = torch.stack([Utils.gather_index(Q, action) for Q in Qs])  # [e, b, 1]
         else:
             assert action is not None and \
                    action.shape[-1] == self.action_dim, f'action with dim={self.action_dim} needed for continuous space'
@@ -97,7 +97,7 @@ class EnsembleQCritic(nn.Module):
             h = h.unsqueeze(1).expand(*shape, -1)
 
             # Q-values for continuous action(s)
-            Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [b, n]
+            Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
 
             # Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
             # action = action.view(*shape, self.action_dim)

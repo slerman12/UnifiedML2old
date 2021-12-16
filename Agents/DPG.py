@@ -102,11 +102,12 @@ class DPGAgent(torch.nn.Module):
 
         # Critic loss
         self.num_actions = 5
+        self.Q_reduction = 'min'
         self.entropy_temp = 0
         critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
                                                   obs, action, reward, discount, next_obs,
-                                                  self.step, self.num_actions, self.entropy_temp,
-                                                  logs=logs)
+                                                  self.step, self.num_actions, self.Q_reduction,
+                                                  self.entropy_temp, logs=logs)
 
         # Update critic
         Utils.optimize(critic_loss,
