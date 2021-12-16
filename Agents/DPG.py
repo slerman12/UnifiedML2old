@@ -127,6 +127,4 @@ class DPGAgent(torch.nn.Module):
         Utils.optimize(actor_loss,
                        self.actor)
 
-        print("YABABA")
-
         return logs

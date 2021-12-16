@@ -97,13 +97,13 @@ class EnsembleQCritic(nn.Module):
             h = h.unsqueeze(1).expand(*shape, -1)
 
             # Q-values for continuous action(s)
-            Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
+            Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [b, n]
 
             # Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
             # action = action.view(*shape, self.action_dim)
 
         # Dist
-        Q = Normal(statistics.mean(Qs), statistics.stdev(Qs))
+        Q = Normal(Qs.mean(0), Qs.std(0))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
 
