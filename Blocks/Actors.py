@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import math
+import copy
 
 import torch
 from torch import nn
@@ -44,12 +45,8 @@ class TruncatedGaussianActor(nn.Module):
 
         # EMA
         if target_tau is not None:
+            self.target = copy.deepcopy(self)
             self.target_tau = target_tau
-            target = self.__class__(repr_shape=repr_shape, feature_dim=feature_dim, hidden_dim=hidden_dim,
-                                    action_dim=action_dim, l2_norm=l2_norm, discrete=discrete,
-                                    stddev_schedule=stddev_schedule, stddev_clip=stddev_clip)
-            target.load_state_dict(self.state_dict())
-            self.target = target
 
     def update_target_params(self):
         assert self.target_tau is not None

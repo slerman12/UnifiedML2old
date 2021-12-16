@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import math
+import copy
 
 import torch
 from torch import nn
@@ -12,20 +13,22 @@ import Utils
 from Blocks.Architectures.Residual import ResidualBlock, Residual
 
 
-# TODO no need for inheritance, give main encoder some CNN options
 class _BaseCNNEncoder(nn.Module):
     """
-    Basic CNN encoder.
+    Basic CNN encoder.  TODO just deepcopy for targets, no re-init or loading
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=3, flatten=True, **kwargs):
+    def __init__(self, obs_shape, out_channels=32, depth=0, pixels=True, flatten=True, **kwargs):
 
         super().__init__()
 
         assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
 
-        # Dimensions
         in_channels = obs_shape[0]
+        self.out_channels = out_channels
+
+        self.obs_shape = obs_shape
+        self.pixels = pixels
 
         # CNN
         self.CNN = nn.Sequential(nn.Conv2d(in_channels, out_channels, 3, stride=2),
@@ -37,9 +40,7 @@ class _BaseCNNEncoder(nn.Module):
         if flatten:
             self.neck = nn.Flatten(-3)
 
-    def __post__(self, obs_shape, out_channels, pixels, optim_lr=None, target_tau=None, **kwargs):
-        assert self.CNN is not None, 'Inheritor of _BaseCNNEncoder must define self.CNN'
-
+    def __post__(self, optim_lr=None, target_tau=None, **kwargs):
         # Initialize weights
         self.apply(Utils.weight_init)
 
@@ -49,20 +50,14 @@ class _BaseCNNEncoder(nn.Module):
 
         # EMA
         if target_tau is not None:
+            self.target = copy.deepcopy(self)
             self.target_tau = target_tau
-            target = self.__class__(obs_shape=obs_shape, out_channels=out_channels,
-                                    pixels=pixels, **kwargs)
-            target.load_state_dict(self.state_dict())
-            self.target = target
 
-        # CNN feature map sizes
-        self.obs_shape = obs_shape
-        self.pixels = pixels
-
-        _, height, width = obs_shape
+        # Dimensions
+        _, height, width = self.obs_shape
         height, width = Utils.cnn_output_shape(height, width, self.CNN)
 
-        self.repr_shape = (out_channels, height, width)  # Feature map shape
+        self.repr_shape = (self.out_channels, height, width)  # Feature map shape
         self.flattened_dim = math.prod(self.repr_shape)  # Flattened features dim
 
     def update_target_params(self):
@@ -70,7 +65,7 @@ class _BaseCNNEncoder(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     # Encodes
-    def forward(self, obs, context=None):
+    def forward(self, obs, *context):
         obs_shape = obs.shape  # Preserve leading dims
         assert obs_shape[-3:] == self.obs_shape
         obs = obs.flatten(0, -4)  # Encode last 3 dims
@@ -80,9 +75,9 @@ class _BaseCNNEncoder(nn.Module):
             obs = obs / 255.0 - 0.5
 
         # Optionally append context to channels assuming dimensions allow
-        if context is not None:
-            context = context.reshape(obs.shape[0], context.shape[-1], 1, 1).expand(-1, -1, *self.obs_shape[1:])
-            obs = torch.cat([obs,  context], 1)
+        context = [c.reshape(obs.shape[0], c.shape[-1], 1, 1).expand(-1, -1, *self.obs_shape[1:])
+                   for c in context]
+        obs = torch.cat([obs, *context], 1)
 
         # CNN encode
         h = self.CNN(obs)
@@ -101,7 +96,7 @@ class CNNEncoder(_BaseCNNEncoder):
     def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True, flatten=True,
                  optim_lr=None, target_tau=None):
 
-        super().__init__(obs_shape, out_channels=out_channels, depth=depth, flatten=flatten)
+        super().__init__(obs_shape, out_channels=out_channels, depth=depth, pixels=pixels, flatten=flatten)
 
         self.__post__(obs_shape=obs_shape, out_channels=out_channels, depth=depth,
                       pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
@@ -120,7 +115,7 @@ class ResidualBlockEncoder(_BaseCNNEncoder):
         super().__init__(obs_shape=obs_shape, out_channels=out_channels,
                          bias=bias, padding=padding, kernel_size=kernel_size,
                          convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
-                         flatten=flatten)
+                         pixels=pixels, flatten=flatten)
 
         self.__post__(obs_shape=obs_shape, out_channels=out_channels,
                       bias=bias, padding=padding, kernel_size=kernel_size,
@@ -137,7 +132,7 @@ class ResidualBlockEncoder(_BaseCNNEncoder):
     def __init__(self, obs_shape, out_channels=64, pixels=True, flatten=True, num_blocks=1,
                  optim_lr=None, target_tau=None):
 
-        super().__init__()
+        super().__init__(obs_shape, out_channels, pixels=pixels, flatten=flatten)
 
         assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
 

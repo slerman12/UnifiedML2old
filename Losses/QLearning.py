@@ -45,7 +45,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
 
         # How to reduce Q ensembles
         if Q_reduction == 'min':
-            next_q = torch.min(*next_Q.Qs)
+            next_q, _ = torch.min(next_Q.Qs, 0)
         elif Q_reduction == 'mean':
             next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
 
@@ -67,9 +67,10 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     Q = critic(obs, action)
 
     # Temporal difference (TD) error (via MSE, but could also use Huber)
-    td_error = sum([F.mse_loss(q, target_q) for q in Q.Qs])
+    td_error = F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
+    # td_error = F.mse_loss(Q.mean, target_q)  # Better since consistent with entropy? Capacity for covariance
 
-    # Entropy
+    # Entropy (humility)
     # entropy = entropy_temp * Q.stddev.mean()
     entropy = entropy_temp * Q.entropy().mean()  # Can also use this in deepPolicyGradient and Creator
 

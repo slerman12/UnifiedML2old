@@ -4,15 +4,11 @@
 # MIT_LICENSE file in the root directory of this source tree.
 import torch
 
-import Utils
 
+def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, exploit_temp=1, logs=None):
+    Pi = actor(obs, step)
 
-def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, exploit_temp=1, Pi=None, logs=None):
-    if Pi is None:
-        Pi = actor(obs, step)
-
-    actions = Pi.rsample(num_actions)
-    Pi_log_probs = Pi.log_prob(actions)
+    actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
 
     Q = critic(obs, actions)
 
@@ -40,7 +36,7 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, e
         assert isinstance(logs, dict)
         logs['exploit_explore_loss'] = exploit_explore_loss.item()
         logs['avg_Q_stddev'] = Q.stddev.mean().item()
-        logs['avg_Pi_probs'] = Pi_log_probs.exp().mean().item()
+        logs['avg_Pi_prob'] = Pi.log_prob(actions).exp().mean().item()
         logs['avg_u'] = u.mean().item()
 
     return exploit_explore_loss

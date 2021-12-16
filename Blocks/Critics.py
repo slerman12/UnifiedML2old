@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import math
-import statistics
+import copy
 
 import torch
 from torch import nn
@@ -22,7 +22,7 @@ class EnsembleQCritic(nn.Module):
     Outputs a Normal distribution over the ensemble.
     """
 
-    def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, critic_norm=False,
+    def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
                  discrete=False, target_tau=None, optim_lr=None):
         super().__init__()
 
@@ -39,12 +39,12 @@ class EnsembleQCritic(nn.Module):
                                          hidden_dim=hidden_dim,
                                          out_dim=Q_dim,
                                          depth=1,
-                                         l2_norm=critic_norm)
+                                         l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
         self.__post__(optim_lr=optim_lr, target_tau=target_tau, repr_shape=repr_shape,
                       feature_dim=feature_dim, hidden_dim=hidden_dim, action_dim=action_dim,
-                      ensemble_size=ensemble_size, critic_norm=critic_norm, discrete=discrete)
+                      ensemble_size=ensemble_size, l2_norm=l2_norm, discrete=discrete)
 
     def __post__(self, action_dim, discrete, optim_lr=None, target_tau=None, **kwargs):
         # Initialize weights
@@ -56,10 +56,8 @@ class EnsembleQCritic(nn.Module):
 
         # EMA
         if target_tau is not None:
+            self.target = copy.deepcopy(self)
             self.target_tau = target_tau
-            target = self.__class__(action_dim=action_dim, discrete=discrete, **kwargs)
-            target.load_state_dict(self.state_dict())
-            self.target = target
 
         self.discrete = discrete
         self.action_dim = action_dim
@@ -90,17 +88,12 @@ class EnsembleQCritic(nn.Module):
 
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
-            shape = action.shape[:-1]  # Preserve leading dims
-            # h = h.unsqueeze(1).expand(*shape, -1).flatten(end_dim=1)
-            # action = action.flatten(end_dim=1)
+            shape = action.shape[:-1]
 
             h = h.unsqueeze(1).expand(*shape, -1)
 
             # Q-values for continuous action(s)
             Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
-
-            # Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
-            # action = action.view(*shape, self.action_dim)
 
         # Dist
         Q = Normal(Qs.mean(0), Qs.std(0))
@@ -117,13 +110,13 @@ class CNNEnsembleQCritic(EnsembleQCritic):
     """
 
     def __init__(self, repr_shape, hidden_channels, out_channels, num_blocks,
-                 hidden_dim, action_dim, ensemble_size=2, critic_norm=False,
+                 hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
                  discrete=False, target_tau=None, optim_lr=None):
         super().__init__((1,), 1, 1, 0, 0, target_tau=None, optim_lr=None)  # Unused parent MLP
 
         in_channels, height, width = repr_shape
 
-        # CNN
+        # CNN  TODO cnn with context e.g. like encoder
         self.trunk = nn.Sequential(*[ResidualBlock(in_channels, hidden_channels)
                                      for _ in range(num_blocks)],
                                    nn.Conv2d(hidden_channels, out_channels, kernel_size=1),
@@ -145,4 +138,4 @@ class CNNEnsembleQCritic(EnsembleQCritic):
         self.__post__(optim_lr=optim_lr, target_tau=target_tau, repr_shape=repr_shape,
                       hidden_channels=hidden_channels, out_channels=out_channels, num_blocks=num_blocks,
                       hidden_dim=hidden_dim, action_dim=action_dim, ensemble_size=ensemble_size,
-                      critic_norm=critic_norm, discrete=discrete)
+                      l2_norm=l2_norm, discrete=discrete)
