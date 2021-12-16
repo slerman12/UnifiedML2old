@@ -27,6 +27,7 @@ class EnsembleQCritic(nn.Module):
         super().__init__()
 
         repr_dim = math.prod(repr_shape)
+        print(repr_dim)
 
         self.trunk = nn.Sequential(nn.Linear(repr_dim, feature_dim),
                                    nn.LayerNorm(feature_dim), nn.Tanh())
