@@ -91,11 +91,16 @@ class EnsembleQCritic(nn.Module):
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
             shape = action.shape[:-1]  # Preserve leading dims
-            h = h.unsqueeze(1).expand(*shape, -1).flatten(end_dim=1)
-            action = action.flatten(end_dim=1)
+            # h = h.unsqueeze(1).expand(*shape, -1).flatten(end_dim=1)
+            # action = action.flatten(end_dim=1)
+
+            h = h.unsqueeze(1).expand(*shape, -1)
 
             # Q-values for continuous action(s)
             Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
+
+            # Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
+            # action = action.view(*shape, self.action_dim)
 
         # Dist
         Q = Normal(statistics.mean(Qs), statistics.stdev(Qs))
