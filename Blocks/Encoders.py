@@ -89,7 +89,6 @@ class _BaseCNNEncoder(nn.Module):
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
         assert tuple(h.shape[-3:]) == self.repr_shape
-        print(h.shape, self.neck(h).shape)
 
         return self.neck(h)
 

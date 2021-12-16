@@ -27,7 +27,6 @@ class EnsembleQCritic(nn.Module):
         super().__init__()
 
         repr_dim = math.prod(repr_shape)
-        print(repr_dim)
 
         self.trunk = nn.Sequential(nn.Linear(repr_dim, feature_dim),
                                    nn.LayerNorm(feature_dim), nn.Tanh())
@@ -89,8 +88,10 @@ class EnsembleQCritic(nn.Module):
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
             shape = action.shape[:-1]  # Preserve leading dims
+            print(shape, action.shape, obs.shape)
             obs = obs.flatten(end_dim=len(shape) - 1)
             action = action.flatten(end_dim=len(shape) - 1)
+            print(obs.shape)
 
             h = self.trunk(obs)
 
