@@ -159,7 +159,7 @@ class TruncatedNormal(pyd.Normal):
 
         if self.to_one_hot:
             # Differentiable one-hot
-            return rone_hot(x, x.shape[-1])
+            return rone_hot(torch.argmax(x, -1, keepdim=True), x.shape[-1])
 
         if self.lo is not None and self.high is not None:
             # Differentiable truncation
@@ -201,12 +201,11 @@ def cnn_output_shape(height, width, block):
 
 # (Multi-dim) one-hot encoding
 def one_hot(x, num_classes):
-    print(x.shape)
-    x = x.long().squeeze(-1).unsqueeze(-1)
-    print(x.shape)
+    assert x.shape[-1] == 1
+    # x = x.squeeze(-1).unsqueeze(-1)  # Or this
+    x = x.long()
     shape = x.shape[:-1]
     zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
-    print(zeros.scatter(len(shape), x, 1).shape)
     return zeros.scatter(len(shape), x, 1)
 
 
