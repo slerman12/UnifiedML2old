@@ -98,7 +98,7 @@ class EnsembleQCritic(nn.Module):
             Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
 
         # Dist
-        Q = Normal(statistics.mean(*Qs), statistics.stdev(*Qs))
+        Q = Normal(statistics.mean(Qs), statistics.stdev(Qs))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
 
