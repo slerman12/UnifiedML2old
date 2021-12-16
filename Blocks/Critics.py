@@ -68,8 +68,11 @@ class EnsembleQCritic(nn.Module):
         assert self.target_tau is not None
         Utils.soft_update_params(self, self.target, self.target_tau)
 
-    def forward(self, obs, action=None, context=torch.empty(0)):
+    def forward(self, obs, action=None, context=None):
         h = self.trunk(obs)
+
+        if context is None:
+            context = torch.empty(0, device=h.device)
 
         # Ensemble
         if self.discrete:
