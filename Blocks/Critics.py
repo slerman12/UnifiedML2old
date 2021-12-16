@@ -96,6 +96,7 @@ class EnsembleQCritic(nn.Module):
             Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
 
         # Dist
+        print(Qs.shape)
         Q = Normal(Qs.mean(0), Qs.std(0))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
