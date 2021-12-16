@@ -31,7 +31,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         else:
             if actor.discrete:
                 # One-hots
-                next_actions = torch.eye(actor.action_dim).repeat(obs.shape[0], 1, 1)
+                next_actions = torch.eye(actor.action_dim, device=obs.device).repeat(obs.shape[0], 1, 1)
                 next_Pi_log_probs = 1
             else:
                 # Sample actions
