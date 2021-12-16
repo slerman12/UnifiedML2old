@@ -69,10 +69,10 @@ class EnsembleQCritic(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     def forward(self, obs, action=None, context=torch.empty(0)):
+        h = self.trunk(obs)
+
         # Ensemble
         if self.discrete:
-            h = self.trunk(obs)
-
             # All actions' Q-values
             Qs = tuple(Q_net(h, context) for Q_net in self.Q_head)  # [b, n]
 
@@ -88,12 +88,8 @@ class EnsembleQCritic(nn.Module):
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
             shape = action.shape[:-1]  # Preserve leading dims
-            print(shape, action.shape, obs.shape)
-            obs = obs.flatten(end_dim=len(shape) - 1)
-            action = action.flatten(end_dim=len(shape) - 1)
-            print(obs.shape)
-
-            h = self.trunk(obs)
+            h = h.unsqueeze(1).expand(*shape, -1).flatten(end_dim=1)
+            action = action.flatten(end_dim=1)
 
             # Q-values for continuous action(s)
             Qs = tuple(Q_net(h, action, context).view(*shape) for Q_net in self.Q_head)  # [b, n]
