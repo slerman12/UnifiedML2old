@@ -10,7 +10,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import TruncatedGaussianActor
+from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
@@ -33,6 +33,9 @@ class DPGAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
+        # Data augmentation
+        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
@@ -45,8 +48,10 @@ class DPGAgent(torch.nn.Module):
                                             l2_norm=False, discrete=discrete,
                                             stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
-        # Data augmentation
-        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+
+        self.creator = CategoricalCriticActor(exploit_schedule=1)
+
+        self.num_actions = 1
 
         # Birth
 
@@ -57,10 +62,17 @@ class DPGAgent(torch.nn.Module):
 
             # "See"
             obs = self.encoder(obs)
-            Pi = self.actor(obs, self.step)
 
-            action = Pi.sample() if self.training \
-                else Pi.mean
+            if self.discrete:
+                actions = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
+            else:
+                Pi = self.actor(obs, self.step)
+                # actions = Pi.sample(self.num_actions) if self.num_actions > 1 \
+                #     else Pi.mean
+                actions = Pi.sample(self.num_actions)
+
+            Q_Pi = self.creator(self.critic(actions))
+            action = Q_Pi.sample() if self.training else Q_Pi.best
 
             if self.training:
                 self.step += 1
@@ -103,7 +115,6 @@ class DPGAgent(torch.nn.Module):
         # "Predict" / "Discern" / "Learn" / "Grow"
 
         # Critic loss
-        self.num_actions = 1
         self.Q_reduction = 'min'
         self.entropy_temp = 0
         critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
