@@ -34,14 +34,10 @@ class EnsembleQCritic(nn.Module):
                                    nn.LayerNorm(feature_dim), nn.Tanh())
 
         in_dim = feature_dim if discrete else feature_dim + action_dim
-        Q_dim = action_dim if discrete else 1
+        out_dim = action_dim if discrete else 1
 
         # MLP
-        self.Q_head = nn.ModuleList([MLP(in_dim=in_dim,
-                                         hidden_dim=hidden_dim,
-                                         out_dim=Q_dim,
-                                         depth=2,
-                                         l2_norm=l2_norm)
+        self.Q_head = nn.ModuleList([MLP(in_dim, out_dim, hidden_dim, 2, l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
         self.init(optim_lr, target_tau)
