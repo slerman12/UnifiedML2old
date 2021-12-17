@@ -21,7 +21,6 @@ class EnsembleQCritic(nn.Module):
     e.g. DrQV2 (https://arxiv.org/abs/2107.09645).
     Outputs a Normal distribution over the ensemble.
     """
-
     def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
                  discrete=False, target_tau=None, optim_lr=None):
         super().__init__()
@@ -30,6 +29,9 @@ class EnsembleQCritic(nn.Module):
 
         self.trunk = nn.Sequential(nn.Linear(repr_dim, feature_dim),
                                    nn.LayerNorm(feature_dim), nn.Tanh())
+
+        self.discrete = discrete
+        self.action_dim = action_dim
 
         in_dim = feature_dim if discrete else feature_dim + action_dim
         Q_dim = action_dim if discrete else 1
@@ -42,11 +44,9 @@ class EnsembleQCritic(nn.Module):
                                          l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
-        self.__post__(optim_lr=optim_lr, target_tau=target_tau, repr_shape=repr_shape,
-                      feature_dim=feature_dim, hidden_dim=hidden_dim, action_dim=action_dim,
-                      ensemble_size=ensemble_size, l2_norm=l2_norm, discrete=discrete)
+        self.init(optim_lr=optim_lr, target_tau=target_tau)
 
-    def __post__(self, action_dim, discrete, optim_lr=None, target_tau=None, **kwargs):
+    def init(self, optim_lr=None, target_tau=None):
         # Initialize weights
         self.apply(Utils.weight_init)
 
@@ -58,9 +58,6 @@ class EnsembleQCritic(nn.Module):
         if target_tau is not None:
             self.target = copy.deepcopy(self)
             self.target_tau = target_tau
-
-        self.discrete = discrete
-        self.action_dim = action_dim
 
     def update_target_params(self):
         assert self.target_tau is not None
@@ -97,6 +94,7 @@ class EnsembleQCritic(nn.Module):
 
         # Dist
         print(Qs.mean(0).shape, Qs.std(0).shape)
+        print(torch.isinf(Qs).any(), torch.isnan(Qs).any(), torch.is_nonzero(Qs).all())
         Q = Normal(Qs.mean(0), Qs.std(0))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
@@ -109,11 +107,10 @@ class CNNEnsembleQCritic(EnsembleQCritic):
     CNN-based Critic network, employs ensemble Q learning,
     e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf) (except with ensembling).
     """
-
     def __init__(self, repr_shape, hidden_channels, out_channels, num_blocks,
                  hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
                  discrete=False, target_tau=None, optim_lr=None):
-        super().__init__((1,), 1, 1, 0, 0, target_tau=None, optim_lr=None)  # Unused parent MLP
+        super().__init__((1,), 1, 1, action_dim, 0, True, discrete)  # Unused parent MLP
 
         in_channels, height, width = repr_shape
 
@@ -133,10 +130,7 @@ class CNNEnsembleQCritic(EnsembleQCritic):
         Q_dim = action_dim if discrete else 1
 
         # MLP
-        self.Q_head = nn.ModuleList([MLP(in_dim, Q_dim, hidden_dim, 2)
+        self.Q_head = nn.ModuleList([MLP(in_dim, Q_dim, hidden_dim, 2, l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
-        self.__post__(optim_lr=optim_lr, target_tau=target_tau, repr_shape=repr_shape,
-                      hidden_channels=hidden_channels, out_channels=out_channels, num_blocks=num_blocks,
-                      hidden_dim=hidden_dim, action_dim=action_dim, ensemble_size=ensemble_size,
-                      l2_norm=l2_norm, discrete=discrete)
+        self.init(optim_lr=optim_lr, target_tau=target_tau)

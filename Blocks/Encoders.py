@@ -13,12 +13,13 @@ import Utils
 from Blocks.Architectures.Residual import ResidualBlock, Residual
 
 
-class _BaseCNNEncoder(nn.Module):
+class CNNEncoder(nn.Module):
     """
-    Basic CNN encoder.  TODO just deepcopy for targets, no re-init or loading
+    Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=0, pixels=True, flatten=True, **kwargs):
+    def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True, flatten=True,
+                 optim_lr=None, target_tau=None):
 
         super().__init__()
 
@@ -40,7 +41,10 @@ class _BaseCNNEncoder(nn.Module):
         if flatten:
             self.neck = nn.Flatten(-3)
 
-    def __post__(self, optim_lr=None, target_tau=None, **kwargs):
+        # Initialize model
+        self.init(optim_lr, target_tau)
+
+    def init(self, optim_lr=None, target_tau=None):
         # Initialize weights
         self.apply(Utils.weight_init)
 
@@ -88,21 +92,7 @@ class _BaseCNNEncoder(nn.Module):
         return self.neck(h)
 
 
-class CNNEncoder(_BaseCNNEncoder):
-    """
-    Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
-    """
-
-    def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True, flatten=True,
-                 optim_lr=None, target_tau=None):
-
-        super().__init__(obs_shape, out_channels=out_channels, depth=depth, pixels=pixels, flatten=flatten)
-
-        self.__post__(obs_shape=obs_shape, out_channels=out_channels, depth=depth,
-                      pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
-
-
-class ResidualBlockEncoder(_BaseCNNEncoder):
+class ResidualBlockEncoder(CNNEncoder):
     """
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
@@ -117,13 +107,13 @@ class ResidualBlockEncoder(_BaseCNNEncoder):
                          convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
                          pixels=pixels, flatten=flatten)
 
-        self.__post__(obs_shape=obs_shape, out_channels=out_channels,
-                      bias=bias, padding=padding, kernel_size=kernel_size,
-                      convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
-                      pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
+        self.init(obs_shape=obs_shape, out_channels=out_channels,
+                  bias=bias, padding=padding, kernel_size=kernel_size,
+                  convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
+                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
 
 
-class ResidualBlockEncoder(_BaseCNNEncoder):
+class ResidualBlockEncoder(CNNEncoder):
     """
     Residual block-based CNN encoder,
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
@@ -150,8 +140,8 @@ class ResidualBlockEncoder(_BaseCNNEncoder):
         if flatten:
             self.neck = nn.Flatten(-3)
 
-        self.__post__(obs_shape=obs_shape, out_channels=out_channels, num_blocks=num_blocks,
-                      pixels=pixels, flatten=flatten, target_tau=target_tau, optim_lr=optim_lr)
+        self.init(obs_shape=obs_shape, out_channels=out_channels, num_blocks=num_blocks,
+                  pixels=pixels, flatten=flatten, target_tau=target_tau, optim_lr=optim_lr)
 
 
 """
@@ -161,7 +151,7 @@ Generative models that plan, forecast, and imagine.
 """
 
 
-class IsotropicCNNEncoder(_BaseCNNEncoder):
+class IsotropicCNNEncoder(CNNEncoder):
     """
     Isotropic (no bottleneck / dimensionality conserving) CNN encoder,
     e.g., SPR(?) (https://arxiv.org/pdf/2007.05929.pdf).
@@ -192,15 +182,15 @@ class IsotropicCNNEncoder(_BaseCNNEncoder):
         if flatten:
             self.neck = nn.Flatten(-3)
 
-        self.__post__(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, depth=depth,
-                      pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
+        self.init(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, depth=depth,
+                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
 
         # Isotropic
         assert obs_shape[-2] == self.repr_shape[1]
         assert obs_shape[-1] == self.repr_shape[2]
 
 
-class IsotropicResidualBlockEncoder(_BaseCNNEncoder):
+class IsotropicResidualBlockEncoder(CNNEncoder):
     """
     Isotropic (no bottleneck / dimensionality conserving) residual block-based CNN encoder,
     e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf)
@@ -229,8 +219,8 @@ class IsotropicResidualBlockEncoder(_BaseCNNEncoder):
         if flatten:
             self.neck = nn.Flatten(-3)
 
-        self.__post__(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, num_blocks=num_blocks,
-                      pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
+        self.init(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, num_blocks=num_blocks,
+                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
 
         # Isotropic
         assert obs_shape[-2] == self.repr_shape[1]
