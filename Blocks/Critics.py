@@ -72,7 +72,7 @@ class EnsembleQCritic(nn.Module):
                 action = torch.arange(self.action_dim).expand_as(Qs[0])  # [b, n]
             else:
                 # Q values for a discrete action
-                Qs = Utils.gather_index(Qs, action)  # [e, b, 1]
+                Qs = Utils.gather_indices(Qs, action)  # [e, b, 1]
 
         else:
             assert action is not None and \
