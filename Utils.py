@@ -125,7 +125,7 @@ def rclamp(x, min, max):
 # (Multi-dim) indexing
 def gather_index(item, ind, dim=-1):
     ind = ind.long().expand(*item.shape[:dim], ind.shape[-1])
-    ind = ind.view(*ind.shape, *([1] * (item.shape[dim:] - 1)))
+    ind = ind.view(*ind.shape, *[1 for _ in range(len(item.shape[dim:]) - 1)])
 
     return torch.gather(item, dim, ind)
 
