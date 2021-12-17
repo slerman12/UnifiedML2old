@@ -99,10 +99,21 @@ The majority of DrQ-v2 is licensed under the MIT license, however portions of th
 
 ## Financing
 
-If you have not yet, please consider donating. We are a nonprofit, single-PhD student team whose bank account is quickly hemmoraging.
+If you have not yet, please consider donating:
 
-If you are an investor wishing to invest more seriously, [please contact **agi.\__init\__**](mailto:agi.init@gmail.com).
+[comment]: <> ([![Donate]&#40;https://img.shields.io/badge/Donate-PayPal-green.svg?style=social&#41;]&#40;https://www.paypal.com/cgi-bin/&#41;)
+
+[comment]: <> ([![Donate]&#40;https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat&#41;]&#40;https://www.paypal.com/cgi-bin/&#41;)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge)](https://www.paypal.com/cgi-bin/)
+
+[comment]: <> ([![Donate]&#40;https://img.shields.io/badge/PayPal-Donate-green.svg?style=for-the-badge&#41;]&#40;https://www.paypal.com/cgi-bin/&#41;)
+
+[comment]: <> ([![Donate]&#40;https://img.shields.io/badge/Give_money-yasss-green.svg?style=for-the-badge&#41;]&#40;https://www.paypal.com/cgi-bin/&#41;)
+
+[comment]: <> ([![Donate]&#40;https://img.shields.io/badge/paypal-green.svg?style=for-the-badge&#41;]&#40;https://www.paypal.com/cgi-bin/&#41;)
+
+We are a nonprofit, single-PhD student team whose bank account is quickly hemmoraging.
+
+If you are an investor wishing to invest more seriously, [please contact **agi.\_\_init\_\_**](mailto:agi.init@gmail.com).
 
 Mark Zuckerburg, if you're looking for an heir... (not joking).
-
-[comment]: <> (Me: Yann LeCunn, heir apparent... I do share a publication with Henry Kautz, my first advisor, who left to run the NSF...)
