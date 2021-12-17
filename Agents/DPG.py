@@ -118,7 +118,7 @@ class DPGAgent(torch.nn.Module):
         self.critic.update_target_params()
 
         # Actor loss
-        self.sample_q = True
+        self.sample_q = False
         self.exploit_temp = 1
         # self.exploit_temp = 1 - Utils.schedule(self.actor.stddev_schedule, self.step)
         actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
