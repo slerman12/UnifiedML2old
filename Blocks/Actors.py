@@ -93,7 +93,6 @@ class CategoricalCriticActor(nn.Module):  # "Creator" for short
 
         best_eps, best_ind = torch.max(u, -1)
         best_action = Utils.gather_indices(Q.action, best_ind, 1)
-        print(Q.action.shape, best_action.shape, best_ind.shape)
 
         def action_sampler(sample_shape):
             i = Q_Pi.sample(sample_shape)
