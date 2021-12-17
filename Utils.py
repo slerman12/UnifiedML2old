@@ -114,7 +114,7 @@ def one_hot(x, num_classes):
 
 # Differentiable one_hot
 def rone_hot(x):
-    return x - (x - torch.argmax(x, -1, keepdim=True), x.shape[-1])
+    return x - (x - one_hot(torch.argmax(x, -1, keepdim=True), x.shape[-1]))
 
 
 # Differentiable clamp
