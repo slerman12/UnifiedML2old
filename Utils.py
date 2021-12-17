@@ -126,7 +126,8 @@ def rclamp(x, min, max):
 def gather_indices(item, ind, dim=-1):
     ind = ind.long().expand(*item.shape[:dim], ind.shape[-1])  # Assumes ind.shape[-1] is desired num indices
     if -1 < dim < len(item.shape) - 1:
-        ind = ind.view(*ind.shape, *item.shape[dim + 1:])
+        ind = ind.view(ind.shape + (1,)*(len(item.shape[dim:]) - 1))
+        ind = ind.expand(*ind.shape, *item.shape[dim + 1:])
     return torch.gather(item, dim, ind)
 
 
