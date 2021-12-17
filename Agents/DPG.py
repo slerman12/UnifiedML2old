@@ -82,7 +82,7 @@ class DPGAgent(torch.nn.Module):
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
-                action = torch.argmax(action, -1)
+                action = torch.argmax(action, -1).int()
 
             return action
 
