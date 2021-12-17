@@ -50,7 +50,9 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
 
         # Value V = expected Q
-        next_probs = torch.softmax(next_Q.mean * next_Pi_log_probs, -1)
+        next_probs = torch.softmax(next_Pi_log_probs, -1)
+        # next_probs = torch.softmax(next_Q.mean * next_Pi_log_probs, -1)  # TODO If creator
+        print(next_probs.mean())
         next_v = torch.sum(next_q * next_probs, -1, keepdim=True)
 
         # "Entropy maximization"
@@ -69,7 +71,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     Q = critic(obs, action)
 
     # Temporal difference (TD) error (via MSE, but could also use Huber)
-    td_error = 2*F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
+    td_error = F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
     # td_error = F.mse_loss(Q.mean, target_q)  # Better since consistent with entropy? Capacity for covariance
 
     # Judgement/humility
