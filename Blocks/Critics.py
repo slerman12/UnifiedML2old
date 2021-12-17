@@ -25,13 +25,13 @@ class EnsembleQCritic(nn.Module):
                  discrete=False, target_tau=None, optim_lr=None):
         super().__init__()
 
+        self.discrete = discrete
+        self.action_dim = action_dim
+
         repr_dim = math.prod(repr_shape)
 
         self.trunk = nn.Sequential(nn.Linear(repr_dim, feature_dim),
                                    nn.LayerNorm(feature_dim), nn.Tanh())
-
-        self.discrete = discrete
-        self.action_dim = action_dim
 
         in_dim = feature_dim if discrete else feature_dim + action_dim
         Q_dim = action_dim if discrete else 1
@@ -94,7 +94,7 @@ class EnsembleQCritic(nn.Module):
 
         # Dist
         print(Qs.mean(0).shape, Qs.std(0).shape)
-        print(torch.isinf(Qs).any(), torch.isnan(Qs).any(), torch.is_nonzero(Qs).all())
+        print(torch.isinf(Qs).any(), torch.isnan(Qs).any(), math.prod(Qs.shape) - torch.count_nonzero(Qs))
         Q = Normal(Qs.mean(0), Qs.std(0))
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
