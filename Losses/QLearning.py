@@ -70,7 +70,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     Q = critic(obs, action)
 
     # Temporal difference (TD) error (via MSE, but could also use Huber)
-    td_error = Q.Qs.shape[0] * F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
+    td_error = F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
     # td_error = F.mse_loss(Q.mean, target_q)  # Better since consistent with entropy? Capacity for covariance
 
     # Judgement/humility

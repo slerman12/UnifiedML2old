@@ -8,7 +8,8 @@ import torch
 def deepPolicyGradient(actor, critic, obs, step, num_actions=5, Q_reduction='sample', exploit_temp=1, logs=None):
     Pi = actor(obs, step)
 
-    actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
+    # actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
+    actions = Pi.rsample(num_actions)
 
     Q = critic(obs, actions)
 
