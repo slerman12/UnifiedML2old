@@ -85,6 +85,7 @@ class EnsembleQCritic(nn.Module):
                    action.shape[-1] == self.action_dim, f'action with dim={self.action_dim} needed for continuous space'
 
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
+            print(action.shape)
 
             shape = action.shape[:-1]
 
