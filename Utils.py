@@ -91,7 +91,7 @@ def cnn_output_shape(height, width, block):
 
 # "Ensembles" (stacks) multiple modules' outputs
 class Ensemble(nn.Module):
-    def __init__(self, *modules, dim=1):
+    def __init__(self, modules, dim=1):
         super(Ensemble, self).__init__()
 
         self.modules = nn.ModuleList(modules)
