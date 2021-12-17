@@ -96,7 +96,7 @@ class CategoricalCriticActor(nn.Module):  # "Creator" for short
 
         def action_sampler(sample_shape):
             i = Q_Pi.sample(sample_shape)
-            return Utils.gather_index(Q.action, i)
+            return Utils.gather_index(Q.action, i, 1)
 
         Q_Pi.__dict__.update({'best': best_action,
                               'best_u': best_eps,

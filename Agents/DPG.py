@@ -73,7 +73,6 @@ class DPGAgent(torch.nn.Module):
 
             Q_Pi = self.creator(self.critic(obs, actions))
             action = Q_Pi.sample() if self.training else Q_Pi.best
-            print(action.shape)
 
             if self.training:
                 self.step += 1
