@@ -5,21 +5,25 @@
 import torch
 
 
-def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, exploit_temp=1, logs=None):
+def deepPolicyGradient(actor, critic, obs, step, num_actions=5, Q_reduction='sample', exploit_temp=1, logs=None):
     Pi = actor(obs, step)
 
     actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
 
     Q = critic(obs, actions)
 
-    # Sample q or mean
-    # q = Q.rsample() if sample_q else Q.mean
-    q = Q.rsample() if sample_q else torch.min(Q.Qs, 0)[0]  # Min reduction as in DrQV2
+    # Sample q or mean/min-reduce
+    if Q_reduction == 'sample':
+        q = Q.rsample()
+    elif Q_reduction == 'mean':
+        q = Q.mean
+    elif Q_reduction == 'min':
+        q = torch.min(Q.Qs, 0)[0]
 
     # Exploitation-exploration tradeoff
     u = exploit_temp * q + (1 - exploit_temp) * Q.stddev
 
-    exploit_explore_loss = -torch.mean(u)
+    exploit_explore_loss = -u.mean()
 
     # "Entropy maximization"
     # Future-action uncertainty maximization in reward
