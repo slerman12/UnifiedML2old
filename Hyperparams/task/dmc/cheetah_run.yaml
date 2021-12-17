@@ -10,4 +10,4 @@ hydra:
     env_set:
       # Environment variables for MuJoCo
       MKL_SERVICE_FORCE_INTEL: '1'
-      MUJOCO_GL: 'glfw'
+      MUJOCO_GL: 'egl'
