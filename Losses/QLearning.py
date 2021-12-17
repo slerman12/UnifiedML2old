@@ -34,7 +34,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             if actor.discrete:
                 # One-hots
                 action = Utils.one_hot(action, actor.action_dim)
-                next_actions = torch.eye(actor.action_dim, device=obs.device).repeat(obs.shape[0], 1, 1)
+                next_actions = torch.eye(actor.action_dim, device=obs.device).expand(obs.shape[0], -1, -1)
                 next_Pi_log_probs = 1
             else:
                 # Sample actions
@@ -56,6 +56,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         # "Entropy maximization"
         # Future-action uncertainty maximization in reward
         # Entropy in future decisions means exploring the uncertain, the lesser-explored
+        # Anxiety vs. comfort
 
         target_q = reward + (discount * next_v)
 
@@ -63,6 +64,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         # Current-action certainty maximization in reward, thereby increasing so-called "action-gap" w.r.t. above
         # Furthermore, off-policy sampling of outdated rewards might be mitigated to a degree by on-policy estimate
         # Another salient heuristic: "optimism in the face of uncertainty" (Brafman & Tennenholtz, 2002) literally
+        # Equivalence / policy consistency
 
     Q = critic(obs, action)
 
@@ -70,7 +72,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     td_error = F.mse_loss(Q.Qs, target_q.expand_as(Q.Qs))
     # td_error = F.mse_loss(Q.mean, target_q)  # Better since consistent with entropy? Capacity for covariance
 
-    # Entropy (humility)
+    # Judgement/humility
     # entropy = entropy_temp * Q.stddev.mean()
     entropy = entropy_temp * Q.entropy().mean()  # Can also use this in deepPolicyGradient and Creator
 

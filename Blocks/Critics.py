@@ -94,7 +94,7 @@ class EnsembleQCritic(nn.Module):
 
         # Dist
         stddev, mean = torch.std_mean(Qs, dim=0)
-        print(stddev)
+        print((stddev < 0).any())
         Q = Normal(mean, stddev)
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
