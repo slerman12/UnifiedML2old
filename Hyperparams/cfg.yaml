@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - task@_global_: atari/krull
+  - task@_global_: dmc/cheetah_run
   - override hydra/launcher: submitit_local
 
 # Environment

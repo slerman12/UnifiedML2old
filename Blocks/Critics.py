@@ -18,8 +18,7 @@ from Blocks.Architectures.Residual import ResidualBlock
 class EnsembleQCritic(nn.Module):
     """
     MLP-based Critic network, employs ensemble Q learning,
-    e.g. DrQV2 (https://arxiv.org/abs/2107.09645).
-    Outputs a Normal distribution over the ensemble.
+    returns a Normal distribution over the ensemble.
     """
     def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
                  discrete=False, target_tau=None, optim_lr=None):
