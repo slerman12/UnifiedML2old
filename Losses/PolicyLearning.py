@@ -13,7 +13,8 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=5, sample_q=True, e
     Q = critic(obs, actions)
 
     # Sample q or mean
-    q = Q.rsample() if sample_q else Q.mean
+    # q = Q.rsample() if sample_q else Q.mean
+    q = Q.rsample() if sample_q else torch.min(Q.Qs, 0)[0]  # Min reduction as in DrQV2
 
     # Exploitation-exploration tradeoff
     u = exploit_temp * q + (1 - exploit_temp) * Q.stddev
