@@ -52,7 +52,6 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         # Value V = expected Q
         next_probs = torch.softmax(next_Pi_log_probs, -1)
         # next_probs = torch.softmax(next_Q.mean * next_Pi_log_probs, -1)  # TODO If creator
-        print(next_probs.shape, next_q.shape)
         next_v = torch.sum(next_q * next_probs, -1, keepdim=True)
 
         # "Entropy maximization"
