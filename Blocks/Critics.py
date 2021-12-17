@@ -35,9 +35,8 @@ class EnsembleQCritic(nn.Module):
         in_dim = feature_dim if discrete else feature_dim + action_dim
         out_dim = action_dim if discrete else 1
 
-        # MLP
-        self.Q_head = nn.ModuleList([MLP(in_dim, out_dim, hidden_dim, 2, l2_norm=l2_norm)
-                                     for _ in range(ensemble_size)])
+        self.Q_head = Utils.Ensemble([MLP(in_dim, out_dim, hidden_dim, 2, l2_norm=l2_norm)
+                                     for _ in range(ensemble_size)], 0)
 
         self.init(optim_lr, target_tau)
 
@@ -67,7 +66,7 @@ class EnsembleQCritic(nn.Module):
         # Ensemble
         if self.discrete:
             # All actions' Q-values
-            Qs = torch.stack([Q_net(h, context) for Q_net in self.Q_head])  # [e, b, n]
+            Qs = self.Q_head(h, context)  # [e, b, n]
 
             if action is None:
                 action = torch.arange(self.action_dim).expand_as(Qs[0])  # [b, n]
@@ -86,7 +85,7 @@ class EnsembleQCritic(nn.Module):
             h = h.unsqueeze(1).expand(*shape, -1)
 
             # Q-values for continuous action(s)
-            Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
+            Qs = self.Q_head(h, action, context).squeeze(-1)  # [e, b, n]
 
         # Dist
         stddev, mean = torch.std_mean(Qs, dim=0)
@@ -109,7 +108,7 @@ class CNNEnsembleQCritic(EnsembleQCritic):
 
         in_channels, height, width = repr_shape
 
-        # CNN  TODO cnn with context e.g. like encoder
+        # TODO cnn with context e.g. like encoder
         self.trunk = nn.Sequential(*[ResidualBlock(in_channels, hidden_channels)
                                      for _ in range(num_blocks)],
                                    nn.Conv2d(hidden_channels, out_channels, kernel_size=1),

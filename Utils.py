@@ -11,8 +11,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import distributions as pyd
-from torch.distributions.utils import _standard_normal
 
 
 # Sets all Torch and Numpy random seeds
@@ -58,6 +56,76 @@ def soft_update_params(net, target_net, tau):
     for param, target_param in zip(net.parameters(), target_net.parameters()):
         target_param.data.copy_(tau * param.data +
                                 (1 - tau) * target_param.data)
+
+
+# Compute the output shape of a CNN layer
+def conv_output_shape(in_height, in_width, kernel_size=1, stride=1, padding=0, dilation=1):
+    if type(kernel_size) is not tuple:
+        kernel_size = (kernel_size, kernel_size)
+    if type(stride) is not tuple:
+        stride = (stride, stride)
+    if type(padding) is not tuple:
+        padding = (padding, padding)
+    out_height = math.floor(((in_height + (2 * padding[0]) - (dilation * (kernel_size[0] - 1)) - 1) / stride[0]) + 1)
+    out_width = math.floor(((in_width + (2 * padding[1]) - (dilation * (kernel_size[1] - 1)) - 1) / stride[1]) + 1)
+    return out_height, out_width
+
+
+# Compute the output shape of a whole CNN
+def cnn_output_shape(height, width, block):
+    if isinstance(block, (nn.Conv2d, nn.AvgPool2d)):
+        height, width = conv_output_shape(height, width,
+                                          kernel_size=block.kernel_size,
+                                          stride=block.stride,
+                                          padding=block.padding)
+    elif hasattr(block, 'output_shape'):
+        height, width = block.output_shape(height, width)
+    elif hasattr(block, 'modules'):
+        for module in block.children():
+            height, width = cnn_output_shape(height, width, module)
+
+    output_shape = (height, width)  # TODO should probably do (width, height) universally
+
+    return output_shape
+
+
+# "Ensembles" (stacks) multiple modules' outputs
+class Ensemble(nn.Module):
+    def __init__(self, *modules, dim=1):
+        super(Ensemble, self).__init__()
+
+        self.modules = nn.ModuleList(modules)
+        self.dim = dim
+
+    def forward(self, x):
+        return torch.stack([module(x) for module in self.modules],
+                           self.dim)
+
+
+# (Multi-dim) one-hot encoding
+def one_hot(x, num_classes):
+    assert x.shape[-1] == 1
+    # x = x.squeeze(-1).unsqueeze(-1)  # Or this
+    x = x.long()
+    shape = x.shape[:-1]
+    zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
+    return zeros.scatter(len(shape), x, 1).float()
+
+
+# Differentiable one_hot
+def rone_hot(x):
+    return x - (x - torch.argmax(x, -1, keepdim=True), x.shape[-1])
+
+
+# Differentiable clamp
+def rclamp(x, min, max):
+    return x - (x - torch.clamp(x, min, max))
+
+
+# (Multi-dim) indexing
+def gather_index(item, ind):
+    ind = ind.long().view(*item.shape[:-1], -1)
+    return torch.gather(item, -1, ind)
 
 
 # Basic L2 normalization
@@ -132,97 +200,6 @@ def schedule(sched, step):
                 mix = np.clip((step - duration1) / duration2, 0.0, 1.0)
                 return (1.0 - mix) * final1 + mix * final2
     raise NotImplementedError(sched)
-
-
-# A Normal distribution with its variance clipped
-class TruncatedNormal(pyd.Normal):
-    def __init__(self, loc, scale, lo=None, high=None, eps=1e-6, stddev_clip=None, to_one_hot=False):
-        super().__init__(loc, scale, validate_args=False)
-        self.lo = lo
-        self.high = high
-        self.eps = eps
-        self.stddev_clip = stddev_clip
-        self.to_one_hot = to_one_hot
-
-    # Defaults to no clip, no grad
-    def sample(self, to_clip=False, sample_shape=torch.Size()):
-        with torch.no_grad():
-            return self.rsample(to_clip=to_clip, sample_shape=sample_shape)
-
-    def rsample(self, to_clip=True, sample_shape=torch.Size()):
-        shape = self._extended_shape(sample_shape)
-        rand = _standard_normal(shape, dtype=self.loc.dtype, device=self.loc.device)  # Explore
-        dev = rand * self.scale  # Deviate
-        if to_clip:
-            dev = rclamp(dev, -self.stddev_clip, self.stddev_clip)  # Don't explore /too/ much
-        x = self.loc + dev
-
-        if self.to_one_hot:
-            # Differentiable one-hot
-            return rone_hot(torch.argmax(x, -1, keepdim=True), x.shape[-1])
-
-        if self.lo is not None and self.high is not None:
-            # Differentiable truncation
-            return rclamp(x, self.lo + self.eps, self.high - self.eps)
-
-        return x
-
-
-# Compute the output shape of a CNN layer
-def conv_output_shape(in_height, in_width, kernel_size=1, stride=1, padding=0, dilation=1):
-    if type(kernel_size) is not tuple:
-        kernel_size = (kernel_size, kernel_size)
-    if type(stride) is not tuple:
-        stride = (stride, stride)
-    if type(padding) is not tuple:
-        padding = (padding, padding)
-    out_height = math.floor(((in_height + (2 * padding[0]) - (dilation * (kernel_size[0] - 1)) - 1) / stride[0]) + 1)
-    out_width = math.floor(((in_width + (2 * padding[1]) - (dilation * (kernel_size[1] - 1)) - 1) / stride[1]) + 1)
-    return out_height, out_width
-
-
-# Compute the output shape of a whole CNN
-def cnn_output_shape(height, width, block):
-    if isinstance(block, (nn.Conv2d, nn.AvgPool2d)):
-        height, width = conv_output_shape(height, width,
-                                          kernel_size=block.kernel_size,
-                                          stride=block.stride,
-                                          padding=block.padding)
-    elif hasattr(block, 'output_shape'):
-        height, width = block.output_shape(height, width)
-    elif hasattr(block, 'modules'):
-        for module in block.children():
-            height, width = cnn_output_shape(height, width, module)
-
-    output_shape = (height, width)  # TODO should probably do (width, height) universally
-
-    return output_shape
-
-
-# (Multi-dim) one-hot encoding
-def one_hot(x, num_classes):
-    assert x.shape[-1] == 1
-    # x = x.squeeze(-1).unsqueeze(-1)  # Or this
-    x = x.long()
-    shape = x.shape[:-1]
-    zeros = torch.zeros(*shape, num_classes, dtype=x.dtype, device=x.device)
-    return zeros.scatter(len(shape), x, 1).float()
-
-
-# Differentiable one_hot
-def rone_hot(x, num_classes):
-    return x - (x - one_hot(x, num_classes))
-
-
-# Differentiable clamp
-def rclamp(x, min, max):
-    return x - (x - torch.clamp(x, min, max))
-
-
-# (Multi-dim) indexing
-def gather_index(item, ind):
-    ind = ind.long().view(*item.shape[:-1], -1)
-    return torch.gather(item, -1, ind)
 
 
 # Helps contain learnable meta coefficients like temperatures, etc.
