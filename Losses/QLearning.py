@@ -50,6 +50,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
 
         # Value V = expected Q
+        print(next_Pi_log_probs.shape, next_Q.mean.shape)
         next_probs = torch.softmax(next_Q.mean * next_Pi_log_probs, -1)
         print(next_probs.mean())
         next_v = torch.sum(next_q * next_probs, -1, keepdim=True)
