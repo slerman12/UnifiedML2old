@@ -71,7 +71,7 @@ class DPGAgent(torch.nn.Module):
                 #     else Pi.mean
                 actions = Pi.sample(self.num_actions)
 
-            Q_Pi = self.creator(self.critic(actions))
+            Q_Pi = self.creator(self.critic(obs, actions))
             action = Q_Pi.sample() if self.training else Q_Pi.best
 
             if self.training:
