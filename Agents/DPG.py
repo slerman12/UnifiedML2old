@@ -49,7 +49,7 @@ class DPGAgent(torch.nn.Module):
                                             stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
 
-        self.creator = CategoricalCriticActor(exploit_schedule=1)
+        self.creator = CategoricalCriticActor(exploit_schedule=stddev_schedule)
 
         self.num_actions = 1
 
