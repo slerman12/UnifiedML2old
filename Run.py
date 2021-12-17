@@ -44,7 +44,7 @@ def main(args):
 def reinforce(args, root_path):
     # Train, test environments
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
-    generalize = instantiate(args.environment, train=False)
+    generalize = instantiate(args.environment, train=False, seed=2)
 
     # Load
     if (root_path / 'Saved.pt').exists():

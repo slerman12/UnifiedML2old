@@ -39,7 +39,7 @@ class DPGAgent(torch.nn.Module):
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       l2_norm=False,
                                       ensemble_size=2,
-                                      target_tau=target_tau, optim_lr=lr).to(device)
+                                      optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                             l2_norm=False, discrete=discrete,
@@ -57,10 +57,10 @@ class DPGAgent(torch.nn.Module):
 
             # "See"
             obs = self.encoder(obs)
-            dist = self.actor(obs, self.step)
+            Pi = self.actor(obs, self.step)
 
-            action = dist.sample() if self.training \
-                else dist.mean
+            action = Pi.sample() if self.training \
+                else Pi.mean
 
             if self.training:
                 self.step += 1
