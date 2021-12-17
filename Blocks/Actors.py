@@ -46,6 +46,7 @@ class TruncatedGaussianActor(nn.Module):
         # EMA
         if target_tau is not None:
             self.target = copy.deepcopy(self)
+            self.target_tau = target_tau
 
     def update_target_params(self):
         assert hasattr(self, 'target')

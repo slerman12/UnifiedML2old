@@ -55,6 +55,7 @@ class CNNEncoder(nn.Module):
         # EMA
         if target_tau is not None:
             self.target = copy.deepcopy(self)
+            self.target_tau = target_tau
 
         # Dimensions
         _, height, width = self.obs_shape

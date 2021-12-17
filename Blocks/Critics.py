@@ -57,6 +57,7 @@ class EnsembleQCritic(nn.Module):
         # EMA
         if target_tau is not None:
             self.target = copy.deepcopy(self)
+            self.target_tau = target_tau
 
     def update_target_params(self):
         assert hasattr(self, 'target')
@@ -92,9 +93,9 @@ class EnsembleQCritic(nn.Module):
             Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
 
         # Dist
-        stddev, mean = torch.std_mean(Qs, dim=0)
-        print(stddev)
-        Q = Normal(mean, stddev)
+        # stddev, mean = torch.std_mean(Qs, dim=0)
+        print(Qs.std())
+        Q = Normal(Qs.mean(), Qs.std())
         Q.__dict__.update({'Qs': Qs,
                            'action': action})
         return Q
