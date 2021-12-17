@@ -55,7 +55,6 @@ class CNNEncoder(nn.Module):
         # EMA
         if target_tau is not None:
             self.target = copy.deepcopy(self)
-            self.target_tau = target_tau
 
         # Dimensions
         _, height, width = self.obs_shape
@@ -65,7 +64,7 @@ class CNNEncoder(nn.Module):
         self.flattened_dim = math.prod(self.repr_shape)  # Flattened features dim
 
     def update_target_params(self):
-        assert self.target_tau is not None
+        assert hasattr(self, 'target')
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     # Encodes
