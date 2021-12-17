@@ -73,15 +73,15 @@ class EnsembleQCritic(nn.Module):
         if self.discrete:
             # All actions' Q-values
             Qs = torch.stack([Q_net(h, context) for Q_net in self.Q_head])  # [e, b, n]
-            assert Qs.shape == torch.Size(len(self.Q_head), obs.shape[0], self.action_dim)
+            assert Qs.shape == torch.Size([len(self.Q_head), obs.shape[0], self.action_dim])
 
             if action is None:
                 action = torch.arange(self.action_dim).expand_as(Qs[0])  # [b, n]
             else:
                 # Q values for a discrete action
                 Qs = Utils.gather_index(Qs, action)  # [e, b, 1]
-                assert Qs.shape == torch.Size(len(self.Q_head), obs.shape[0], 1)
-                assert action.shape == torch.Size(obs.shape[0], 1)  # [b, 1]
+                assert Qs.shape == torch.Size([len(self.Q_head), obs.shape[0], 1])
+                assert action.shape == torch.Size([obs.shape[0], 1])  # [b, 1]
 
         else:
             assert action is not None and \
@@ -95,7 +95,7 @@ class EnsembleQCritic(nn.Module):
 
             # Q-values for continuous action(s)
             Qs = torch.stack([Q_net(h, action, context).squeeze(-1) for Q_net in self.Q_head])  # [e, b, n]
-            assert Qs.shape == torch.Size(len(self.Q_head), obs.shape[0], shape[-1])
+            assert Qs.shape == torch.Size([len(self.Q_head), obs.shape[0], shape[-1]])
 
         # Dist
         stddev, mean = torch.std_mean(Qs, dim=0)
