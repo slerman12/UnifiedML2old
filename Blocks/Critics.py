@@ -40,11 +40,11 @@ class EnsembleQCritic(nn.Module):
         self.Q_head = nn.ModuleList([MLP(in_dim=in_dim,
                                          hidden_dim=hidden_dim,
                                          out_dim=Q_dim,
-                                         depth=1,
+                                         depth=2,
                                          l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
-        self.init(optim_lr=optim_lr, target_tau=target_tau)
+        self.init(optim_lr, target_tau)
 
     def init(self, optim_lr=None, target_tau=None):
         # Initialize weights
@@ -133,4 +133,4 @@ class CNNEnsembleQCritic(EnsembleQCritic):
         self.Q_head = nn.ModuleList([MLP(in_dim, Q_dim, hidden_dim, 2, l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
 
-        self.init(optim_lr=optim_lr, target_tau=target_tau)
+        self.init(optim_lr, target_tau)
