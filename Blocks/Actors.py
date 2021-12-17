@@ -81,7 +81,7 @@ class CategoricalCriticActor(nn.Module):  # "Creator" for short
 
         self.exploit_schedule = exploit_schedule
 
-    def forward(self, Q, step, temp=1, sample_q=True):
+    def forward(self, Q, step=None, temp=1, sample_q=True):
         # Sample q or mean
         q = Q.rsample() if sample_q else Q.mean
 
