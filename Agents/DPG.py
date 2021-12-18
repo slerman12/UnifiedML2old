@@ -50,10 +50,16 @@ class DPGAgent(torch.nn.Module):
                                             stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
 
-        self.creator = CategoricalCriticActor(exploit_schedule=stddev_schedule)
+        # self.creator = CategoricalCriticActor(exploit_schedule=stddev_schedule)
 
         self.num_actions = 1
         self.sample_q = False
+        self.Q_reduction = 'min'
+        self.dpg_Q_reduction = 'min'
+        self.entropy_temp = 0  # Q current entropy
+        self.stddev_schedule = stddev_schedule  # Pi entropy
+        self.exploit_schedule = 1  # Q_Pi utility non-entropy
+        self.temp = 1  # Q_Pi entropy
 
         # Birth
 
@@ -67,20 +73,15 @@ class DPGAgent(torch.nn.Module):
 
             if self.discrete:
                 actions = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
+                actions_log_prob = 0
             else:
                 Pi = self.actor(obs, self.step)
                 # actions = Pi.sample(self.num_actions) if self.num_actions > 1 \
                 #     else Pi.mean
                 actions = Pi.sample(self.num_actions)
+                actions_log_prob = Pi.log_prob(actions).sum(-1, True)
 
             Q = self.critic(obs, actions)
-
-            # temp = Utils.schedule(self.actor.stddev_schedule, self.step)
-
-            # log_prob = Pi.log_prob(actions).sum(-1, keepdim=True)
-            # q = Q.sample() if self.sample_q else Q.mean
-            # u = (1 - temp) * q + temp * Q.stddev
-            # Q_Pi = Categorical(u * log_prob / temp, -1)
 
             # prob = Pi.log_prob(Q.actions).sum(-1, True).exp()
             # u = torch.softmax((1 - temp) * Q.sample() + temp * Q.stddev, -1)
@@ -92,20 +93,14 @@ class DPGAgent(torch.nn.Module):
             #     Q_Pi = Categorical((u + prob) / 2 / meta.discovery, -1)
             #     return Q_Pi
 
-            actions_log_prob = Pi.log_prob(Q.actions).sum(-1, True)
-            temp = 1
             exploit_factor = Utils.schedule(self.exploit_schedule, self.step)
             q = Q.sample() if self.sample_q else Q.mean
             u = exploit_factor * q + (1 - exploit_factor) * Q.stddev
             u_logits = u - u.max(dim=-1, keepdim=True)[0]
-            Q_Pi = Categorical(logits=u_logits / temp + actions_log_prob)
+            Q_Pi = Categorical(logits=u_logits / self.temp + actions_log_prob)
 
-            # actions_log_prob = Pi.log_prob(Q.actions).sum(-1, True)
-            # u = meta.exploit_factor * Q.sample() + (1 - meta.exploit_factor) * Q.stddev  # Q.mean
-            # u_logits = u - u.max(dim=-1, keepdim=True)[0]
-            # Q_Pi = Categorical(logits=u_logits / meta.temp + actions_log_prob)
-
-            action = Utils.gather_indices(Q.action, Q_Pi.sample() if self.training else torch.argmax(u, -1), 1)
+            action = Utils.gather_indices(Q.action,
+                                          Q_Pi.sample() if self.training else torch.argmax(u, -1), 1).squeeze(1)
 
             # Q_Pi = self.creator(self.critic(obs, actions), self.step, temp, sample_q, actions_log_prob)
             # action = Q_Pi.sample() if self.training else Q_Pi.best
@@ -120,7 +115,7 @@ class DPGAgent(torch.nn.Module):
             if self.discrete:
                 action = torch.argmax(action, -1)
 
-            return action.squeeze(1)
+            return action
 
     # "Dream"
     def update(self, replay):
@@ -151,12 +146,11 @@ class DPGAgent(torch.nn.Module):
         # "Predict" / "Discern" / "Learn" / "Grow"
 
         # Critic loss
-        self.Q_reduction = 'min'
-        self.entropy_temp = 0
         critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
                                                   obs, action, reward, discount, next_obs,
                                                   self.step, self.num_actions, self.Q_reduction,
-                                                  self.entropy_temp, logs=logs)
+                                                  self.exploit_schedule, self.entropy_temp,
+                                                  logs=logs)
 
         # Update critic
         Utils.optimize(critic_loss,
@@ -166,10 +160,10 @@ class DPGAgent(torch.nn.Module):
         self.critic.update_target_params()
 
         # Actor loss
-        # self.exploit_temp = 1 - Utils.schedule(self.actor.stddev_schedule, self.step)
         actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
-                                                       self.step, self.num_actions, self.Q_reduction,
-                                                       self.exploit_temp, logs=logs)
+                                                       self.step, self.num_actions, self.dpg_Q_reduction,
+                                                       self.exploit_schedule,
+                                                       logs=logs)
 
         # Update actor
         Utils.optimize(actor_loss,
