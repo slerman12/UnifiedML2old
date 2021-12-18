@@ -4,6 +4,7 @@
 # MIT_LICENSE file in the root directory of this source tree.
 import math
 import copy
+from functools import partial
 
 import torch
 from torch import nn
@@ -60,15 +61,15 @@ class TruncatedGaussianActor(nn.Module):
         h = self.trunk(obs)
 
         if self.stddev_schedule is None or step is None:
-            raw_mean, log_stddev = self.Pi_head(h).chunk(2, dim=-1)
+            mean_tanh, log_stddev = self.Pi_head(h).chunk(2, dim=-1)
             stddev = torch.exp(log_stddev)
         else:
-            raw_mean = self.Pi_head(h)
-            stddev = torch.full_like(raw_mean,
+            mean_tanh = self.Pi_head(h)
+            stddev = torch.full_like(mean_tanh,
                                      Utils.schedule(self.stddev_schedule, step))
 
-        self.raw_mean = raw_mean
-        mean = torch.tanh(raw_mean)
+        self.mean_tanh = mean_tanh  # Pre-Tanh mean can be regularized (https://openreview.net/pdf?id=9xhgmsNVHu)
+        mean = torch.tanh(self.mean_tanh)
 
         Pi = TruncatedNormal(mean, stddev, low=-1, high=1, stddev_clip=self.stddev_clip)
 
@@ -81,15 +82,14 @@ class CategoricalCriticActor(nn.Module):  # "Creator" for short
 
         self.exploit_schedule = exploit_schedule
 
-    def forward(self, Q, step=None, temp=1, sample_q=True):
+    def forward(self, Q, step=None, temp=1, sample_q=True, actions_log_prob=0):
         # Sample q or mean
         q = Q.rsample() if sample_q else Q.mean
 
         exploit_factor = Utils.schedule(self.exploit_schedule, step)
         u = exploit_factor * q + (1 - exploit_factor) * Q.stddev
-
-        logits = (u - u.max(dim=-1, keepdim=True)[0])
-        Q_Pi = Categorical(logits=logits / temp)
+        u_logits = u - u.max(dim=-1, keepdim=True)[0]
+        Q_Pi = Categorical(logits=u_logits / temp + actions_log_prob)
 
         best_eps, best_ind = torch.max(u, -1)
         best_action = Utils.gather_indices(Q.action, best_ind, 1)
@@ -127,10 +127,10 @@ class GaussianActorEnsemble(TruncatedGaussianActor):
 
 
 class SGDActor(nn.Module):
-    def __init__(self, critic, low=-1, high=1, lr=0.01, steps=1):
+    def __init__(self, module, low=-1, high=1, lr=0.01, steps=1):
         super().__init__()
 
-        self.critic = critic
+        self.module = module
         self.low, self.high = low, high
         self.optim_lr = lr
         self.steps = steps
@@ -145,6 +145,6 @@ class SGDActor(nn.Module):
             low = high = start_action
             assert obs.shape[0] == start_action.shape[0]
 
-        Pi = SGAUniform(module=lambda action: self.Q_reduction(self.critic(obs, action)),
+        Pi = SGAUniform(module=partial(self.module, obs=obs),
                         low=low, high=high, optim_lr=self.optim_lr, steps=self.steps)
         return Pi
