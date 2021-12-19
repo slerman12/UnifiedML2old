@@ -104,10 +104,12 @@ def reinforce(args, root_path):
 
         # Check if worker finished rollout
         while not replay.worker_is_available(worker=0):
+            print("nah")
             pass
 
         # Parallelize
         if replay.worker_is_available(worker=0):
+            print("yeah")
             # Utils.soft_update_params(agent, agent_alias, tau=1)  # TODO test EMA, try no EMA
             torch.save(agent.state_dict(), root_path / 'Alias.pt')
             agent_alias = instantiate(args.agent, device=args.alias_device)
