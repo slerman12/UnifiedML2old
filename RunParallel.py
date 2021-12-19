@@ -103,7 +103,8 @@ def reinforce(args, root_path):
                     Utils.save(root_path, agent=agent, replay=replay)
 
         # Check if worker finished rollout
-        next(replay)
+        for _ in range(10):
+            next(replay)
         while not replay.worker_is_available(worker=0):
             pass
 
