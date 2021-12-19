@@ -32,6 +32,7 @@ class Environment:
         return getattr(self.env, item)
 
     def rollout(self, agent, steps=inf, vlog=False):
+        print("wowWWW")
         if self.daybreak is None:
             self.daybreak = time.time()  # "Daybreak" for whole episode
 
