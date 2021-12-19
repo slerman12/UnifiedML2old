@@ -123,6 +123,9 @@ class ExperienceReplay:
     def worker_is_available(self, worker):
         return self.loading.worker_is_available(worker)
 
+    def assign_task_to(self, worker, task):
+        self.loading.assign_task_to(worker, task)
+
     @property
     def replay(self):
         if self._replay is None:
@@ -222,6 +225,9 @@ class ExperienceLoading(IterableDataset):
 
     def worker_is_available(self, worker):
         return worker not in self.assignments
+
+    def assign_task_to(self, worker, task):
+        self.assignments[worker] = task
 
     # Populates workers with up-to-date data
     def worker_fetch_episodes(self):
