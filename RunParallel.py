@@ -104,7 +104,7 @@ def reinforce(args, root_path):
                     Utils.save(root_path, agent=agent, replay=replay)
 
         # Check if worker finished rollout
-        print(agent_alias.step)
+        print(agent_alias.step, agent.step)
         while not replay.worker_is_available(worker=0):
             if agent_alias.step > 0:
                 print("why")

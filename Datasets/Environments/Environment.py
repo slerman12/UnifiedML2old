@@ -86,5 +86,5 @@ class Environment:
         if self.episode_done:
             self.episode_step = self.episode_reward = 0
             self.daybreak = sundown
-        print(agent.step, logs['step'])
+        
         return experiences, logs, vlogs
