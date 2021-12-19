@@ -70,6 +70,7 @@ def reinforce(args, root_path):
     agent.train()  # .train() just sets .training to True
     # agent_alias = copy.deepcopy(agent).to(args.alias_device)  # For parallelization
     # agent_alias.device = args.alias_device
+    next(replay)
 
     # Start training
     converged = False
