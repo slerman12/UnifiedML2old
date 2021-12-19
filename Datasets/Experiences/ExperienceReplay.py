@@ -38,7 +38,7 @@ class ExperienceReplay:
         # Experience loading
 
         # Can override
-        self.loader = ExperienceLoading(load_path=self.store_path,
+        self.loading = ExperienceLoading(load_path=self.store_path,
                                         capacity=capacity // max(1, num_workers),
                                         num_workers=num_workers,
                                         fetch_every=1000,
@@ -47,8 +47,8 @@ class ExperienceReplay:
         self.nstep = nstep
         self.discount = discount
 
-        self.loader.sample = self._sample
-        self.loader.process = self._process
+        self.loading.sample = self._sample
+        self.loading.process = self._process
 
         self._replay = None
 
@@ -57,7 +57,7 @@ class ExperienceReplay:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.loader = torch.utils.data.DataLoader(dataset=self.loader,
+        self.loader = torch.utils.data.DataLoader(dataset=self.loading,
                                                   batch_size=batch_size,
                                                   num_workers=num_workers,
                                                   pin_memory=True,
@@ -74,7 +74,7 @@ class ExperienceReplay:
             if self.episode_len > 0:
                 assert set([spec.name for spec in experiences.specs]) == \
                        set([name for name in self.episode]), 'make sure to store before merging a disjoint replay'
-            self.loader.load_paths.append(experiences.store_path)
+            self.loading.load_paths.append(experiences.store_path)
             self.num_episodes += experiences.num_episodes
             self.num_experiences_stored += experiences.num_experiences_stored
             experiences = [{name: experiences.episode[name][i] for name in experiences.episode}
@@ -118,10 +118,10 @@ class ExperienceReplay:
         self.episode_len = 0
 
     def __len__(self):
-        return self.loader.num_experiences_loaded
+        return self.loading.num_experiences_loaded
 
     def worker_is_available(self, worker):
-        return self.loader.worker_is_available(worker)
+        return self.loading.worker_is_available(worker)
 
     @property
     def replay(self):
