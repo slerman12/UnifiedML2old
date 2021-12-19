@@ -73,15 +73,12 @@ def reinforce(args, root_path):
 
     # Start training
     converged = False
+    step = episode = 0
     while True:
         def evaluate_and_rollout():
-            print("kkkkkkk")
-
             # Evaluate
-            if agent.episode % args.evaluate_per_episodes == 0:
-
-                print("YEAHHHHH")
-
+            if episode % args.evaluate_per_episodes == 0:
+                print(" HMMMMMMMMM")
                 for ep in range(args.evaluate_episodes):
                     _, logs, vlogs = generalize.rollout(agent_alias.eval(),
                                                         vlog=args.log_video)
@@ -91,7 +88,6 @@ def reinforce(args, root_path):
 
                 if args.log_video:
                     vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
-            print("YhhhhhhhhhhEAHHHHH")
 
             # Rollout
             experiences, logs, _ = env.rollout(agent_alias.train(), steps=args.train_steps - agent.step)
