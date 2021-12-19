@@ -116,7 +116,7 @@ class DrQV2Agent(torch.nn.Module):
                                                   self.step, logs=logs)
 
         # Update critic
-        param_data = [p for p in self.critic.parameters()]
+        param_data = [p.clone() for p in self.critic.parameters()]
         Utils.optimize(critic_loss,
                        self.encoder,
                        self.critic)
