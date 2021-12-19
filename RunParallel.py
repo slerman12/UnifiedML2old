@@ -77,7 +77,7 @@ def reinforce(args, root_path):
     while True:
         def evaluate_and_rollout():
             # Evaluate
-            if episode % args.evaluate_per_episodes == 0:
+            if episode:
                 print(" HMMMMMMMMM")
                 for ep in range(args.evaluate_episodes):
                     _, logs, vlogs = generalize.rollout(agent_alias.eval(),
