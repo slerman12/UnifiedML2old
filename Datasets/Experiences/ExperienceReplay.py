@@ -129,7 +129,7 @@ class ExperienceReplay:
     def sample(self):
         return next(self.replay)
 
-    # Can iterate on self to get batches e.g. next(self) <=> self.sample()  TODO Can book-keep metadata
+    # Can iterate on self to get batches e.g. next(self) <=> self.sample()
     def __next__(self):
         return self.replay.__next__()
 
@@ -138,7 +138,7 @@ class ExperienceReplay:
 
     # Overrides methods in Experience Loading
     def _sample(self, episode_names, metrics=None):
-        episode_name = random.choice(episode_names)  # Uniform sampling of experiences  TODO Prioritized
+        episode_name = random.choice(episode_names)  # Uniform sampling of experiences
         return episode_name
 
     def _process(self, episode):  # N-step cumulative discounted rewards
@@ -185,6 +185,8 @@ class ExperienceLoading(IterableDataset):
         self.fetch_every = fetch_every
         self.samples_since_last_fetch = fetch_every
 
+        self.assignments = {}
+
         self.save = save
 
     def load_episode(self, episode_name):
@@ -206,7 +208,6 @@ class ExperienceLoading(IterableDataset):
             early_episode_name.unlink(missing_ok=True)
 
         self.episode_names.append(episode_name)
-        # TODO Book-keep corresponding metrics, update names for prioritized sampling
         self.episode_names.sort()
         self.episodes[episode_name] = episode
         self.num_experiences_loaded += episode_len
@@ -216,6 +217,9 @@ class ExperienceLoading(IterableDataset):
 
         return True
 
+    def worker_is_available(self, worker):
+        return worker not in self.assignments
+
     # Populates workers with up-to-date data
     def worker_fetch_episodes(self):
         if self.samples_since_last_fetch < self.fetch_every:
@@ -224,9 +228,13 @@ class ExperienceLoading(IterableDataset):
         self.samples_since_last_fetch = 0
 
         try:
-            worker_id = torch.utils.data.get_worker_info().id
+            worker = torch.utils.data.get_worker_info().id
         except:
-            worker_id = 0
+            worker = 0
+
+        if worker in self.assignments:
+            self.assignments[worker]()
+            del self.assignments[worker]
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
@@ -236,8 +244,9 @@ class ExperienceLoading(IterableDataset):
         # Find one new episode
         for episode_name in episode_names:
             episode_idx, episode_len = [int(x) for x in episode_name.stem.split('_')[1:]]
-            if episode_idx % self.num_workers != worker_id:  # Each worker stores their own dedicated data
-                continue
+            if episode_idx % self.num_workers != worker:  # Each worker stores their own dedicated data
+                if worker - 1 in self.assignments and episode_idx % self.num_workers == worker - 1:  # Pick up slack
+                    continue
             if episode_name in self.episodes.keys():  # Don't store redundantly
                 break
             if num_fetched + episode_len > self.capacity:  # Don't overfill
@@ -262,7 +271,6 @@ class ExperienceLoading(IterableDataset):
 
         self.samples_since_last_fetch += 1
 
-        # TODO at the end of training, I think it bugs out; can limit this to:
         if len(self.episode_names) > 0:
             episode_name = self.sample(self.episode_names)  # Sample an episode
 
@@ -271,6 +279,6 @@ class ExperienceLoading(IterableDataset):
             return self.process(episode)  # Process episode into an experience
 
     def __iter__(self):
-        # Keep fetching, sampling, and building batches  TODO Metadata just for Replay
+        # Keep fetching, sampling, and building batches
         while True:
             yield self.fetch_sample_process()

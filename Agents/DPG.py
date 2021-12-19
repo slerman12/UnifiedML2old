@@ -71,7 +71,15 @@ class DPGAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
+            # Should also be able to do:
+            # actions = None if self.discrete else self.actor(obs, self.step).sample(self.num_actions)
+            # actions_log_prob = 0 if self.discrete else Pi.log_prob(actions).sum(-1, True)
+            # Or:
+            # Pi = self.actor(self.critic(obs), self.step) if self.discrete else self.actor(obs, self.step)
+            # action = Pi.sample()  # return this
+
             if self.discrete:
+                # One-hots
                 actions = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
                 actions_log_prob = 0
             else:
@@ -119,15 +127,17 @@ class DPGAgent(torch.nn.Module):
 
     # "Dream"
     def update(self, replay):
-        logs = {'episode': self.episode, 'step': self.step} if self.log \
-            else None
-
         # "Recollect"
 
         batch = replay.sample()  # Can also write 'batch = next(replay)'
         obs, action, reward, discount, next_obs, *traj = Utils.to_torch(
             batch, self.device)
         traj_o, traj_a, traj_r = traj
+
+        logs = {'episode': self.episode,
+                'step': self.step,
+                'batch_reward': reward.mean().item()} if self.log \
+            else None
 
         # "Imagine" / "Envision"
 
@@ -139,9 +149,6 @@ class DPGAgent(torch.nn.Module):
         obs = self.encoder(obs)
         with torch.no_grad():
             next_obs = self.encoder(next_obs)
-
-        if self.log:
-            logs['batch_reward'] = reward.mean().item()
 
         # "Predict" / "Discern" / "Learn" / "Grow"
 

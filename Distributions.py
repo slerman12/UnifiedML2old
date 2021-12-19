@@ -47,7 +47,7 @@ class TruncatedNormal(pyd.Normal):
 
 # Stochastic gradient ascent (SGA) on a uniform sample w.r.t. a network
 class SGAUniform(pyd.Uniform):
-    def __init__(self, module, low=0, high=1, optim_lr=0.01, steps=1, ascent=True):
+    def __init__(self, module, low=0, high=1, optim_lr=0.01, steps=1, descent=False):
         super().__init__(low, high)
 
         self.module = module
@@ -57,7 +57,7 @@ class SGAUniform(pyd.Uniform):
 
         self.optim_lr = optim_lr
         self.steps = steps
-        self.ascent = ascent
+        self.descent = descent
 
     def rsample(self, sample_shape=torch.Size()):
         shape = self._extended_shape(sample_shape)
@@ -68,11 +68,11 @@ class SGAUniform(pyd.Uniform):
         utility = self.module(z)
         optim = torch.optim.Adam(z, lr=self.optim_lr)
 
-        if self.ascent:
+        if self.descent:
             utility *= -1
 
         for _ in range(self.steps):
-            Utils.optimize(utility.mean(), self.Sampler(optim))
+            Utils.optimize(-utility.mean(), self.Sampler(optim))
 
     def log_prob(self, value):
         if self._validate_args:

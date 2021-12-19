@@ -7,10 +7,10 @@ from hydra.utils import instantiate
 
 import os
 from pathlib import Path
+import copy
 
 import Utils
 
-import torch
 # If input sizes consistent, will lead to better performance.
 from torch.backends import cudnn
 cudnn.benchmark = True
@@ -66,46 +66,65 @@ def reinforce(args, root_path):
 
     vlogger = instantiate(args.vlogger)
 
-    # Start training  TODO eval after update, update after train
-    step = 0
-    while step < args.train_steps:
-        # Evaluate
-        if step % args.evaluate_per_steps == 0:
+    agent.train()  # .train() just sets .training to True
+    agent_alias = copy.deepcopy(agent).to(args.alias_device)  # For parallelization
 
-            for ep in range(args.evaluate_episodes):
-                _, logs, vlogs = generalize.rollout(agent.eval(),  # agent.eval() just sets agent.training to False
-                                                    vlog=args.log_video)
+    # Start training
+    converged = False
+    while True:
+        def evaluate_and_rollout():
+            # Evaluate
+            if agent.episode % args.evaluate_per_episodes == 0:
 
-                logger.log(logs, 'Eval')
-            logger.dump_logs('Eval')
+                for ep in range(args.evaluate_episodes):
+                    _, logs, vlogs = generalize.rollout(agent_alias.eval(),
+                                                        vlog=args.log_video)
 
-            if args.log_video:
-                vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
+                    logger.log(logs, 'Eval')
+                logger.dump_logs('Eval')
 
-        # Rollout
-        experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
+                if args.log_video:
+                    vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
-        replay.add(experiences)
+            # Rollout
+            experiences, logs, _ = env.rollout(agent_alias.train(), steps=args.train_steps - agent.step)
 
-        if env.episode_done:
-            logger.log(logs, 'Train', dump=True)
+            replay.add(experiences)
 
-            if env.last_episode_len >= args.nstep:
-                replay.add(store=True)  # Only store full episodes
+            if env.episode_done:
+                logger.log(logs, 'Train', dump=True)
 
-            if args.save_session:
-                Utils.save(root_path, agent=agent, replay=replay)
+                if env.last_episode_len >= args.nstep:
+                    replay.add(store=True)  # Only store full episodes
 
-        step = agent.step
+                if args.save_session:
+                    Utils.save(root_path, agent=agent, replay=replay)
+
+        # Check if worker finished rollout
+        while not replay.worker_is_available(worker=0):
+            pass
+
+        # Parallelize
+        if replay.worker_is_available(worker=0):
+            Utils.soft_update_params(agent, agent_alias, tau=1)  # TODO test EMA, try no EMA
+            replay.assign_task_to(worker=0, task=evaluate_and_rollout)
+
+        if converged:
+            break
+
+        converged = \
+            agent.step >= args.train_steps
 
         # Update agent
-        if step > args.seed_steps and \
-                step % args.update_per_steps == 0:
+        if agent.step > args.seed_steps:
 
-            logs = agent.update(replay)  # Trains the agent
+            num_updates = args.num_post_updates if converged else args.num_updates
 
-            if args.log_tensorboard:
-                logger.log_tensorboard(logs, 'Train')
+            for _ in range(num_updates):
+                logs = agent.update(replay)  # Trains the agent
+
+                if args.log_tensorboard:
+                    logger.log_tensorboard(logs, 'Train')
 
 
 def classify(args, root_path):

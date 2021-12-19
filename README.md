@@ -94,6 +94,15 @@ Monitor results:
 tensorboard --logdir exp_local
 ```
 
+
+If you want to run a state-of-art RL algorithm using only code meant to spoon-feed a baby, use python RunSimpleExample.py
+
+If you want to run classification tasks as well as RL in a unified comprehensive framework that is also joyously simple, use python Run.py
+
+And if you want all of the above, but also faster, distributed training -- on either multiple GPUs/CPUs OR one GPU and multiple CPUs (or even just multiple CPUs... or I guess even just one CPU if you're really testy; the world's your oyster with this one), then use python RunParallel.py
+
+Each of the above commands has the same interface
+
 ## License
 The majority of DrQ-v2 is licensed under the MIT license, however portions of the project are available under separate license terms: DeepMind is licensed under the Apache 2.0 license.
 

@@ -14,6 +14,9 @@ import torch.nn.functional as F
 
 
 # Sets all Torch and Numpy random seeds
+from torch.distributions import Normal
+
+
 def set_seed_everywhere(seed):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -100,6 +103,23 @@ class Ensemble(nn.Module):
     def forward(self, *x):
         return torch.stack([module(*x) for module in self.ensemble],
                            self.dim)
+
+
+# Merges two critics into one if so desired (ensembles of ensembles)
+class MergeCritics(nn.Module):
+    def __init__(self, *critics):
+        super().__init__()
+        self.critics = critics
+
+    def forward(self, obs, action=None, context=None):
+        Q = [critic(obs, action, context) for critic in self.critics]
+        Qs = torch.cat([Q_.Qs for Q_ in Q], 0)
+        # Dist
+        stddev, mean = torch.std_mean(Qs, dim=0)
+        merged_Q = Normal(mean, stddev + 1e-12)
+        merged_Q.__dict__.update({'Qs': Qs,
+                                  'action': Q[0].action})
+        return merged_Q
 
 
 # (Multi-dim) one-hot encoding

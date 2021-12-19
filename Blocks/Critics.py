@@ -80,9 +80,7 @@ class EnsembleQCritic(nn.Module):
 
             action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
-            shape = action.shape[:-1]
-
-            h = h.unsqueeze(1).expand(*shape, -1)
+            h = h.unsqueeze(1).expand(*action.shape[:-1], -1)
 
             # Q-values for continuous action(s)
             Qs = self.Q_head(h, action, context).squeeze(-1)  # [e, b, n]
@@ -126,5 +124,28 @@ class CNNEnsembleQCritic(EnsembleQCritic):
         # MLP
         self.Q_head = nn.ModuleList([MLP(in_dim, Q_dim, hidden_dim, 2, l2_norm=l2_norm)
                                      for _ in range(ensemble_size)])
+
+        self.init(optim_lr, target_tau)
+
+
+class PROCritic(EnsembleQCritic):
+    """
+    PRO critic, employs ensemble Q learning via Policy Ratio, A.K.A Proportionality,
+    returns a Normal distribution over the ensemble.
+    """
+    def __init__(self, actor, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
+                 discrete=False, target_tau=None, optim_lr=None):
+        super().__init__(repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size * 2, l2_norm, discrete)
+
+        PRO_heads = []
+
+        for i in range(ensemble_size * 2, step=2):
+            class PRO(nn.Module):  # TODO discrete actions
+                def forward(self, obs, action, context=None):
+                    M, B = super().Q_head(obs, action, context)
+                    return M.abs() * actor(obs).log_prob(action) + B
+            PRO_heads.append(PRO())
+
+        self.Q_head = PRO_heads
 
         self.init(optim_lr, target_tau)

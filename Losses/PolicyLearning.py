@@ -7,6 +7,7 @@ import torch
 import Utils
 
 
+# TODO modularize (don't need to initialize losses in __init__, can just keep current agent structure, pass agent as arg
 def deepPolicyGradient(actor, critic, obs, step, num_actions=1, Q_reduction='min', exploit_schedule=1, logs=None):
     Pi = actor(obs, step)
 

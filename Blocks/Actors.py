@@ -146,5 +146,5 @@ class SGDActor(nn.Module):
             assert obs.shape[0] == start_action.shape[0]
 
         Pi = SGAUniform(module=partial(self.module, obs=obs),
-                        low=low, high=high, optim_lr=self.optim_lr, steps=self.steps)
+                        low=low, high=high, optim_lr=self.optim_lr, steps=self.steps, descent=True)
         return Pi
