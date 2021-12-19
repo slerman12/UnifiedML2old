@@ -113,7 +113,6 @@ def reinforce(args, root_path):
             agent_alias = instantiate(args.agent, device=args.alias_device)
             agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
             replay.assign_task_to(worker=0, task=evaluate_and_rollout)
-            next(replay)
 
         if converged:
             break

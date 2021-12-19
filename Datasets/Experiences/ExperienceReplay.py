@@ -290,4 +290,7 @@ class ExperienceLoading(IterableDataset):
     def __iter__(self):
         # Keep fetching, sampling, and building batches
         while True:
-            yield self.fetch_sample_process()
+            processed_sample = self.fetch_sample_process()
+            if processed_sample is None:
+                processed_sample = torch.empty(1)
+            yield processed_sample
