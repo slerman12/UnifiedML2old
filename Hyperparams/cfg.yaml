@@ -32,6 +32,7 @@ log_tensorboard: false
 # Misc
 root_path: ???  # To be specified later
 device: cuda
+alias_device: cpu
 RL: ??? # To be specified later
 # Experiment
 Agent: Agents.DPGAgent

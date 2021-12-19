@@ -16,7 +16,7 @@ from torch.utils.data import IterableDataset
 
 class ExperienceReplay:
     def __init__(self, batch_size, num_workers, root_path, obs_spec, action_spec, capacity,
-                 save, nstep, discount):  # TODO pass in nulls
+                 save, nstep, discount):
 
         # Episode storage
 
