@@ -242,9 +242,9 @@ class ExperienceLoading(IterableDataset):
             worker = 0
 
         if worker in self.assignments:
+            print("entered")
             self.assignments[worker]()
             del self.assignments[worker]
-            print(self.worker_is_available(worker))
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
