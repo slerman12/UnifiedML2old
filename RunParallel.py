@@ -103,8 +103,6 @@ def reinforce(args, root_path):
                     Utils.save(root_path, agent=agent, replay=replay)
 
         # Check if worker finished rollout
-        for _ in range(100):
-            next(replay)
         while not replay.worker_is_available(worker=0):
             pass
 
@@ -115,6 +113,7 @@ def reinforce(args, root_path):
             agent_alias = instantiate(args.agent, device=args.alias_device)
             agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
             replay.assign_task_to(worker=0, task=evaluate_and_rollout)
+            next(replay)
 
         if converged:
             break
