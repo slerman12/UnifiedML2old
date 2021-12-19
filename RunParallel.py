@@ -70,7 +70,6 @@ def reinforce(args, root_path):
     agent.train()  # .train() just sets .training to True
     # agent_alias = copy.deepcopy(agent).to(args.alias_device)  # For parallelization
     # agent_alias.device = args.alias_device
-    next(replay)
 
     # Start training
     converged = False
@@ -104,6 +103,7 @@ def reinforce(args, root_path):
                     Utils.save(root_path, agent=agent, replay=replay)
 
         # Check if worker finished rollout
+        next(replay)
         while not replay.worker_is_available(worker=0):
             pass
 
