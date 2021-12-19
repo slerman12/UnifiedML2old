@@ -120,6 +120,9 @@ class ExperienceReplay:
     def __len__(self):
         return self.loader.num_experiences_loaded
 
+    def worker_is_available(self, worker):
+        return self.loader.worker_is_available(worker)
+
     @property
     def replay(self):
         if self._replay is None:
