@@ -16,7 +16,7 @@ from Blocks.Critics import EnsembleQCritic
 from Losses import QLearning, PolicyLearning
 
 
-class DPGAgent(torch.nn.Module):
+class DrQV2Agent(torch.nn.Module):
     """Deep Policy Gradient"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
