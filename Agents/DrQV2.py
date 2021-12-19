@@ -116,9 +116,12 @@ class DPGAgent(torch.nn.Module):
                                                   self.step, logs=logs)
 
         # Update critic
+        param_data = [p.data for p in self.critic.parameters()]
         Utils.optimize(critic_loss,
                        self.encoder,
                        self.critic)
+        for i, p in enumerate(self.critic.parameters()):
+            assert p == param_data[i]
 
         self.critic.update_target_params()
 
