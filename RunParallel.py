@@ -75,6 +75,8 @@ def reinforce(args, root_path):
     converged = False
     while True:
         def evaluate_and_rollout():
+
+            print("WOW")
             # Evaluate
             if agent.episode % args.evaluate_per_episodes == 0:
 
