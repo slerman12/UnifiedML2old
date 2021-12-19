@@ -247,8 +247,10 @@ class ExperienceLoading(IterableDataset):
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
+        print("HAA!!")
 
         episode_names = sorted(load_path.glob('*.npz'), reverse=True)  # Episodes
+        print("AHHH!")
         num_fetched = 0
         # Find one new episode
         for episode_name in episode_names:
