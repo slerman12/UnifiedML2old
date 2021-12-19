@@ -242,7 +242,6 @@ class ExperienceLoading(IterableDataset):
             worker = 0
 
         if worker in self.assignments:
-            print("entered")
             self.assignments[worker]()
             del self.assignments[worker]
 

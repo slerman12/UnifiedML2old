@@ -70,6 +70,7 @@ def reinforce(args, root_path):
     agent.train()  # .train() just sets .training to True
     # agent_alias = copy.deepcopy(agent).to(args.alias_device)  # For parallelization
     # agent_alias.device = args.alias_device
+    agent_alias = instantiate(args.agent, device=args.alias_device)
 
     # Start training
     converged = False
@@ -110,12 +111,11 @@ def reinforce(args, root_path):
         if replay.worker_is_available(worker=0):
             print("yeah")
             # Utils.soft_update_params(agent, agent_alias, tau=1)  # TODO test EMA, try no EMA
-            torch.save(agent.state_dict(), root_path / 'Alias.pt')
-            agent_alias = instantiate(args.agent, device=args.alias_device)
-            agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
-            replay.assign_task_to(worker=0, task=evaluate_and_rollout)
             agent.step = agent_alias.step
             agent.episode = agent_alias.episode
+            torch.save(agent.state_dict(), root_path / 'Alias.pt')
+            agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
+            replay.assign_task_to(worker=0, task=evaluate_and_rollout)
             print("aright")
             # for _ in range(10):
             next(replay)
