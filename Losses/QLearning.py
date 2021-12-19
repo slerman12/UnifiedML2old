@@ -9,7 +9,7 @@ import Utils
 
 
 def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
-                      num_actions=5, Q_reduction='min', exploit_schedule=1, entropy_temp=0, logs=None):
+                      num_actions=1, Q_reduction='min', exploit_schedule=1, entropy_temp=0, logs=None):
     with torch.no_grad():
         if critic.discrete:
             # All actions
