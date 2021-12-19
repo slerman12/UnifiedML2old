@@ -21,8 +21,11 @@ discount: 0.99
 # Training
 seed_steps: 2000
 update_per_steps: 2
+num_updates: 1
+num_post_updates: 1
 # Evaluating
 evaluate_per_steps: 5000
+evaluate_per_episodes: 5
 evaluate_episodes: 10
 # Saving
 save_session: false
