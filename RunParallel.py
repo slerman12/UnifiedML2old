@@ -104,7 +104,7 @@ def reinforce(args, root_path):
 
         # Check if worker finished rollout
         while not replay.worker_is_available(worker=0):
-            pass
+            next(replay)
 
         # Parallelize
         if replay.worker_is_available(worker=0):
