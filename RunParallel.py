@@ -109,9 +109,9 @@ def reinforce(args, root_path):
         # Parallelize
         if replay.worker_is_available(worker=0):
             # Utils.soft_update_params(agent, agent_alias, tau=1)  # TODO test EMA, try no EMA
-            torch.save(agent.state_dict(), root_path)
+            torch.save(agent.state_dict(), root_path / 'Alias.pt')
             agent_alias = instantiate(args.agent, device=args.alias_device)
-            agent_alias.load_state_dict(torch.load(root_path, map_location=args.alias_device))
+            agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
             replay.assign_task_to(worker=0, task=evaluate_and_rollout)
 
         if converged:
