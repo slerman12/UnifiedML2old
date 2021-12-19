@@ -228,8 +228,6 @@ class ExperienceLoading(IterableDataset):
 
     def assign_task_to(self, worker, task):
         self.assignments[worker] = task
-        while not self.worker_is_available(worker):
-            next(self)
 
     # Populates workers with up-to-date data
     def worker_fetch_episodes(self):
@@ -246,6 +244,7 @@ class ExperienceLoading(IterableDataset):
         if worker in self.assignments:
             self.assignments[worker]()
             del self.assignments[worker]
+            print(self.worker_is_available(worker))
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
