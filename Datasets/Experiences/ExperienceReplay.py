@@ -39,10 +39,10 @@ class ExperienceReplay:
 
         # Can override
         self.loading = ExperienceLoading(load_path=self.store_path,
-                                        capacity=capacity // max(1, num_workers),
-                                        num_workers=num_workers,
-                                        fetch_every=1000,
-                                        save=save)
+                                         capacity=capacity // max(1, num_workers),
+                                         num_workers=num_workers,
+                                         fetch_every=1000,
+                                         save=save)
 
         self.nstep = nstep
         self.discount = discount
