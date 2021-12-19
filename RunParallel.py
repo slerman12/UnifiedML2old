@@ -75,7 +75,6 @@ def reinforce(args, root_path):
     converged = False
     while True:
         def evaluate_and_rollout():
-            print("okay...")
             # Evaluate
             if agent.episode % args.evaluate_per_episodes == 0:
 
@@ -105,6 +104,7 @@ def reinforce(args, root_path):
 
         # Check if worker finished rollout
         while not replay.worker_is_available(worker=0):
+            print("oh")
             pass
 
         # Parallelize
