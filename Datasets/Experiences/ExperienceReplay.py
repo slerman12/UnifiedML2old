@@ -102,13 +102,7 @@ class ExperienceReplay:
     # Stores episode (to file in system)
     def store_episode(self):
         for spec in self.specs:
-            # try:
             self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
-            # except TypeError:
-            #     # Handling Nones
-            #     # alias = [np.nan if val is None else val for val in self.episode[spec['name']]]
-            #     self.episode[spec['name']] = np.array(alias, dtype='')
-            #     self.episode[spec['name']][nones] = np.NaN
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
