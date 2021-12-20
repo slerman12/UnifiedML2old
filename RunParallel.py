@@ -17,8 +17,6 @@ from torch.backends import cudnn
 cudnn.benchmark = True
 
 
-import torch.multiprocessing as mp
-
 # Hydra conveniently and cleanly manages sys args;
 # hyper-param cfg files located in ./Hyperparams
 
@@ -76,17 +74,15 @@ def reinforce(args, root_path):
 
     # Start training
     converged = False
-    started = False
-    mp.set_start_method('spawn')
     agent.share_memory()
+    agent_alias.share_memory()
     while True:
-
-        def evaluate_and_rollout(agent, args, generalize, env, replay, logger, vlogger, Utils):
+        def evaluate_and_rollout():
             # Evaluate
             if agent.episode % args.evaluate_per_episodes == 0:
 
                 for ep in range(args.evaluate_episodes):
-                    _, logs, vlogs = generalize.rollout(agent.eval(),
+                    _, logs, vlogs = generalize.rollout(agent_alias.eval(),
                                                         vlog=args.log_video)
 
                     logger.log(logs, 'Eval')
@@ -96,7 +92,7 @@ def reinforce(args, root_path):
                     vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
             # Rollout
-            experiences, logs, _ = env.rollout(agent.train(), steps=args.train_steps - agent.step)
+            experiences, logs, _ = env.rollout(agent_alias.train(), steps=args.train_steps - agent.step)
 
             replay.add(experiences)
 
@@ -109,15 +105,26 @@ def reinforce(args, root_path):
                 if args.save_session:
                     Utils.save(root_path, agent=agent, replay=replay)
 
-        p = mp.Process(target=evaluate_and_rollout, args=(agent, args, generalize, env, replay, logger, vlogger, Utils))
-
         # Check if worker finished rollout
-        if started:
-            p.join()
+        print(agent_alias.step, agent.step, replay.worker_is_available(worker=0))
+        while not replay.worker_is_available(worker=0):
+            if agent_alias.step > 0:
+                print("why")
+            pass
 
         # Parallelize
-        p.start()
-        started = True
+        if replay.worker_is_available(worker=0):
+            print("yeah")
+            # Utils.soft_update_params(agent, agent_alias, tau=1)  # TODO test EMA, try no EMA
+            agent.step = agent_alias.step
+            agent.episode = agent_alias.episode
+            torch.save(agent.state_dict(), root_path / 'Alias.pt')
+            agent_alias.load_state_dict(torch.load(root_path / 'Alias.pt', map_location=args.alias_device))
+            replay.assign_task_to(worker=0, task=evaluate_and_rollout)
+            print("aright")
+            # for _ in range(10):
+            next(replay)
+            print("huh")
 
         if converged:
             break
