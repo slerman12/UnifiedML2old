@@ -27,10 +27,10 @@ class ExperienceReplay:
         self.num_experiences_stored = 0
 
         self.specs = (obs_spec, action_spec,
-                      {'name': 'label', 'shape': (1,), 'dtype': 'int32'},
+                      {'name': 'label', 'shape': (1,), 'dtype': 'float64'},
                       {'name': 'reward', 'shape': (1,), 'dtype': 'float32'},
                       {'name': 'discount', 'shape': (1,), 'dtype': 'float32'},
-                      {'name': 'step', 'shape': (1,), 'dtype': 'int32'},)
+                      {'name': 'step', 'shape': (1,), 'dtype': 'float64'},)
 
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
@@ -102,14 +102,13 @@ class ExperienceReplay:
     # Stores episode (to file in system)
     def store_episode(self):
         for spec in self.specs:
-            try:
-                self.episode[spec['name']] = np.array(self.episode[spec['name']], f"{spec['dtype']}, nan")
-            except TypeError:
-                # Handling Nones
-                nones = [i for i, _ in enumerate(self.episode[spec['name']])]
-                alias = [0 if val is None else val for val in self.episode[spec['name']]]
-                self.episode[spec['name']] = np.array(alias, dtype=spec['dtype'])
-                self.episode[spec['name']][nones] = np.NaN
+            # try:
+                self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
+            # except TypeError:
+            #     # Handling Nones
+            #     # alias = [np.nan if val is None else val for val in self.episode[spec['name']]]
+            #     self.episode[spec['name']] = np.array(alias, dtype='')
+            #     self.episode[spec['name']][nones] = np.NaN
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
