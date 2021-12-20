@@ -107,7 +107,6 @@ class ExperienceReplay:
             except TypeError:
                 # Handling Nones
                 self.episode[spec['name']] = np.array(self.episode[spec['name']], dtype=object)
-                print(self.episode[spec['name']][0])
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
@@ -203,9 +202,9 @@ class ExperienceLoading(IterableDataset):
         try:
             with episode_name.open('rb') as episode_file:
                 episode = np.load(episode_file)
+                print(episode.keys())
                 episode = {key: episode[key] for key in episode.keys()}
         except:
-            print("Nahhh", episode_name)
             return False
 
         episode_len = next(iter(episode.values())).shape[0] - 1
