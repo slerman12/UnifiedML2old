@@ -202,7 +202,7 @@ class ExperienceLoading(IterableDataset):
         try:
             with episode_name.open('rb') as episode_file:
                 episode = np.load(episode_file)
-                print(episode.keys())
+                print(list(episode.keys()))
                 episode = {key: episode[key] for key in episode.keys()}
         except:
             return False
