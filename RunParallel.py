@@ -111,7 +111,9 @@ def reinforce(args, root_path):
         p = mp.Process(target=evaluate_and_rollout, args=(agent,))
 
         # Check if worker finished rollout
-        p.join()
+        if agent.step > 0:
+            print("ha;;e")
+            p.join()
 
         # Parallelize
         if replay.worker_is_available(worker=0):
