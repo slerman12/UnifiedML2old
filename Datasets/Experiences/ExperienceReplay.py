@@ -203,8 +203,8 @@ class ExperienceLoading(IterableDataset):
             with episode_name.open('rb') as episode_file:
                 episode = np.load(episode_file)
                 episode = {key: episode[key] for key in episode.keys()}
-                print("Nahhh")
         except:
+            print("Nahhh", episode_name)
             return False
 
         episode_len = next(iter(episode.values())).shape[0] - 1
