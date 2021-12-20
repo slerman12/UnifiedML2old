@@ -108,7 +108,7 @@ def reinforce(args, root_path):
                 if args.save_session:
                     Utils.save(root_path, agent=agent, replay=replay)
 
-        p = mp.Process(target=evaluate_and_rollout, args=agent)
+        p = mp.Process(target=evaluate_and_rollout, args=(agent,))
 
         # Check if worker finished rollout
         p.join()
