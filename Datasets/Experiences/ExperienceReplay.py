@@ -173,7 +173,7 @@ class ExperienceReplay:
             reward += discount * step_reward
             discount *= episode['discount'][idx + i] * self.discount
         for bla in [obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step]:
-            print(bla[0])
+            print(bla[0], "YAHHHHHHHHHHHHHHHHHH")
 
         # return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
