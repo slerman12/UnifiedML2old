@@ -215,7 +215,7 @@ class ExperienceLoading(IterableDataset):
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
-
+        print("HMMM")
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
@@ -265,22 +265,21 @@ class ExperienceLoading(IterableDataset):
         return experience
 
     def fetch_sample_process(self):
-        print("HAAAAA")
         try:
             self.worker_fetch_episodes()  # Populate workers with up-to-date data
         except:
             traceback.print_exc()
 
-        print("BAAAAA")
         self.samples_since_last_fetch += 1
 
         if len(self.episode_names) > 0:
-            print("YAAAAA")
             episode_name = self.sample(self.episode_names)  # Sample an episode
 
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into an experience
+        else:
+            return np.empty(1)
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
