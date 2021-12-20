@@ -116,9 +116,7 @@ def reinforce(args, root_path):
             p.join()
 
         # Parallelize
-        if replay.worker_is_available(worker=0):
-            # Utils.soft_update_params(agent, agent, tau=1)  # TODO test EMA, try no EMA
-            p.start()
+        p.start()
 
         if converged:
             break
