@@ -70,7 +70,7 @@ def reinforce(args, root_path):
     converged = False
     while True:
         # Evaluate
-        if agent.episode % args.evaluate_per_episodes == 0:
+        if agent.step % args.evaluate_per_steps == 0:
 
             for ep in range(args.evaluate_episodes):
                 _, logs, vlogs = generalize.rollout(agent.eval(),
