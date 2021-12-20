@@ -66,14 +66,14 @@ def reinforce(args, root_path):
 
     vlogger = instantiate(args.vlogger)
 
-    # Start training  TODO eval after update, update after train
-    step = 0
-    while step < args.train_steps:
+    # Start training
+    converged = False
+    while True:
         # Evaluate
-        if step % args.evaluate_per_steps == 0:
+        if agent.episode % args.evaluate_per_episodes == 0:
 
             for ep in range(args.evaluate_episodes):
-                _, logs, vlogs = generalize.rollout(agent.eval(),  # agent.eval() just sets agent.training to False
+                _, logs, vlogs = generalize.rollout(agent.eval(),
                                                     vlog=args.log_video)
 
                 logger.log(logs, 'Eval')
@@ -83,7 +83,7 @@ def reinforce(args, root_path):
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
         # Rollout
-        experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
+        experiences, logs, _ = env.rollout(agent.train(), steps=args.train_steps - agent.step)
 
         replay.add(experiences)
 
@@ -96,16 +96,22 @@ def reinforce(args, root_path):
             if args.save_session:
                 Utils.save(root_path, agent=agent, replay=replay)
 
-        step = agent.step
+        if converged:
+            break
+
+        converged = \
+            agent.step >= args.train_steps
 
         # Update agent
-        if step > args.seed_steps and \
-                step % args.update_per_steps == 0:
+        if agent.step > args.seed_steps:
 
-            logs = agent.update(replay)  # Trains the agent
+            num_updates = args.num_post_updates if converged else args.num_updates
 
-            if args.log_tensorboard:
-                logger.log_tensorboard(logs, 'Train')
+            for _ in range(num_updates):
+                logs = agent.update(replay)  # Trains the agent
+
+                if args.log_tensorboard:
+                    logger.log_tensorboard(logs, 'Train')
 
 
 def classify(args, root_path):

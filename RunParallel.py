@@ -76,7 +76,7 @@ def reinforce(args, root_path):
 
     # Start training
     converged = False
-
+    started = False
     mp.set_start_method('spawn')
     agent.share_memory()
     while True:
@@ -112,12 +112,12 @@ def reinforce(args, root_path):
         p = mp.Process(target=evaluate_and_rollout, args=(agent, args, generalize, env, replay, logger, vlogger, Utils))
 
         # Check if worker finished rollout
-        if agent.step > 0:
-            print("ha;;e")
+        if started:
             p.join()
 
         # Parallelize
         p.start()
+        started = True
 
         if converged:
             break
