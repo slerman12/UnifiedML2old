@@ -201,7 +201,9 @@ class ExperienceLoading(IterableDataset):
     def load_episode(self, episode_name):
         try:
             with episode_name.open('rb') as episode_file:
+                print("YAAAAA")
                 episode = np.load(episode_file)
+                print("Nahhh")
                 episode = {key: episode[key] for key in episode.keys()}
         except:
             return False
@@ -215,7 +217,6 @@ class ExperienceLoading(IterableDataset):
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
-        print("HMMM")
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
