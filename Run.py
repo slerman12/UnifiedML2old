@@ -10,7 +10,6 @@ from pathlib import Path
 
 import Utils
 
-import torch
 # If input sizes consistent, will lead to better performance.
 from torch.backends import cudnn
 cudnn.benchmark = True
@@ -105,14 +104,13 @@ def reinforce(args, root_path):
         # Update agent
         if agent.step > args.seed_steps:
 
-            # num_updates = args.num_post_updates if converged else args.num_updates
-            #
-            # for _ in range(num_updates):
-            if agent.step % args.update_per_steps == 0:
-                logs = agent.update(replay)  # Trains the agent
+            if agent.step % args.update_per_steps == 0 or converged:
 
-                if args.log_tensorboard:
-                    logger.log_tensorboard(logs, 'Train')
+                for _ in range(args.num_post_updates if converged else 1):  # Additional updates after all rollouts
+                    logs = agent.update(replay)  # Trains the agent
+
+                    if args.log_tensorboard:
+                        logger.log_tensorboard(logs, 'Train')
 
 
 def classify(args, root_path):

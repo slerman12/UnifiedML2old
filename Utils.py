@@ -11,12 +11,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-
-# Sets all Torch and Numpy random seeds
 from torch.distributions import Normal
 
 
+# Sets all Torch and Numpy random seeds
 def set_seed_everywhere(seed):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -54,7 +52,7 @@ def weight_init(m):
             m.bias.data.fill_(0.0)
 
 
-# Copies parameters from one model to another
+# Copies parameters from one model to another, with optional EMA
 def soft_update_params(net, target_net, tau):
     for param, target_param in zip(net.parameters(), target_net.parameters()):
         target_param.data.copy_(tau * param.data +
@@ -105,7 +103,7 @@ class Ensemble(nn.Module):
                            self.dim)
 
 
-# Merges two critics into one if so desired (ensembles of ensembles)
+# Merges multiple critics into one if so desired (ensembles of ensembles)
 class MergeCritics(nn.Module):
     def __init__(self, *critics):
         super().__init__()
@@ -231,12 +229,18 @@ class Meta(nn.Module):
     def __init__(self, optim_lr=None, **metas):
         super().__init__()
 
+        self.metas = list(metas.keys())
         for name, meta in metas.items():
             meta = nn.Parameter(torch.full((1,), meta))
-            setattr(self, name, meta)
+            setattr(self, name, meta)  # {name: init_value}
 
         if optim_lr is not None:
             self.optim = torch.optim.Adam(self.parameters(), lr=optim_lr)
+
+    def forward(self, *names):
+        if len(names) == 0:
+            names = self.metas
+        return torch.cat([getattr(self, meta) for meta in names])
 
 
 # Converts an agent to a classifier

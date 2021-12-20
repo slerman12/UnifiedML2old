@@ -27,8 +27,10 @@ class ExperienceReplay:
         self.num_experiences_stored = 0
 
         self.specs = (obs_spec, action_spec,
+                      {'name': 'label', 'shape': (1,), 'dtype': 'int32'},
                       {'name': 'reward', 'shape': (1,), 'dtype': 'float32'},
-                      {'name': 'discount', 'shape': (1,), 'dtype': 'float32'})
+                      {'name': 'discount', 'shape': (1,), 'dtype': 'float32'},
+                      {'name': 'step', 'shape': (1,), 'dtype': 'int32'},)
 
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
@@ -87,14 +89,15 @@ class ExperienceReplay:
             for spec in self.specs:
                 if np.isscalar(exp[spec['name']]):
                     exp[spec['name']] = np.full(spec['shape'], exp[spec['name']], spec['dtype'])
-                self.episode[spec['name']].append(exp[spec['name']])
-                assert spec['shape'] == exp[spec['name']].shape
-                assert spec['dtype'] == exp[spec['name']].dtype.name
+                self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
+                if exp[spec['name']] is not None:
+                    assert spec['shape'] == exp[spec['name']].shape
+                    assert spec['dtype'] == exp[spec['name']].dtype.name
 
         self.episode_len += len(experiences)
 
         if store:
-            self.store_episode()
+            self.store_episode()  # Stores them in file system
 
     # Stores episode (to file in system)
     def store_episode(self):
@@ -119,12 +122,6 @@ class ExperienceReplay:
 
     def __len__(self):
         return self.loading.num_experiences_loaded
-
-    def worker_is_available(self, worker):
-        return self.loading.worker_is_available(worker)
-
-    def assign_task_to(self, worker, task):
-        self.loading.assign_task_to(worker, task)
 
     @property
     def replay(self):
@@ -157,11 +154,14 @@ class ExperienceReplay:
         next_obs = episode['observation'][idx + self.nstep - 1]
         reward = np.zeros_like(episode['reward'][idx])
         discount = np.ones_like(episode['discount'][idx])
+        label = episode['label'][idx]
+        step = episode['step'][idx - 1]
 
         # Trajectory
-        traj_o = episode["observation"][idx - 1:idx + self.nstep]
-        traj_a = episode["action"][idx:idx + self.nstep]
-        traj_r = episode["reward"][idx:idx + self.nstep]
+        traj_o = episode['observation'][idx - 1:idx + self.nstep]
+        traj_a = episode['action'][idx:idx + self.nstep]
+        traj_r = episode['reward'][idx:idx + self.nstep]
+        traj_l = episode['label'][idx:idx + self.nstep]
 
         # Compute cumulative discounted reward
         for i in range(self.nstep):
@@ -169,7 +169,8 @@ class ExperienceReplay:
             reward += discount * step_reward
             discount *= episode['discount'][idx + i] * self.discount
 
-        return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
+        # return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
+        return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
 
 # Multi-cpu workers iteratively and efficiently build batches of experience in parallel (from files)
@@ -190,8 +191,6 @@ class ExperienceLoading(IterableDataset):
 
         self.fetch_every = fetch_every
         self.samples_since_last_fetch = fetch_every
-
-        self.assignments = {}
 
         self.save = save
 
@@ -223,12 +222,6 @@ class ExperienceLoading(IterableDataset):
 
         return True
 
-    def worker_is_available(self, worker):
-        return worker not in self.assignments
-
-    def assign_task_to(self, worker, task):
-        self.assignments[worker] = task
-
     # Populates workers with up-to-date data
     def worker_fetch_episodes(self):
         if self.samples_since_last_fetch < self.fetch_every:
@@ -241,10 +234,6 @@ class ExperienceLoading(IterableDataset):
         except:
             worker = 0
 
-        if worker in self.assignments:
-            self.assignments[worker]()
-            del self.assignments[worker]
-
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
 
@@ -254,8 +243,7 @@ class ExperienceLoading(IterableDataset):
         for episode_name in episode_names:
             episode_idx, episode_len = [int(x) for x in episode_name.stem.split('_')[1:]]
             if episode_idx % self.num_workers != worker:  # Each worker stores their own dedicated data
-                if worker - 1 in self.assignments and episode_idx % self.num_workers == worker - 1:  # Pick up slack
-                    continue
+                continue
             if episode_name in self.episodes.keys():  # Don't store redundantly
                 break
             if num_fetched + episode_len > self.capacity:  # Don't overfill
@@ -290,7 +278,4 @@ class ExperienceLoading(IterableDataset):
     def __iter__(self):
         # Keep fetching, sampling, and building batches
         while True:
-            processed_sample = self.fetch_sample_process()
-            if processed_sample is None:
-                processed_sample = torch.empty(1)
-            yield processed_sample
+            yield self.fetch_sample_process()

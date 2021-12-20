@@ -112,6 +112,8 @@ class CategoricalCriticActor(nn.Module):  # "Creator" for short
 
 
 class GaussianActorEnsemble(TruncatedGaussianActor):
+    """"Ensembles actions output by Gaussian actors,
+    returns all actor outputs unaltered, simply grouped"""
     def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2,
                  l2_norm=False, discrete=False, stddev_schedule=None,  stddev_clip=None,
                  target_tau=None, optim_lr=None):
@@ -148,3 +150,22 @@ class SGDActor(nn.Module):
         Pi = SGAUniform(module=partial(self.module, obs=obs),
                         low=low, high=high, optim_lr=self.optim_lr, steps=self.steps, descent=True)
         return Pi
+
+
+class MetaActor(nn.Module):
+    """A simple 'Meta Actor' who contains meta parameters like temps, etc.
+    and optionally returns a Gaussian"""
+    def __init__(self, stddev_schedule, optim_lr=None, **metas):
+        super().__init__()
+
+        self.stddev_schedule = stddev_schedule
+
+        self.meta = Utils.Meta(optim_lr, **metas)
+        if optim_lr is not None:
+            self.optim = self.meta.optim
+
+    def forward(self, step=None, *names):
+        stddev = None if step is None or self.stddev_schedule is None \
+            else Utils.schedule(self.stddev_schedule, step)
+        return self.meta(*names) if stddev is None \
+            else TruncatedNormal(self.meta(*names), stddev, -1, 1)

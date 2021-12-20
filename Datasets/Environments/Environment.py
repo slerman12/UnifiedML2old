@@ -48,7 +48,7 @@ class Environment:
             action = agent.act(exp.observation)
             exp = self.env.step(action.cpu().numpy()[0])
 
-            # exp.step = agent.step
+            exp.step = agent.step
 
             experiences.append(exp)
 
@@ -86,5 +86,5 @@ class Environment:
         if self.episode_done:
             self.episode_step = self.episode_reward = 0
             self.daybreak = sundown
-        
+
         return experiences, logs, vlogs
