@@ -206,7 +206,8 @@ class ExperienceLoading(IterableDataset):
                 print(list(episode.values()))
                 episode = {key: episode[key] for key in episode.keys()}
                 print("yaaaaa")
-        except:
+        except Exception as e:
+            print(e)
             return False
 
         episode_len = next(iter(episode.values())).shape[0] - 1
