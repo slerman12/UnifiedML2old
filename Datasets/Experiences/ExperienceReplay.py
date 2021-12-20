@@ -103,7 +103,7 @@ class ExperienceReplay:
     def store_episode(self):
         for spec in self.specs:
             # try:
-                self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
+            self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
             # except TypeError:
             #     # Handling Nones
             #     # alias = [np.nan if val is None else val for val in self.episode[spec['name']]]
