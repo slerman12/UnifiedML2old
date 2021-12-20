@@ -103,7 +103,7 @@ class ExperienceReplay:
     def store_episode(self):
         for spec in self.specs:
             try:
-                self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
+                self.episode[spec['name']] = np.array(self.episode[spec['name']], f"{spec['dtype']}, nan")
             except TypeError:
                 # Handling Nones
                 nones = [i for i, _ in enumerate(self.episode[spec['name']])]
