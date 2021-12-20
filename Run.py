@@ -105,9 +105,10 @@ def reinforce(args, root_path):
         # Update agent
         if agent.step > args.seed_steps:
 
-            num_updates = args.num_post_updates if converged else args.num_updates
-
-            for _ in range(num_updates):
+            # num_updates = args.num_post_updates if converged else args.num_updates
+            #
+            # for _ in range(num_updates):
+            if agent.step % args.update_per_steps == 0:
                 logs = agent.update(replay)  # Trains the agent
 
                 if args.log_tensorboard:
