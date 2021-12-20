@@ -8,11 +8,11 @@ from typing import NamedTuple, Any
 
 
 class ExtendedTimeStep(NamedTuple):
-    step_type: Any
-    reward: Any
-    discount: Any
-    observation: Any
-    action: Any
+    step_type: Any = None
+    reward: Any = None
+    discount: Any = None
+    observation: Any = None
+    action: Any = None
     step: int = None
     label: int = None
 
@@ -257,7 +257,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return ExtendedTimeStep(observation=time_step.observation,
                                 step_type=time_step.step_type,
                                 action=action,
-                                reward=time_step.reward or 0.0,
+                                reward=time_step.reward,
                                 discount=time_step.discount or 1.0)
 
     @property

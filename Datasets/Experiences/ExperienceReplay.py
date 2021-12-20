@@ -6,6 +6,7 @@ import random
 import datetime
 import io
 import traceback
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -15,8 +16,8 @@ from torch.utils.data import IterableDataset
 
 
 class ExperienceReplay:
-    def __init__(self, batch_size, num_workers, root_path, obs_spec, action_spec, capacity,
-                 save, nstep, discount):
+    def __init__(self, batch_size, num_workers, root_path, capacity, save,
+                 action_spec, obs_spec=None, nstep=0, discount=1):
 
         # Episode storage
 
@@ -25,6 +26,9 @@ class ExperienceReplay:
 
         self.num_episodes = 0
         self.num_experiences_stored = 0
+
+        if obs_spec is None:
+            obs_spec = {'name': 'obs', 'shape': (1,), 'dtype': 'float64'},
 
         self.specs = (obs_spec, action_spec,
                       {'name': 'label', 'shape': (1,), 'dtype': 'float64'},
@@ -37,20 +41,17 @@ class ExperienceReplay:
 
         self.merging_enabled = True
 
-        # Experience loading
+        # Parallelized experience loading
 
-        # Can override
-        self.loading = ExperienceLoading(load_path=self.store_path,
-                                         capacity=capacity // max(1, num_workers),
-                                         num_workers=num_workers,
-                                         fetch_every=1000,
-                                         save=save)
+        self.experiences = Experiences(load_path=self.store_path,
+                                       capacity=capacity // max(1, num_workers),
+                                       num_workers=num_workers,
+                                       fetch_every=1000,
+                                       save=save,
+                                       nstep=nstep,
+                                       discount=discount)
 
-        self.nstep = nstep
-        self.discount = discount
-
-        self.loading.sample = self._sample
-        self.loading.process = self._process
+        # Batch loading
 
         self._replay = None
 
@@ -59,11 +60,28 @@ class ExperienceReplay:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.loader = torch.utils.data.DataLoader(dataset=self.loading,
-                                                  batch_size=batch_size,
-                                                  num_workers=num_workers,
-                                                  pin_memory=True,
-                                                  worker_init_fn=worker_init_fn)
+        self.batches = torch.utils.data.DataLoader(dataset=self.experiences,
+                                                   batch_size=batch_size,
+                                                   num_workers=num_workers,
+                                                   pin_memory=True,
+                                                   worker_init_fn=worker_init_fn)
+
+    # Returns batch of experience
+    def sample(self):
+        return next(self)  # Can iterate via next
+
+    def __next__(self):
+        return self.replay.__next__()
+
+    # Can iterate via next
+    def __iter__(self):
+        return self.replay.__iter__()
+
+    @property
+    def replay(self):
+        if self._replay is None:
+            self._replay = iter(self.batches)
+        return self._replay
 
     # Tracks single episode in memory buffer
     def add(self, experiences=None, store=False):
@@ -76,7 +94,7 @@ class ExperienceReplay:
             if self.episode_len > 0:
                 assert set([spec.name for spec in experiences.specs]) == \
                        set([name for name in self.episode]), 'make sure to store before merging a disjoint replay'
-            self.loading.load_paths.append(experiences.store_path)
+            self.experiences.load_paths.append(experiences.store_path)
             self.num_episodes += experiences.num_episodes
             self.num_experiences_stored += experiences.num_experiences_stored
             experiences = [{name: experiences.episode[name][i] for name in experiences.episode}
@@ -120,62 +138,10 @@ class ExperienceReplay:
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
 
-    def __len__(self):
-        return self.loading.num_experiences_loaded
-
-    @property
-    def replay(self):
-        if self._replay is None:
-            self._replay = iter(self.loader)
-        return self._replay
-
-    def sample(self):
-        return next(self.replay)
-
-    # Can iterate on self to get batches e.g. next(self) <=> self.sample()
-    def __next__(self):
-        return self.replay.__next__()
-
-    def __iter__(self):
-        return self.replay.__iter__()
-
-    # Overrides methods in Experience Loading
-    def _sample(self, episode_names, metrics=None):
-        episode_name = random.choice(episode_names)  # Uniform sampling of experiences
-        return episode_name
-
-    def _process(self, episode):  # N-step cumulative discounted rewards
-        episode_len = next(iter(episode.values())).shape[0] - 1
-        idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
-
-        # Transition
-        obs = episode['observation'][idx - 1]
-        action = episode['action'][idx]
-        next_obs = episode['observation'][idx + self.nstep - 1]
-        reward = np.zeros_like(episode['reward'][idx])
-        discount = np.ones_like(episode['discount'][idx])
-        label = episode['label'][idx]
-        step = episode['step'][idx - 1]
-
-        # Trajectory
-        traj_o = episode['observation'][idx - 1:idx + self.nstep]
-        traj_a = episode['action'][idx:idx + self.nstep]
-        traj_r = episode['reward'][idx:idx + self.nstep]
-        traj_l = episode['label'][idx:idx + self.nstep]
-
-        # Compute cumulative discounted reward
-        for i in range(self.nstep):
-            step_reward = episode['reward'][idx + i]
-            reward += discount * step_reward
-            discount *= episode['discount'][idx + i] * self.discount
-
-        # return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
-        return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
-
 
 # Multi-cpu workers iteratively and efficiently build batches of experience in parallel (from files)
-class ExperienceLoading(IterableDataset):
-    def __init__(self, load_path, capacity, num_workers, fetch_every, save=False):
+class Experiences(IterableDataset):
+    def __init__(self, load_path, capacity, num_workers, fetch_every, save=False, nstep=0, discount=1):
 
         # Dataset construction via parallel workers
 
@@ -193,6 +159,9 @@ class ExperienceLoading(IterableDataset):
         self.samples_since_last_fetch = fetch_every
 
         self.save = save
+
+        self.nstep = nstep
+        self.discount = discount
 
     def load_episode(self, episode_name):
         try:
@@ -251,13 +220,37 @@ class ExperienceLoading(IterableDataset):
             if not self.load_episode(episode_name):
                 break  # Resolve conflicts
 
-    def sample(self, episode_names, metrics=None):  # Can be over-ridden from ExperienceReplay via ._sample()
+    def sample(self, episode_names, metrics=None):
         episode_name = random.choice(episode_names)  # Uniform sampling of experiences
         return episode_name
 
-    def process(self, episode):  # Can be over-ridden from ExperienceReplay via ._process()
-        experience = tuple(episode[key] for key in episode)
-        return experience
+    def process(self, episode):  # N-step cumulative discounted rewards
+        episode_len = next(iter(episode.values())).shape[0] - 1
+        idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
+
+        # Transition
+        obs = episode['observation'][idx - 1]
+        action = episode['action'][idx]
+        next_obs = episode['observation'][idx + self.nstep - 1]
+        reward = np.zeros_like(episode['reward'][idx])
+        discount = np.ones_like(episode['discount'][idx])
+        label = episode['label'][idx]
+        step = episode['step'][idx - 1]
+
+        # Trajectory
+        traj_o = episode['observation'][idx - 1:idx + self.nstep]
+        traj_a = episode['action'][idx:idx + self.nstep]
+        traj_r = episode['reward'][idx:idx + self.nstep]
+        traj_l = episode['label'][idx:idx + self.nstep]
+
+        # Compute cumulative discounted reward
+        for i in range(self.nstep):
+            step_reward = episode['reward'][idx + i]
+            reward += discount * step_reward
+            discount *= episode['discount'][idx + i] * self.discount
+
+        # return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
+        return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
     def fetch_sample_process(self):
         try:
@@ -273,12 +266,13 @@ class ExperienceLoading(IterableDataset):
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into an experience
-        # else:
-        #     empty = np.empty(11)
-        #     empty[:] = np.NaN
-        #     return empty
+        else:
+            empty = np.empty(11)
+            empty[:] = np.NaN
+            warnings.warn('Yielding empty experience in replay')
+            return empty
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
         while True:
-            yield self.fetch_sample_process()
+            yield self.fetch_sample_process()  # Yields a single experience (or NaNs)
