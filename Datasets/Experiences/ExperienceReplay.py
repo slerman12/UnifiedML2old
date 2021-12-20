@@ -203,6 +203,7 @@ class ExperienceLoading(IterableDataset):
             with episode_name.open('rb') as episode_file:
                 episode = np.load(episode_file)
                 print(list(episode.keys()))
+                print(list(episode.values()))
                 episode = {key: episode[key] for key in episode.keys()}
                 print("yaaaaa")
         except:
