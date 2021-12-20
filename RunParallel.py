@@ -80,7 +80,7 @@ def reinforce(args, root_path):
     mp.set_start_method('spawn')
     agent.share_memory()
     while True:
-        def evaluate_and_rollout(agent):
+        def evaluate_and_rollout(agent, args, generalize, env, replay, logger, vlogger):
             # Evaluate
             if agent.episode % args.evaluate_per_episodes == 0:
 
@@ -108,7 +108,7 @@ def reinforce(args, root_path):
                 if args.save_session:
                     Utils.save(root_path, agent=agent, replay=replay)
 
-        p = mp.Process(target=evaluate_and_rollout, args=(agent,))
+        p = mp.Process(target=evaluate_and_rollout, args=(agent, args, generalize, env, replay, logger, vlogger))
 
         # Check if worker finished rollout
         if agent.step > 0:
