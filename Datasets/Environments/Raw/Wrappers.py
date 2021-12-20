@@ -265,7 +265,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return self.to_attr_dict(self.time_step)
 
     def to_attr_dict(self, exp):
-        keys = ['step_type', 'reward', 'discount', 'observation', 'action',
+        keys = ['step_type', 'reward', 'discount', 'observation', 'action', 'label', 'step',
                 'first', 'mid', 'last', 'episode_done', 'get_last']
         return AttrDict({key: getattr(exp, key, None) for key in keys})
 
