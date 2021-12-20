@@ -110,7 +110,7 @@ class ExperienceReplay:
                 # alias_episode = [np.nan if val is None else val for val in self.episode[spec['name']]]
                 # self.episode[spec['name']] = np.array(alias_episode, spec['dtype'])
                 # alias_episode[alias_episode == -999425] = np.nan
-                self.episode[spec['name']] = pd.Series(self.episode[spec['name']]).astype(object)
+                self.episode[spec['name']] = np.array(self.episode[spec['name']]).astype(object)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
