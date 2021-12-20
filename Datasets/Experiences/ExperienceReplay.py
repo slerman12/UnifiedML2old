@@ -201,10 +201,9 @@ class ExperienceLoading(IterableDataset):
     def load_episode(self, episode_name):
         try:
             with episode_name.open('rb') as episode_file:
-                print("YAAAAA")
                 episode = np.load(episode_file)
-                print("Nahhh")
                 episode = {key: episode[key] for key in episode.keys()}
+                print("Nahhh")
         except:
             return False
 
@@ -279,8 +278,10 @@ class ExperienceLoading(IterableDataset):
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into an experience
-        else:
-            return np.empty(1)
+        # else:
+        #     empty = np.empty(11)
+        #     empty[:] = np.NaN
+        #     return empty
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
