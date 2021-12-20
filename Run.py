@@ -83,7 +83,7 @@ def reinforce(args, root_path):
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
         # Rollout
-        experiences, logs, _ = env.rollout(agent.train(), steps=args.train_steps - agent.step)
+        experiences, logs, _ = env.rollout(agent.train(), steps=1)
 
         replay.add(experiences)
 
