@@ -80,6 +80,7 @@ def reinforce(args, root_path):
     mp.set_start_method('spawn')
     agent.share_memory()
     while True:
+        global evaluate_and_rollout
         def evaluate_and_rollout(agent, args, generalize, env, replay, logger, vlogger):
             # Evaluate
             if agent.episode % args.evaluate_per_episodes == 0:
