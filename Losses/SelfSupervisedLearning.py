@@ -46,8 +46,11 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
 
     # Self supervision
     dynamics_loss = 0
-    for predictor, predicting in zip([obs_predictor, reward_predictor], [traj_o[:, 1:depth + 1], traj_r]):
-        if predictor is not None:
-            dynamics_loss -= bootstrapYourOwnLatent(forecast, predicting, encoder, projector, predictor, logs)
+    future = traj_o[:, 1:depth + 1]
+    if obs_predictor is not None:
+        dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
+
+    if reward_predictor is not None:
+        dynamics_loss -= F.mse_loss(reward_predictor(forecast), traj_r)
 
     return dynamics_loss
