@@ -28,9 +28,12 @@ def format(log, log_name):
 
 
 class Logger:
-    def __init__(self, path='.'):
+    def __init__(self, task, seed, path='.'):
 
         self.path = path.replace('Agents.', '')
+        Path(self.path).mkdir(parents=True, exist_ok=False)
+        self.task = task
+        self.seed = seed
 
         self.logs = {}
         self.counts = {}
@@ -108,7 +111,7 @@ class Logger:
 
         assert 'step' in logs
 
-        file_name = Path(self.path.replace('Name', name))
+        file_name = Path(self.path) / f'{self.task}_{self.seed}_{name}.csv'
         write_header = True
         if file_name.exists():
             try:
@@ -116,8 +119,6 @@ class Logger:
                 write_header = False
             except Exception:
                 print(f'Header mismatch: overwriting old entries of {file_name}')
-        else:
-            Path(file_name).mkdir(parents=True, exist_ok=False)
 
         file = file_name.open('a')
         writer = csv.DictWriter(file,

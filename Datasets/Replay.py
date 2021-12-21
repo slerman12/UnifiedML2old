@@ -70,10 +70,11 @@ class ExperienceReplay:
     def sample(self):
         return next(self)  # Can iterate via next
 
+    # Allows iteration
     def __next__(self):
         return self.replay.__next__()
 
-    # Can iterate via next
+    # Allows iteration
     def __iter__(self):
         return self.replay.__iter__()
 
