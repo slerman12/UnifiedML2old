@@ -9,7 +9,7 @@ import torch
 import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
-from Blocks.Encoders import SPRCNNEncoder as CNNEncoder
+from Blocks.Encoders import CNNEncoder
 from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
