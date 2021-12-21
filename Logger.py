@@ -8,6 +8,9 @@ from pathlib import Path
 from termcolor import colored
 
 from torch.utils.tensorboard import SummaryWriter
+import wandb
+
+import Plot
 
 
 def shorthand(log_name):
@@ -39,6 +42,7 @@ class Logger:
         self.counts = {}
 
         self.tensorboard_writer = None
+        self.wandb = None
 
     def log(self, log=None, name="Logs", dump=False):
         if log is not None:
@@ -130,7 +134,6 @@ class Logger:
         writer.writerow(logs)
         file.flush()
 
-    # TODO add log_weights_and_biases / log_wandb too
     def log_tensorboard(self, logs, name):
         if self.tensorboard_writer is None:
             self.tensorboard_writer = SummaryWriter(self.path + f'/{self.task}_{self.seed}_{name}_TensorBoard.csv')
@@ -138,3 +141,10 @@ class Logger:
         for key in logs:
             if key != 'step' and key != 'episode':
                 self.tensorboard_writer.add_scalar(f'{key}', logs[key], logs['step'])
+
+    def log_wandb(self, logs, name):
+        if self.wandb is None:
+            self.wandb = ...
+            wandb.init(project=self.path.replace('/', '_') + f'_{self.task}_{self.seed}')
+        logs.update({'name': name})
+        wandb.log(logs)
