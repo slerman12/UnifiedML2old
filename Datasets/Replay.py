@@ -247,11 +247,9 @@ class Experiences(IterableDataset):
         # Compute cumulative discounted reward
         for i in range(self.nstep):
             if episode['reward'][idx + i] != np.NaN:
-                print("k...")
                 step_reward = episode['reward'][idx + i]
-                if reward == np.NaN:
+                if np.isnan(reward):
                     reward = np.zeros(1)
-                    print("kk")
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
         print(reward)
