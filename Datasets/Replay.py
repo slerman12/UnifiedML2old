@@ -22,7 +22,7 @@ class ExperienceReplay:
         # Episode storage
 
         self.store_path = Path(path)
-        self.store_path.mkdir(exist_ok=True)
+        self.store_path.mkdir(exist_ok=True, parents=True)
 
         self.num_episodes = 0
         self.num_experiences_stored = 0

@@ -9,7 +9,7 @@ import imageio  # M1 Mac: comment out freeimage imports in imageio/plugins/_init
 class Vlogger:
     def __init__(self, fps, path='.'):
         self.save_path = Path(path.replace('Agents.', ''))
-        self.save_path.mkdir(exist_ok=True)
+        self.save_path.mkdir(exist_ok=True, parents=True)
         self.fps = fps
 
     def dump_vlogs(self, vlogs, name="Video"):
