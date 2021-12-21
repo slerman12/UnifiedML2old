@@ -106,7 +106,7 @@ class ResidualBlockEncoder(CNNEncoder):
 
         # Dimensions
         in_channels = obs_shape[0] + context_dim
-        out_channels = in_channels if isotropic else out_channels
+        self.out_channels = in_channels if isotropic else out_channels
 
         pre = nn.Sequential(nn.Conv2d(in_channels, out_channels,
                                       kernel_size=3, stride=1,
