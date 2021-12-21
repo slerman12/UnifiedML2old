@@ -42,13 +42,11 @@ class SPRAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      l2_norm=False,  # Disabled
                                       ensemble_size=2, discrete=False,  # False for now
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = CategoricalCriticActor(stddev_schedule) if discrete \
             else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                        l2_norm=False,  # Disabled
                                         stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                         optim_lr=lr).to(device)
 
@@ -151,7 +149,7 @@ class SPRAgent(torch.nn.Module):
         self.critic.update_target_params()
 
         # Actor loss
-        actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
+        actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.flatten(-3).detach(),
                                                        self.step, logs=logs)
 
         # Update actor
