@@ -23,11 +23,12 @@ class SPRAgent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, device, log,  # On-boarding
+                 discrete, RL, device, log,  # On-boarding
                  ):
         super().__init__()
 
         self.discrete = discrete  # Continuous supported!
+        self.RL = RL  # And classification!
         self.device = device
         self.log = log
         self.birthday = time.time()
