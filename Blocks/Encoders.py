@@ -67,7 +67,7 @@ class CNNEncoder(nn.Module):
     # Encodes
     def forward(self, obs, *context, flatten=True):
         obs_shape = obs.shape  # Preserve leading dims
-        assert obs_shape[-3:] == self.obs_shape, 'encoder received an invalid obs shape'
+        assert obs_shape[-3:] == self.obs_shape, f'encoder received an invalid obs shape'
         obs = obs.flatten(0, -4)  # Encode last 3 dims
 
         # Normalizes pixels
