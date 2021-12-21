@@ -92,8 +92,7 @@ class CNNEncoder(nn.Module):
 
 class SPRCNNEncoder(CNNEncoder):
     """The encoder used in SPR (https://arxiv.org/abs/2007.05929)"""
-    def __init__(self, obs_shape, pixels=True,
-                 optim_lr=None, target_tau=None):
+    def __init__(self, obs_shape, pixels=True, optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, 64, 0, pixels)
 
@@ -101,7 +100,7 @@ class SPRCNNEncoder(CNNEncoder):
         channels, kernels, strides = [32, 64, 64], [8, 4, 3], [4, 2, 1]
 
         # SPR
-        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else channels[i - 1],
                                                   channels[i], kernels[i], stride=strides[i]),
                                         nn.ReLU())
                                        for i in range(3)], ()))
