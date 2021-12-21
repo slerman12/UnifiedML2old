@@ -124,5 +124,6 @@ class ResidualBlockEncoder(CNNEncoder):
 
         # Isotropic
         if isotropic:
+            print(obs_shape, self.repr_shape)
             assert obs_shape[-2] == self.repr_shape[1]
             assert obs_shape[-1] == self.repr_shape[2]
