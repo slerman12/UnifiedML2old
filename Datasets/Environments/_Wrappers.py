@@ -253,7 +253,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return self.to_attr_dict(self.time_step)
 
     def close(self):
-        self.env.close()
+        self.gym_env.close()
 
     def augment_time_step(self, time_step, action=None):
         if action is None:
