@@ -14,7 +14,7 @@ from typing import NamedTuple, Any
 class ExtendedTimeStep(NamedTuple):
     step_type: Any = None
     reward: Any = None
-    discount: Any = None
+    discount: Any = 1
     observation: Any = None
     action: Any = None
     step: int = None
