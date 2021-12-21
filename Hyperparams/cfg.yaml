@@ -29,7 +29,7 @@ evaluate_per_steps: 5000
 evaluate_episodes: 10
 # Saving
 save_session: false
-save_path: ${hydra.dir}/Checkpoints/${Agent}_${experiment}/${environment.suite}/${task}_${seed}
+save_path: ${hydra.dir}/Checkpoints/${Agent}_${experiment}/${environment.suite}/${task}_${seed}_Saved.pt
 # Logging
 log_video: false
 log_tensorboard: false
@@ -69,7 +69,7 @@ agent:
 
 replay:
   _target_: Datasets.Experiences.ExperienceReplay
-  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}/${task}_${seed}_Replay
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000
@@ -81,18 +81,12 @@ replay:
 
 logger:
   _target_: Logger.Logger
-  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
-  experiment: ${experiment}
-  agent: ${Agent}
-  task: ${task_name}
-  seed: ${seed}
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}/Name/${task}_${seed}
 
 vlogger:
   _target_: Vlogger.Vlogger
-  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}/${task}_${seed}_Video
   fps: 20
-  task: ${task_name}
-  seed: ${seed}
 
 hydra:
   run:
