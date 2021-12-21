@@ -82,7 +82,7 @@ replay:
 
 logger:
   _target_: Logger.Logger
-  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/Name/${task_name}_${seed}
+  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/Name/${task_name}_${seed}.csv
 
 vlogger:
   _target_: Vlogger.Vlogger
