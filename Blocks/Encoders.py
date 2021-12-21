@@ -67,7 +67,6 @@ class CNNEncoder(nn.Module):
     # Encodes
     def forward(self, obs, *context, flatten=True):
         obs_shape = obs.shape  # Preserve leading dims
-        print(obs_shape , self.obs_shape)
         assert obs_shape[-3:] == self.obs_shape
         obs = obs.flatten(0, -4)  # Encode last 3 dims
 
