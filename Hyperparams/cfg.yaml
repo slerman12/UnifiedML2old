@@ -69,7 +69,7 @@ agent:
 
 replay:
   _target_: Datasets.Experiences.ExperienceReplay
-  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}/${task}_${seed}_Replay
+  path: ${hydra.dir}/Replay_Memory/${Agent}_${experiment}/${environment.suite}/${task}_${seed}_Replay
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000
@@ -89,7 +89,7 @@ vlogger:
   fps: 20
 
 hydra:
-  run:
+  run: ./
   dir: ./
   sweep:
     dir: ./
