@@ -110,9 +110,7 @@ class SPRAgent(torch.nn.Module):
             batch, self.device)
         traj_o, traj_a, traj_r = traj
 
-        logs = {'episode': self.episode,
-                'step': self.step,
-                'batch_reward': reward.mean().item()} if self.log \
+        logs = {'episode': self.episode, 'step': self.step} if self.log \
             else None
 
         # "Imagine" / "Envision"
@@ -138,9 +136,10 @@ class SPRAgent(torch.nn.Module):
             traj_a = Utils.one_hot(traj_a, num_classes=self.actor.action_dim)
 
         # Dynamics loss
-        dynamics_loss = SelfSupervisedLearning.DynamicsLoss(self.encoder, self.dynamics, self.projector,
-                                                            self.state_predictor, self.reward_predictor,
-                                                            self.aug)(traj_o, traj_a, traj_r)
+        dynamics_loss = SelfSupervisedLearning.dynamicsLearning(obs, traj_o, traj_a, traj_r,
+                                                                self.encoder, self.dynamics, self.projector,
+                                                                self.state_predictor, self.reward_predictor,
+                                                                depth=5, logs=logs)
 
         # Update critic, dynamics
         Utils.optimize(critic_loss + dynamics_loss,
