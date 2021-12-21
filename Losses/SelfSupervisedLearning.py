@@ -12,7 +12,6 @@ def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=No
     self-supervision via EMA target
     """
     with torch.no_grad():
-        print(positive.shape, encoder.obs_shape, encoder.target.obs_shape)
         positive = encoder.target(positive)
         positive = projector.target(positive)
 
@@ -51,6 +50,6 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
         dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
 
     if reward_predictor is not None:
-        dynamics_loss -= F.mse_loss(reward_predictor(forecast), traj_r)
+        dynamics_loss -= F.mse_loss(reward_predictor(projector(forecast)), traj_r)
 
     return dynamics_loss
