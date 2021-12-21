@@ -251,9 +251,9 @@ class Experiences(IterableDataset):
                 if reward == np.NaN:
                     reward[:] = 0
                 reward += discount * step_reward
+                if discount == np.NaN:
+                    discount[:] = 1
                 if episode['discount'][idx + i] != np.NaN:
-                    if discount == np.NaN:
-                        discount[:] = 1
                     discount *= episode['discount'][idx + i] * self.discount
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
