@@ -93,10 +93,11 @@ class CNNEncoder(nn.Module):
 class ResidualBlockEncoder(CNNEncoder):
     """
     Residual block-based CNN encoder,
+    Isotropic means no bottleneck / dimensionality conserving
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
     """
 
-    def __init__(self, obs_shape, out_channels=64, num_blocks=1, pixels=True,
+    def __init__(self, obs_shape, out_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, out_channels, 0, pixels)
@@ -104,72 +105,16 @@ class ResidualBlockEncoder(CNNEncoder):
         # Dimensions
         in_channels = obs_shape[0]
 
-        # CNN
-        self.CNN = nn.Sequential(nn.Conv2d(in_channels, out_channels,
-                                           kernel_size=3, padding=1, bias=False),
-                                 nn.BatchNorm2d(out_channels // 2),
-                                 nn.ReLU(),
-                                 *[ResidualBlock(out_channels, out_channels)
-                                   for _ in range(num_blocks)])
+        pre = nn.Sequential(nn.Conv2d(in_channels, out_channels,
+                                      kernel_size=3, stride=2 if isotropic else 1,
+                                      padding='same' if isotropic else 1, bias=False),
+                            nn.BatchNorm2d(out_channels // 2))
 
-        self.init(optim_lr, target_tau)
-
-
-"""
-Creators: As in, "to create." 
-
-Generative models that can plan, forecast, and imagine.
-"""
-
-
-# TODO can probably delete this one
-class IsotropicCNNEncoder(CNNEncoder):
-    """
-    Isotropic (no bottleneck / dimensionality conserving) CNN encoder,
-    """
-
-    def __init__(self, obs_shape, context_dim=0, out_channels=None, depth=0, pixels=False,
-                 optim_lr=None, target_tau=None):
-
-        super().__init__(obs_shape, out_channels, 0, pixels)
-
-        # Dimensions
-        in_channels = obs_shape[0] + context_dim
-        out_channels = obs_shape[0] if out_channels is None else out_channels
+        if pre_residual:
+            pre = Residual(pre)
 
         # CNN
-        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels, out_channels, 3, 'same'),
-                                        nn.BatchNorm2d(out_channels) if i < depth else nn.Identity(),
-                                        nn.ReLU())
-                                       for i in range(depth + 1)], ()))
-
-        self.init(optim_lr, target_tau)
-
-        # Isotropic
-        assert obs_shape[-2] == self.repr_shape[1]
-        assert obs_shape[-1] == self.repr_shape[2]
-
-
-class IsotropicResidualBlockEncoder(CNNEncoder):
-    """
-    Isotropic (no bottleneck / dimensionality conserving) residual block-based CNN encoder,
-    e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf)
-    """
-
-    def __init__(self, obs_shape, context_dim=0, out_channels=None, num_blocks=1, pixels=False,
-                 optim_lr=None, target_tau=None):
-        super().__init__(obs_shape, out_channels, 0, pixels)
-
-        # Dimensions
-        in_channels = obs_shape[0] + context_dim
-        out_channels = obs_shape[0] if out_channels is None else out_channels
-
-        # CNN  Note: this is the only difference with ResidualBlockEncoder
-        pre_residual = nn.Sequential(nn.Conv2d(in_channels, out_channels, 3, 2, 1, bias=False),
-                                     nn.BatchNorm2d(out_channels))
-
-        # CNN
-        self.CNN = nn.Sequential(Residual(pre_residual),
+        self.CNN = nn.Sequential(pre,
                                  nn.ReLU(),
                                  *[ResidualBlock(out_channels, out_channels)
                                    for _ in range(num_blocks)])
@@ -177,5 +122,6 @@ class IsotropicResidualBlockEncoder(CNNEncoder):
         self.init(optim_lr, target_tau)
 
         # Isotropic
-        assert obs_shape[-2] == self.repr_shape[1]
-        assert obs_shape[-1] == self.repr_shape[2]
+        if isotropic:
+            assert obs_shape[-2] == self.repr_shape[1]
+            assert obs_shape[-1] == self.repr_shape[2]
