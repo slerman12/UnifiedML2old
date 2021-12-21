@@ -32,7 +32,7 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     assert depth < traj_o.shape[1], f"depth {depth} exceeds future trajectory size of {traj_o.shape[1] - 1} steps"
 
     # Predict future
-    forecast = [dynamics(obs, traj_a[:, 0])]
+    forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]
     for k in range(1, depth):
         forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
     forecast = torch.stack(forecast, 1).flatten(-3)
