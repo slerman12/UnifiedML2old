@@ -48,17 +48,17 @@ class CNNEncoder(nn.Module):
         if optim_lr is not None:
             self.optim = torch.optim.Adam(self.parameters(), lr=optim_lr)
 
-        # EMA
-        if target_tau is not None:
-            self.target = copy.deepcopy(self)
-            self.target_tau = target_tau
-
         # Dimensions
         _, height, width = self.obs_shape
         height, width = Utils.cnn_output_shape(height, width, self.CNN)
 
         self.repr_shape = (self.out_channels, height, width)  # Feature map shape
         self.flattened_dim = math.prod(self.repr_shape)  # Flattened features dim
+
+        # EMA
+        if target_tau is not None:
+            self.target = copy.deepcopy(self)
+            self.target_tau = target_tau
 
     def update_target_params(self):
         assert hasattr(self, 'target')
