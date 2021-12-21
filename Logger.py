@@ -31,7 +31,6 @@ class Logger:
     def __init__(self, path='.'):
 
         self.path = path.replace('Agents.', '')
-        Path(self.path).mkdir(parents=True, exist_ok=True)
 
         self.logs = {}
         self.counts = {}
@@ -117,6 +116,8 @@ class Logger:
                 write_header = False
             except Exception:
                 print(f'Header mismatch: overwriting old entries of {file_name}')
+        else:
+            Path(file_name).mkdir(parents=True, exist_ok=False)
 
         file = file_name.open('a')
         writer = csv.DictWriter(file,
