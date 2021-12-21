@@ -22,11 +22,12 @@ class DrQV2Agent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, device, log,  # On-boarding
+                 discrete, RL, device, log,  # On-boarding
                  ):
         super().__init__()
 
         self.discrete = discrete  # Discrete supported!
+        self.RL = RL  # And classification...
         self.device = device
         self.log = log
         self.birthday = time.time()
@@ -89,12 +90,10 @@ class DrQV2Agent(torch.nn.Module):
         # "Recollect"
 
         batch = next(replay)
-        obs, action, reward, discount, next_obs, *traj = Utils.to_torch(
+        obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
 
-        logs = {'episode': self.episode,
-                'step': self.step,
-                'batch_reward': reward.mean().item()} if self.log \
+        logs = {'episode': self.episode, 'step': self.step} if self.log \
             else None
 
         # "Imagine" / "Envision"
