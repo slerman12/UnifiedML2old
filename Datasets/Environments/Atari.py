@@ -11,7 +11,7 @@ import cv2
 
 import numpy as np
 
-from Datasets.Environments import ActionSpecWrapper, TruncateWrapper, AugmentAttributesWrapper, \
+from Datasets.Environments._Wrappers import ActionSpecWrapper, TruncateWrapper, AugmentAttributesWrapper, \
     FrameStackWrapper
 
 
