@@ -121,7 +121,7 @@ class SPRAgent(torch.nn.Module):
         next_obs = self.aug(next_obs)
 
         # Encode
-        obs = self.encoder(obs)
+        obs = self.encoder(obs, flatten=False)
         with torch.no_grad():
             next_obs = self.encoder(next_obs)
 
@@ -129,7 +129,7 @@ class SPRAgent(torch.nn.Module):
 
         # Critic loss
         critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                  obs, action, reward, discount, next_obs,
+                                                  obs.flatten(-3), action, reward, discount, next_obs,
                                                   self.step, logs=logs)
 
         # Convert discrete action trajectories to one-hot
