@@ -89,8 +89,8 @@ vlogger:
   fps: 20
 
 hydra:
-  run: ./
-  dir: ./
+  run:
+    dir: ./
   sweep:
     dir: ./
     subdir: ./
