@@ -130,7 +130,7 @@ class CNNEnsembleQCritic(EnsembleQCritic):
 
 class PROCritic(EnsembleQCritic):
     """
-    PRO critic, employs ensemble Q learning via Policy Ratio, A.K.A Proportionality,
+    PRO critic, employs ensemble Q learning via policy ratio, A.K.A Proportionality,
     returns a Normal distribution over the ensemble.
     """
     def __init__(self, actor, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
