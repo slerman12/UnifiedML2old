@@ -115,7 +115,7 @@ class ResidualBlockEncoder(CNNEncoder):
 
         # CNN
         self.CNN = nn.Sequential(pre,
-                                 nn.ReLU(),
+                                 nn.ReLU(),  # MaxPool after this?
                                  *[ResidualBlock(hidden_channels if i == 0 else self.out_channels,
                                                  self.out_channels)
                                    for i in range(num_blocks)])
