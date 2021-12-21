@@ -232,7 +232,6 @@ class Experiences(IterableDataset):
         # Transition
         obs = episode['observation'][idx - 1]
         action = episode['action'][idx]
-        print(obs)
         next_obs = episode['observation'][idx - 1 + self.nstep]
         reward = np.NaN
         discount = np.ones(1)
@@ -253,6 +252,7 @@ class Experiences(IterableDataset):
                     reward = np.zeros(1)
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
+        print(reward)
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
