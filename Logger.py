@@ -8,9 +8,7 @@ from pathlib import Path
 from termcolor import colored
 
 from torch.utils.tensorboard import SummaryWriter
-import wandb
-
-import Plot
+# import wandb
 
 
 def shorthand(log_name):

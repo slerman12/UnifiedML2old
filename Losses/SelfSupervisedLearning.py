@@ -18,19 +18,7 @@ def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=No
     # Assumes obs already encoded
     anchor = predictor(projector(obs))
 
-    # Why not yield cosine similarity of anchor / positive - rounding error?
     self_supervised_loss = -F.cosine_similarity(anchor, positive, -1).mean()
-
-    # Explicit
-    # anchor_norm = F.normalize(anchor)
-    # positive_norm = F.normalize(positive)
-    # self_supervised_loss = - (anchor_norm * positive_norm)
-    # self_supervised_loss = self_supervised_loss.sum(dim=-1).mean()
-
-    # SPR loss...  (https://github.com/mila-iqia/spr/issues/27#issuecomment-998857945)
-    # anchor_norm = F.normalize(anchor, dim=-1, eps=1e-3)
-    # positive_norm = F.normalize(positive, dim=-1, eps=1e-3)
-    # self_supervised_loss = F.mse_loss(anchor_norm, positive_norm, reduction="none").sum(-1).mean(0)
 
     if logs is not None:
         logs['byol_loss'] = self_supervised_loss
@@ -43,11 +31,13 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
                      depth=1, logs=None):
     assert depth < traj_o.shape[1], f"depth {depth} exceeds future trajectory size of {traj_o.shape[1] - 1} steps"
 
+    # Predict future
     forecast = [dynamics(obs, traj_a[:, 0])]
     for k in range(1, depth):
         forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
     forecast = torch.stack(forecast, 1).flatten(-3)
 
+    # Self supervision
     dynamics_loss = 0
     for predictor, predicting in zip([obs_predictor, reward_predictor], [traj_o[:, 1:depth + 1], traj_r]):
         if predictor is not None:
