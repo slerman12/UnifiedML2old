@@ -101,15 +101,12 @@ def reinforce(args, save_path):
             agent.step >= args.train_steps
 
         # Update agent
-        if agent.step > args.seed_steps:
+        if agent.step > args.seed_steps and agent.step % args.update_per_steps == 0 or converged:
+            for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
+                logs = agent.update(replay)  # Trains the agent
 
-            if agent.step % args.update_per_steps == 0 or converged:
-
-                for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
-                    logs = agent.update(replay)  # Trains the agent
-
-                    if args.log_tensorboard:
-                        logger.log_tensorboard(logs, 'Train')
+                if args.log_tensorboard:
+                    logger.log_tensorboard(logs, 'Train')
 
 
 def classify(args, save_path):

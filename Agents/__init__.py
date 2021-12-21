@@ -4,3 +4,4 @@
 # MIT_LICENSE file in the root directory of this source tree.
 from Agents.DPG import DPGAgent
 from Agents.DrQV2 import DrQV2Agent
+from Agents.SPR import SPRAgent
