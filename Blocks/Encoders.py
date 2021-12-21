@@ -97,17 +97,18 @@ class ResidualBlockEncoder(CNNEncoder):
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
     """
 
-    def __init__(self, obs_shape, context_dim=0, out_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
+    def __init__(self, obs_shape, context_dim=0, hidden_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
-        super().__init__(obs_shape, out_channels, 0, pixels)
+        super().__init__(obs_shape, hidden_channels, 0, pixels)
 
         # Dimensions
         in_channels = obs_shape[0] + context_dim
-        self.out_channels = in_channels if isotropic else out_channels
+        self.out_channels = obs_shape[0] if isotropic else hidden_channels
+        hidden_channels = in_channels if pre_residual else self.out_channels
 
-        pre = nn.Sequential(nn.Conv2d(in_channels, self.out_channels, kernel_size=3, padding=1),
-                            nn.BatchNorm2d(self.out_channels))
+        pre = nn.Sequential(nn.Conv2d(in_channels, hidden_channels, kernel_size=3, padding=1),
+                            nn.BatchNorm2d(hidden_channels))
 
         if pre_residual:
             pre = Residual(pre)
@@ -115,8 +116,9 @@ class ResidualBlockEncoder(CNNEncoder):
         # CNN
         self.CNN = nn.Sequential(pre,
                                  nn.ReLU(),
-                                 *[ResidualBlock(self.out_channels, self.out_channels)
-                                   for _ in range(num_blocks)])
+                                 *[ResidualBlock(hidden_channels if i == 0 else self.out_channels,
+                                                 self.out_channels)
+                                   for i in range(num_blocks)])
 
         self.init(optim_lr, target_tau)
 
