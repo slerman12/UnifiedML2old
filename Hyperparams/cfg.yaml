@@ -43,7 +43,7 @@ seed: 1
 experiment: experiment_name
 
 environment:
-  _target_: Datasets.Environments.Environment
+  _target_: Datasets.Environments.Environments
   task_name: ${task_name}
   frame_stack: ${frame_stack}
   action_repeat: ${action_repeat}
@@ -68,7 +68,7 @@ agent:
   log: ${log_tensorboard}
 
 replay:
-  _target_: Datasets.Experiences.ExperienceReplay
+  _target_: Datasets.Experiences.Experiences
   path: ./Replay_Memory/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Replay
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
