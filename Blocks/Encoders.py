@@ -67,7 +67,7 @@ class CNNEncoder(nn.Module):
     # Encodes
     def forward(self, obs, *context, flatten=True):
         obs_shape = obs.shape  # Preserve leading dims
-        assert obs_shape[-3:] == self.obs_shape, 'invalid shape for encoder input'
+        assert obs_shape[-3:] == self.obs_shape, 'encoder received an invalid obs shape'
         obs = obs.flatten(0, -4)  # Encode last 3 dims
 
         # Normalizes pixels
@@ -83,7 +83,7 @@ class CNNEncoder(nn.Module):
         h = self.CNN(obs)
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
-        assert tuple(h.shape[-3:]) == self.repr_shape, 'pre-computed shape does not match output shape'
+        assert tuple(h.shape[-3:]) == self.repr_shape, 'pre-computed repr_shape does not match output CNN shape'
 
         if flatten:
             return h.flatten(-3)

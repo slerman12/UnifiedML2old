@@ -12,6 +12,7 @@ def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=No
     self-supervision via EMA target
     """
     with torch.no_grad():
+        print(positive.shape, encoder.repr_shape, encoder.target.repr_shape)
         positive = encoder.target(positive)
         positive = projector.target(positive)
 
