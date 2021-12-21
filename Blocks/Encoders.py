@@ -97,18 +97,20 @@ class ResidualBlockEncoder(CNNEncoder):
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
     """
 
-    def __init__(self, obs_shape, out_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, out_channels, 0, pixels)
 
         # Dimensions
-        in_channels = obs_shape[0]
+        in_channels = obs_shape[0] + context_dim
+        out_channels = obs_shape[0] if isotropic else out_channels
 
         pre = nn.Sequential(nn.Conv2d(in_channels, out_channels,
                                       kernel_size=3, stride=2 if isotropic else 1,
-                                      padding='same' if isotropic else 1, bias=False),
-                            nn.BatchNorm2d(out_channels // 2))
+                                      # padding='same' if isotropic else 1, bias=False),
+                                      padding=1, bias=False),
+                            nn.BatchNorm2d(out_channels))
 
         if pre_residual:
             pre = Residual(pre)

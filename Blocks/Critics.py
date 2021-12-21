@@ -12,7 +12,6 @@ from torch.distributions import Normal
 import Utils
 
 from Blocks.Architectures.MLP import MLP
-from Blocks.Architectures.Residual import ResidualBlock
 
 
 class EnsembleQCritic(nn.Module):
@@ -94,41 +93,7 @@ class EnsembleQCritic(nn.Module):
         return Q
 
 
-class CNNEnsembleQCritic(EnsembleQCritic):
-    """
-    CNN-based Critic network, employs ensemble Q learning,
-    e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf) (except with ensembling).
-    """
-    def __init__(self, repr_shape, hidden_channels, out_channels, num_blocks,
-                 hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
-                 discrete=False, target_tau=None, optim_lr=None):
-        super().__init__((1,), 1, 1, action_dim, 0, True, discrete)  # Unused parent MLP
-
-        in_channels, height, width = repr_shape
-
-        # TODO cnn with context e.g. like encoder
-        self.trunk = nn.Sequential(*[ResidualBlock(in_channels, hidden_channels)
-                                     for _ in range(num_blocks)],
-                                   nn.Conv2d(hidden_channels, out_channels, kernel_size=1),
-                                   nn.BatchNorm2d(out_channels),
-                                   nn.Flatten())
-
-        # CNN dimensions
-        trunk_h, trunk_w = Utils.cnn_output_shape(height, width, self.trunk)
-        feature_dim = out_channels * trunk_h * trunk_w
-
-        # MLP dimensions
-        in_dim = feature_dim if discrete else feature_dim + action_dim
-        Q_dim = action_dim if discrete else 1
-
-        # MLP
-        self.Q_head = nn.ModuleList([MLP(in_dim, Q_dim, hidden_dim, 2, l2_norm=l2_norm)
-                                     for _ in range(ensemble_size)])
-
-        self.init(optim_lr, target_tau)
-
-
-class PROCritic(EnsembleQCritic):
+class PolicyRatioCritic(EnsembleQCritic):
     """
     PRO critic, employs ensemble Q learning via policy ratio, A.K.A Proportionality,
     returns a Normal distribution over the ensemble.

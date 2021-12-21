@@ -10,7 +10,7 @@ import Utils
 from Blocks.Architectures.MLP import MLPBlock
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
-from Blocks.Encoders import CNNEncoder, IsotropicCNNEncoder
+from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder
 from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
@@ -51,8 +51,9 @@ class SPRAgent(torch.nn.Module):
                                         stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                         optim_lr=lr).to(device)
 
-        self.dynamics = IsotropicCNNEncoder(self.encoder.repr_shape, context_dim=action_shape[-1],
-                                            optim_lr=lr).to(device)
+        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],
+                                             pre_residual=True, pixels=False, isotropic=True,
+                                             optim_lr=lr).to(device)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
                                   depth=2, layer_norm=True,
