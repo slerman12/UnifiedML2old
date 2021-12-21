@@ -139,17 +139,19 @@ class ResidualBlockEncoder(CNNEncoder):
         pre = nn.Sequential(nn.Conv2d(in_channels, hidden_channels, kernel_size=3, padding=1),
                             nn.BatchNorm2d(hidden_channels))
 
+        # Add a concurrent stream to pre
         if pre_residual:
-            pre = Residual(pre)
+            pre = Residual(pre, down_sample=nn.Sequential(nn.Conv2d(in_channels, hidden_channels,
+                                                                    kernel_size=3, padding=1),
+                                                          nn.BatchNorm2d(hidden_channels)))
 
         # CNN ResNet-ish
         self.CNN = nn.Sequential(pre,
                                  nn.ReLU(inplace=True),  # MaxPool after this?
-                                 *[ResidualBlock(hidden_channels if i == 0 else hidden_channels,
-                                                 hidden_channels)
-                                   for i in range(num_blocks)],  # TODO can instead use downsample
-                                 nn.Conv2d(in_channels, self.out_channels, kernel_size=3, padding=1),
-                                 nn.ReLU(inplace=True))  # TODO replace with downsample
+                                 *[ResidualBlock(hidden_channels, hidden_channels)
+                                   for _ in range(num_blocks)],
+                                 nn.Conv2d(hidden_channels, self.out_channels, kernel_size=3, padding=1),
+                                 nn.ReLU(inplace=True))
 
         self.init(optim_lr, target_tau)
 

@@ -53,7 +53,7 @@ class SPRAgent(torch.nn.Module):
                                         optim_lr=lr).to(device)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],
-                                             pre_residual=True, pixels=False, isotropic=True,
+                                             pixels=False, isotropic=True,
                                              optim_lr=lr).to(device)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
