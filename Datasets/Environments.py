@@ -5,10 +5,10 @@
 import time
 from math import inf
 
-from Datasets.Environments.Raw import DMC, Atari
+from Datasets.Environments import DMC, Atari, Classify
 
 
-class Environment:
+class Environments:
     def __init__(self, task_name, frame_stack, action_repeat, max_episode_frames,
                  truncate_episode_frames, seed, train=True, suite="dmc"):
         self.suite = suite
@@ -27,6 +27,8 @@ class Environment:
             return DMC
         elif self.suite.lower() == "atari":
             return Atari
+        elif self.suite.lower() == 'classify':
+            return Classify
 
     def __getattr__(self, item):
         return getattr(self.env, item)

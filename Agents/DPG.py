@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
+from Blocks.Actors import TruncatedGaussianActor
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
@@ -49,8 +49,6 @@ class DPGAgent(torch.nn.Module):
                                             l2_norm=False, discrete=discrete,
                                             stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
-
-        # self.creator = CategoricalCriticActor(exploit_schedule=stddev_schedule)
 
         self.num_actions = 1
         self.sample_q = False

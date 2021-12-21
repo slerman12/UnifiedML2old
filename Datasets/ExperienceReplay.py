@@ -66,7 +66,7 @@ class ExperienceReplay:
                                                    pin_memory=True,
                                                    worker_init_fn=worker_init_fn)
 
-    # Returns batch of experience
+    # Returns a batch of experiences
     def sample(self):
         return next(self)  # Can iterate via next
 
@@ -231,10 +231,10 @@ class Experiences(IterableDataset):
         # Transition
         obs = episode['observation'][idx - 1]
         action = episode['action'][idx]
-        next_obs = episode['observation'][idx + self.nstep - 1]
-        reward = np.zeros_like(episode['reward'][idx])
-        discount = np.ones_like(episode['discount'][idx])
-        label = episode['label'][idx]
+        next_obs = episode['observation'][idx - 1 + self.nstep]
+        reward = np.full_like(episode['reward'][idx], np.NaN)
+        discount = np.full_like(episode['discount'][idx], np.NaN)
+        label = episode['label'][idx - 1]
         step = episode['step'][idx - 1]
 
         # Trajectory
@@ -245,11 +245,16 @@ class Experiences(IterableDataset):
 
         # Compute cumulative discounted reward
         for i in range(self.nstep):
-            step_reward = episode['reward'][idx + i]
-            reward += discount * step_reward
-            discount *= episode['discount'][idx + i] * self.discount
+            if episode['reward'][idx + i] != np.NaN:
+                step_reward = episode['reward'][idx + i]
+                if reward == np.NaN:
+                    reward[:] = 0
+                reward += discount * step_reward
+                if episode['discount'][idx + i] != np.NaN:
+                    if discount == np.NaN:
+                        discount[:] = 1
+                    discount *= episode['discount'][idx + i] * self.discount
 
-        # return obs, action, reward, discount, next_obs, traj_o, traj_a, traj_r
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
     def fetch_sample_process(self):

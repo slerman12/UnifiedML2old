@@ -249,7 +249,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return self.to_attr_dict(self.time_step)
 
     def close(self):
-        self.gym_env.close()
+        self.env.close()
 
     def augment_time_step(self, time_step, action=None):
         if action is None:
@@ -258,7 +258,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
                                 step_type=time_step.step_type,
                                 action=action,
                                 reward=time_step.reward,
-                                discount=time_step.discount or 1.0)
+                                discount=time_step.discount or 1.0,
+                                step=time_step.step if hasattr(time_step, 'step') else None,
+                                label=time_step.label if hasattr(time_step, 'label') else None)
 
     @property
     def exp(self):
