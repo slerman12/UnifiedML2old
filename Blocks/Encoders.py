@@ -18,7 +18,7 @@ class CNNEncoder(nn.Module):
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True, flatten=True,
+    def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True,
                  optim_lr=None, target_tau=None):
 
         super().__init__()
@@ -37,9 +37,6 @@ class CNNEncoder(nn.Module):
                                  *sum([(nn.Conv2d(out_channels, out_channels, 3, stride=1),
                                         nn.ReLU())
                                        for _ in range(depth)], ()))
-
-        if flatten:
-            self.neck = nn.Flatten(-3)
 
         # Initialize model
         self.init(optim_lr, target_tau)
@@ -69,7 +66,7 @@ class CNNEncoder(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     # Encodes
-    def forward(self, obs, *context):
+    def forward(self, obs, *context, flatten=True):
         obs_shape = obs.shape  # Preserve leading dims
         assert obs_shape[-3:] == self.obs_shape
         obs = obs.flatten(0, -4)  # Encode last 3 dims
@@ -89,7 +86,9 @@ class CNNEncoder(nn.Module):
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
         assert tuple(h.shape[-3:]) == self.repr_shape
 
-        return self.neck(h)
+        if flatten:
+            return h.flatten(-3)
+        return h
 
 
 class ResidualBlockEncoder(CNNEncoder):
