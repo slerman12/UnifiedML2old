@@ -37,15 +37,6 @@ class CNNEncoder(nn.Module):
                                         nn.ReLU())
                                        for i in range(depth + 1)], ()))
 
-        # SPR
-        channels = [32, 64, 64]
-        kernels = [8, 4, 3]
-        strides = [4, 2, 1]
-        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
-                                                  channels[i], kernels[i], stride=strides[i]),
-                                        nn.ReLU())
-                                       for i in range(3)], ()))
-
         # Initialize model
         self.init(optim_lr, target_tau)
 
