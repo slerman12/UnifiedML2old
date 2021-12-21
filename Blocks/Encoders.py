@@ -37,6 +37,15 @@ class CNNEncoder(nn.Module):
                                         nn.ReLU())
                                        for i in range(depth + 1)], ()))
 
+        # SPR
+        channels = [32, 64, 64]
+        kernels = [8, 4, 3]
+        strides = [4, 2, 1]
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
+                                                  channels[i], kernels[i], stride=strides[i]),
+                                        nn.ReLU())
+                                       for i in range(3)], ()))
+
         # Initialize model
         self.init(optim_lr, target_tau)
 
@@ -90,22 +99,42 @@ class CNNEncoder(nn.Module):
         return h
 
 
+class SPRCNNEncoder(CNNEncoder):
+    """The encoder used in SPR (https://arxiv.org/abs/2007.05929)"""
+    def __init__(self, obs_shape, out_channels=32, pixels=True,
+                 optim_lr=None, target_tau=None):
+
+        super().__init__(obs_shape, out_channels, 0, pixels)
+
+        in_channels = obs_shape[0]
+        channels, kernels, strides = [32, 64, 64], [8, 4, 3], [4, 2, 1]
+
+        # SPR
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
+                                                  channels[i], kernels[i], stride=strides[i]),
+                                        nn.ReLU())
+                                       for i in range(3)], ()))
+
+        self.init(optim_lr, target_tau)
+
+
 class ResidualBlockEncoder(CNNEncoder):
     """
     Residual block-based CNN encoder,
     Isotropic means no bottleneck / dimensionality conserving
-    e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
+    e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf) or SPR (https://arxiv.org/abs/2007.05929).
     """
 
-    def __init__(self, obs_shape, context_dim=0, hidden_channels=64, num_blocks=1, pixels=True, pre_residual=False, isotropic=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=32, hidden_channels=64, num_blocks=1, pixels=True,
+                 pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, hidden_channels, 0, pixels)
 
         # Dimensions
         in_channels = obs_shape[0] + context_dim
-        self.out_channels = obs_shape[0] if isotropic else hidden_channels
-        hidden_channels = in_channels if pre_residual else self.out_channels
+        self.out_channels = obs_shape[0] if isotropic else out_channels
+        hidden_channels = in_channels if pre_residual else hidden_channels
 
         pre = nn.Sequential(nn.Conv2d(in_channels, hidden_channels, kernel_size=3, padding=1),
                             nn.BatchNorm2d(hidden_channels))
@@ -115,15 +144,16 @@ class ResidualBlockEncoder(CNNEncoder):
 
         # CNN ResNet-ish
         self.CNN = nn.Sequential(pre,
-                                 nn.ReLU(),  # MaxPool after this?
-                                 *[ResidualBlock(hidden_channels if i == 0 else self.out_channels,
-                                                 self.out_channels)
-                                   for i in range(num_blocks)])
+                                 nn.ReLU(inplace=True),  # MaxPool after this?
+                                 *[ResidualBlock(hidden_channels if i == 0 else hidden_channels,
+                                                 hidden_channels)
+                                   for i in range(num_blocks)],  # TODO can instead use downsample
+                                 nn.Conv2d(in_channels, self.out_channels, kernel_size=3, padding=1),
+                                 nn.ReLU(inplace=True))  # TODO replace with downsample
 
         self.init(optim_lr, target_tau)
 
         # Isotropic
         if isotropic:
-            print(obs_shape, self.repr_shape)
             assert obs_shape[-2] == self.repr_shape[1]
             assert obs_shape[-1] == self.repr_shape[2]

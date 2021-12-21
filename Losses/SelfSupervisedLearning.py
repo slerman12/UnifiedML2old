@@ -35,6 +35,12 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]
     for k in range(1, depth):
         forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
+        # "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
+        # shape = forecast[-1].shape
+        # forecast[-1] = forecast[-1].flatten(-3)
+        # forecast[-1] -= forecast[-1].min(-1, True)[0]
+        # forecast[-1] /= forecast[-1].max(-1, True)[0]
+        # forecast[-1] = forecast[-1].view(*shape)
     forecast = torch.stack(forecast, 1).flatten(-3)
 
     # Self supervision
