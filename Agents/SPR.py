@@ -107,9 +107,9 @@ class SPRAgent(torch.nn.Module):
         # "Recollect"
 
         batch = next(replay)
-        obs, action, reward, discount, next_obs, *traj = Utils.to_torch(
+        obs, action, reward, label, discount, next_obs, *traj, step = Utils.to_torch(
             batch, self.device)
-        traj_o, traj_a, traj_r = traj
+        traj_o, traj_a, traj_r, traj_l = traj
 
         logs = {'episode': self.episode, 'step': self.step} if self.log \
             else None
