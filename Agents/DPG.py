@@ -78,7 +78,6 @@ class DPGAgent(torch.nn.Module):
             # action = Pi.sample()  # return this
 
             if self.discrete:
-                # One-hots
                 actions = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
                 actions_log_prob = 0
             else:

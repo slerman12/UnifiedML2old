@@ -10,7 +10,7 @@ import Utils
 from Blocks.Architectures.MLP import MLPBlock
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
-from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder
+from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder, SPRCNNEncoder
 from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
@@ -39,7 +39,8 @@ class SPRAgent(torch.nn.Module):
             print('Original SPR does not support continuous action spaces. Instantiating generalized...')
 
         # Models
-        self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
+        self.encoder = SPRCNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
+        # self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       ensemble_size=2, discrete=False,  # False for now
@@ -58,12 +59,9 @@ class SPRAgent(torch.nn.Module):
                                   depth=2, layer_norm=True,
                                   target_tau=target_tau, optim_lr=lr).to(device)
 
-        self.state_predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                        depth=2, layer_norm=True,
-                                        optim_lr=lr).to(device)
-        self.reward_predictor = MLPBlock(hidden_dim, 1, hidden_dim, hidden_dim,
-                                         depth=2, layer_norm=True,
-                                         optim_lr=lr).to(device)
+        self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
+                                  depth=2, layer_norm=True,
+                                  optim_lr=lr).to(device)
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
@@ -79,7 +77,6 @@ class SPRAgent(torch.nn.Module):
             obs = self.encoder(obs)
 
             if self.discrete:
-                # One-hots
                 action = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
                 Q = self.critic(obs, action)
 
@@ -137,14 +134,13 @@ class SPRAgent(torch.nn.Module):
         # Dynamics loss
         dynamics_loss = SelfSupervisedLearning.dynamicsLearning(obs, traj_o, traj_a, traj_r,
                                                                 self.encoder, self.dynamics, self.projector,
-                                                                self.state_predictor, self.reward_predictor,
-                                                                depth=5, logs=logs)
+                                                                self.predictor, depth=5, logs=logs)
 
         # Update critic, dynamics
         Utils.optimize(critic_loss + dynamics_loss,
                        self.encoder,
                        self.critic,
-                       self.dynamics, self.projector, self.state_predictor, self.reward_predictor)
+                       self.dynamics, self.projector, self.predictor)
 
         self.critic.update_target_params()
 
