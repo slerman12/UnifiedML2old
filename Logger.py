@@ -31,7 +31,7 @@ class Logger:
     def __init__(self, task, seed, path='.'):
 
         self.path = path.replace('Agents.', '')
-        Path(self.path).mkdir(parents=True, exist_ok=False)
+        Path(self.path).mkdir(parents=True, exist_ok=True)
         self.task = task
         self.seed = seed
 
@@ -133,7 +133,7 @@ class Logger:
     # TODO add log_weights_and_biases / log_wandb too
     def log_tensorboard(self, logs, name):
         if self.tensorboard_writer is None:
-            self.tensorboard_writer = SummaryWriter(self.path.replace('Name', name) + '_TensorBoard.csv')
+            self.tensorboard_writer = SummaryWriter(self.path + f'/{self.task}_{self.seed}_{name}_TensorBoard.csv')
 
         for key in logs:
             if key != 'step' and key != 'episode':
