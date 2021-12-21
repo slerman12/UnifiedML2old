@@ -233,8 +233,8 @@ class Experiences(IterableDataset):
         obs = episode['observation'][idx - 1]
         action = episode['action'][idx]
         next_obs = episode['observation'][idx - 1 + self.nstep]
-        reward = np.full_like(episode['reward'][idx], np.NaN)
-        discount = np.full_like(episode['discount'][idx], np.NaN)
+        reward = np.NaN
+        discount = np.ones(1)
         label = episode['label'][idx - 1]
         step = episode['step'][idx - 1]
 
@@ -249,10 +249,8 @@ class Experiences(IterableDataset):
             if episode['reward'][idx + i] != np.NaN:
                 step_reward = episode['reward'][idx + i]
                 if reward == np.NaN:
-                    reward[:] = 0
+                    reward = np.zeros(1)
                 reward += discount * step_reward
-                if discount == np.NaN:
-                    discount[:] = 1
                 if episode['discount'][idx + i] != np.NaN:
                     discount *= episode['discount'][idx + i] * self.discount
 
