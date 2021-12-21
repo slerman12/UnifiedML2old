@@ -106,11 +106,11 @@ class ResidualBlockEncoder(CNNEncoder):
         in_channels = obs_shape[0] + context_dim
         self.out_channels = in_channels if isotropic else out_channels
 
-        pre = nn.Sequential(nn.Conv2d(in_channels, out_channels,
+        pre = nn.Sequential(nn.Conv2d(in_channels, self.out_channels,
                                       kernel_size=3,
                                       # padding='same' if isotropic else 1, bias=False),
                                       padding=1, bias=False),
-                            nn.BatchNorm2d(out_channels))
+                            nn.BatchNorm2d(self.out_channels))
 
         if pre_residual:
             pre = Residual(pre)
@@ -118,7 +118,7 @@ class ResidualBlockEncoder(CNNEncoder):
         # CNN
         self.CNN = nn.Sequential(pre,
                                  nn.ReLU(),
-                                 *[ResidualBlock(out_channels, out_channels)
+                                 *[ResidualBlock(self.out_channels, self.out_channels)
                                    for _ in range(num_blocks)])
 
         self.init(optim_lr, target_tau)
