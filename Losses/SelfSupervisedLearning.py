@@ -34,6 +34,7 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     # Predict future
     forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]
     for k in range(1, depth):
+        print(forecast[-1].shape)
         forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
     forecast = torch.stack(forecast, 1).flatten(-3)
 

@@ -67,7 +67,7 @@ class CNNEncoder(nn.Module):
     # Encodes
     def forward(self, obs, *context, flatten=True):
         obs_shape = obs.shape  # Preserve leading dims
-        assert obs_shape[-3:] == self.obs_shape
+        assert obs_shape[-3:] == self.obs_shape, 'invalid shape for encoder input'
         obs = obs.flatten(0, -4)  # Encode last 3 dims
 
         # Normalizes pixels
@@ -83,7 +83,7 @@ class CNNEncoder(nn.Module):
         h = self.CNN(obs)
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
-        assert tuple(h.shape[-3:]) == self.repr_shape
+        assert tuple(h.shape[-3:]) == self.repr_shape, 'pre-computed shape does not match output shape'
 
         if flatten:
             return h.flatten(-3)
@@ -106,10 +106,7 @@ class ResidualBlockEncoder(CNNEncoder):
         in_channels = obs_shape[0] + context_dim
         self.out_channels = in_channels if isotropic else out_channels
 
-        pre = nn.Sequential(nn.Conv2d(in_channels, self.out_channels,
-                                      kernel_size=3,
-                                      # padding='same' if isotropic else 1, bias=False),
-                                      padding=1, bias=False),
+        pre = nn.Sequential(nn.Conv2d(in_channels, self.out_channels, kernel_size=3, padding=1),
                             nn.BatchNorm2d(self.out_channels))
 
         if pre_residual:
