@@ -13,6 +13,7 @@ class Residual(nn.Module):
         y = self.module(x)
         if self.down_sample is not None:
             x = self.down_sample(x)
+        print(x.shape, y.shape)
         return y + x
 
     def output_shape(self, height, width):

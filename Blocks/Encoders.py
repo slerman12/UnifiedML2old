@@ -83,8 +83,6 @@ class CNNEncoder(nn.Module):
         h = self.CNN(obs)
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
-        if tuple(h.shape[-3:]) != self.repr_shape:
-            print(tuple(h.shape[-3:]), self.repr_shape)
         assert tuple(h.shape[-3:]) == self.repr_shape
 
         if flatten:
@@ -109,7 +107,7 @@ class ResidualBlockEncoder(CNNEncoder):
         self.out_channels = in_channels if isotropic else out_channels
 
         pre = nn.Sequential(nn.Conv2d(in_channels, out_channels,
-                                      kernel_size=3, stride=1,
+                                      kernel_size=3,
                                       # padding='same' if isotropic else 1, bias=False),
                                       padding=1, bias=False),
                             nn.BatchNorm2d(out_channels))
