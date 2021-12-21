@@ -29,11 +29,11 @@ evaluate_per_steps: 5000
 evaluate_episodes: 10
 # Saving
 save_session: false
+save_path: ${hydra.dir}/Checkpoints/${Agent}_${experiment}/${environment.suite}/${task}_${seed}
 # Logging
 log_video: false
 log_tensorboard: false
 # Misc
-root_path: ???  # To be specified later
 device: cuda
 alias_device: cpu
 RL: ??? # To be specified later
@@ -43,7 +43,7 @@ seed: 1
 experiment: experiment_name
 
 environment:
-  _target_: Datasets.Environments.Environment.Environment
+  _target_: Datasets.Environments.Environment
   task_name: ${task_name}
   frame_stack: ${frame_stack}
   action_repeat: ${action_repeat}
@@ -68,8 +68,8 @@ agent:
   log: ${log_tensorboard}
 
 replay:
-  _target_: Datasets.Experiences.ExperienceReplay.ExperienceReplay
-  root_path: ${root_path}
+  _target_: Datasets.Experiences.ExperienceReplay
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000
@@ -81,7 +81,7 @@ replay:
 
 logger:
   _target_: Logger.Logger
-  root_path: ${root_path}
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
   experiment: ${experiment}
   agent: ${Agent}
   task: ${task_name}
@@ -89,15 +89,17 @@ logger:
 
 vlogger:
   _target_: Vlogger.Vlogger
-  root_path: ${root_path}
+  path: ${hydra.dir}/Benchmarking/${Agent}_${experiment}/${environment.suite}
   fps: 20
+  task: ${task_name}
+  seed: ${seed}
 
 hydra:
   run:
-    dir: ./exp_local/${now:%Y.%m.%d}/${now:%H%M%S}_${hydra.job.override_dirname}
+  dir: ./
   sweep:
-    dir: ./exp/${now:%Y.%m.%d}/${now:%H%M}_${agent_cfg.experiment}
-    subdir: ${hydra.job.num}
+    dir: ./
+    subdir: ./
   launcher:
     timeout_min: 4300
     cpus_per_task: 10
@@ -105,4 +107,4 @@ hydra:
     tasks_per_node: 1
     mem_gb: 160
     nodes: 1
-    submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm
+    submitit_folder: ./

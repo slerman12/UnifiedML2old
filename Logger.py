@@ -28,15 +28,15 @@ def format(log, log_name):
 
 
 class Logger:
-    def __init__(self, root_path='.', experiment='Experiment', agent='Agent', task='Task', seed=-1):
+    def __init__(self, root_path=Path.cwd(), path='.', experiment='Experiment', agent='Agent', task='Task', seed=-1):
 
         self.experiment = experiment
         self.agent = agent.replace('Agents.', '').replace('Agent', '')
         self.task = task
         self.seed = seed
 
-        self.log_path = Path(f'{root_path}/Benchmarking/{experiment}/{self.agent}')
-        self.log_path.mkdir(parents=True, exist_ok=True)
+        self.path = root_path / path.replace('Agents.', '') / 'Video'
+        self.path.mkdir(parents=True, exist_ok=True)
 
         self.logs = {}
         self.counts = {}
@@ -116,7 +116,7 @@ class Logger:
         for log_name in ['agent', 'task', 'seed', 'experiment']:
             logs[log_name] = getattr(self, log_name)
 
-        file_name = self.log_path / f'{name}_{self.task}_{self.seed}_{self.experiment}.csv'
+        file_name = f'{self.path}/{self.task}_{self.seed}.csv'
         write_header = True
         if file_name.exists():
             try:
@@ -138,7 +138,7 @@ class Logger:
     # TODO add log_weights_and_biases / log_wandb too
     def log_tensorboard(self, logs, name):
         if self.tensorboard_writer is None:
-            self.tensorboard_writer = SummaryWriter(self.log_path / 'TensorBoard')
+            self.tensorboard_writer = SummaryWriter(f'{self.path}/{self.task}_{self.seed}_TensorBoard.csv')
 
         for key in logs:
             if key != 'step' and key != 'episode':

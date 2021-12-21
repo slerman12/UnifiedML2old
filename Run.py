@@ -5,7 +5,6 @@
 import hydra
 from hydra.utils import instantiate
 
-import os
 from pathlib import Path
 
 import Utils
@@ -25,7 +24,7 @@ def main(args):
 
     Utils.set_seed_everywhere(args.seed)
 
-    args.root_path, root_path = os.getcwd(), Path.cwd()  # Hydra doesn't support Path types
+    save_path = Path(args.save_path)
 
     # All agents can convert seamlessly between RL or classification
 
@@ -34,20 +33,20 @@ def main(args):
 
     if args.RL:
         # Reinforcement Learning
-        reinforce(args, root_path)
+        reinforce(args, save_path)
     else:
         # Classification
-        classify(args, root_path)
+        classify(args, save_path)
 
 
-def reinforce(args, root_path):
+def reinforce(args, save_path):
     # Train, test environments
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
     generalize = instantiate(args.environment, train=False, seed=2)
 
     # Load
-    if (root_path / 'Saved.pt').exists():
-        agent, replay = Utils.load(root_path, 'agent', 'replay')
+    if save_path.exists():
+        agent, replay = Utils.load(save_path, 'agent', 'replay')
 
         agent = Utils.to_agent(agent).to(args.device)
     else:
@@ -93,7 +92,7 @@ def reinforce(args, root_path):
                 replay.add(store=True)  # Only store full episodes
 
             if args.save_session:
-                Utils.save(root_path, agent=agent, replay=replay)
+                Utils.save(save_path, agent=agent, replay=replay)
 
         if converged:
             break
@@ -113,10 +112,10 @@ def reinforce(args, root_path):
                         logger.log_tensorboard(logs, 'Train')
 
 
-def classify(args, root_path):
+def classify(args, save_path):
     # Agent
-    agent = Utils.load(root_path,
-                       'agent') if (root_path / 'Saved.pt').exists() \
+    agent = Utils.load(save_path,
+                       'agent') if save_path.exists() \
         else instantiate(args.agent)  # An instance of DQNDPGAgent, for example
 
     # Convert to classifier
@@ -141,7 +140,7 @@ def classify(args, root_path):
 
             # Save
             if args.save_session:
-                Utils.save(root_path, agent=agent)
+                Utils.save(save_path, agent=agent)
 
         # Train
         logs = agent.train().update(replay)

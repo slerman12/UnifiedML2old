@@ -24,15 +24,15 @@ def set_seed_everywhere(seed):
 
 
 # Saves Torch objects to root
-def save(root_path, **to_save):
-    save_path = root_path / 'Saved.pt'
+def save(path, **to_save):
+    save_path = path.replace('Agents.', '') / 'Saved.pt'
     with save_path.open('wb') as f:
         torch.save(to_save, f)
 
 
 # Loads Torch objects from root
-def load(root_path, *keys):
-    save_path = root_path / 'Saved.pt'
+def load(path, *keys):
+    save_path = path.replace('Agents.', '') / 'Saved.pt'
     print(f'resuming: {save_path}')
     with save_path.open('rb') as f:
         loaded = torch.load(f)

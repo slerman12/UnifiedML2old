@@ -16,12 +16,12 @@ from torch.utils.data import IterableDataset
 
 
 class ExperienceReplay:
-    def __init__(self, batch_size, num_workers, root_path, capacity, save,
-                 action_spec, obs_spec=None, nstep=0, discount=1):
+    def __init__(self, batch_size, num_workers, capacity, action_spec, save, task, seed,
+                 obs_spec=None, nstep=0, discount=1, root_path=Path.cwd(), path='.'):
 
         # Episode storage
 
-        self.store_path = Path(root_path) / 'Buffer'
+        self.store_path = Path(root_path) / path / f'{task}_{seed}_Buffer'
         self.store_path.mkdir(exist_ok=True)
 
         self.num_episodes = 0
