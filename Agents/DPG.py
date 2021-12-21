@@ -27,8 +27,8 @@ class DPGAgent(torch.nn.Module):
                  ):
         super().__init__()
 
-        self.discrete = discrete  # Discrete supported!
-        self.RL = RL  # And classification...
+        self.discrete = discrete
+        self.RL = RL
         self.device = device
         self.log = log
         self.birthday = time.time()

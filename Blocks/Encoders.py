@@ -83,6 +83,8 @@ class CNNEncoder(nn.Module):
         h = self.CNN(obs)
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
+        if tuple(h.shape[-3:]) != self.repr_shape:
+            print(tuple(h.shape[-3:]), self.repr_shape)
         assert tuple(h.shape[-3:]) == self.repr_shape
 
         if flatten:
