@@ -32,11 +32,10 @@ class CNNEncoder(nn.Module):
         self.pixels = pixels
 
         # CNN
-        self.CNN = nn.Sequential(nn.Conv2d(in_channels, out_channels, 3, stride=2),
-                                 nn.ReLU(),
-                                 *sum([(nn.Conv2d(out_channels, out_channels, 3, stride=1),
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
+                                                  out_channels, 3, stride=2 if i == 0 else 1),
                                         nn.ReLU())
-                                       for _ in range(depth)], ()))
+                                       for i in range(depth + 1)], ()))
 
         # Initialize model
         self.init(optim_lr, target_tau)
@@ -93,37 +92,14 @@ class CNNEncoder(nn.Module):
 
 class ResidualBlockEncoder(CNNEncoder):
     """
-    Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
-    """
-
-    def __init__(self, obs_shape, out_channels=32, bias=False, padding=1, kernel_size=1,
-                 convolutions=1, residual_blocks=1, batch_norm=True,
-                 pixels=True, flatten=True,
-                 optim_lr=None, target_tau=None):
-
-        super().__init__(obs_shape=obs_shape, out_channels=out_channels,
-                         bias=bias, padding=padding, kernel_size=kernel_size,
-                         convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
-                         pixels=pixels, flatten=flatten)
-
-        self.init(obs_shape=obs_shape, out_channels=out_channels,
-                  bias=bias, padding=padding, kernel_size=kernel_size,
-                  convolutions=convolutions, residual_blocks=residual_blocks, batch_norm=batch_norm,
-                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
-
-
-class ResidualBlockEncoder(CNNEncoder):
-    """
     Residual block-based CNN encoder,
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf).
     """
 
-    def __init__(self, obs_shape, out_channels=64, pixels=True, flatten=True, num_blocks=1,
+    def __init__(self, obs_shape, out_channels=64, num_blocks=1, pixels=True,
                  optim_lr=None, target_tau=None):
 
-        super().__init__(obs_shape, out_channels, pixels=pixels, flatten=flatten)
-
-        assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
+        super().__init__(obs_shape, out_channels, 0, pixels)
 
         # Dimensions
         in_channels = obs_shape[0]
@@ -136,53 +112,38 @@ class ResidualBlockEncoder(CNNEncoder):
                                  *[ResidualBlock(out_channels, out_channels)
                                    for _ in range(num_blocks)])
 
-        if flatten:
-            self.neck = nn.Flatten(-3)
-
-        self.init(obs_shape=obs_shape, out_channels=out_channels, num_blocks=num_blocks,
-                  pixels=pixels, flatten=flatten, target_tau=target_tau, optim_lr=optim_lr)
+        self.init(optim_lr, target_tau)
 
 
 """
 Creators: As in, "to create." 
 
-Generative models that plan, forecast, and imagine.
+Generative models that can plan, forecast, and imagine.
 """
 
 
+# TODO can probably delete this one
 class IsotropicCNNEncoder(CNNEncoder):
     """
     Isotropic (no bottleneck / dimensionality conserving) CNN encoder,
-    e.g., SPR(?) (https://arxiv.org/pdf/2007.05929.pdf).
     """
 
-    def __init__(self, obs_shape, context_dim=0, out_channels=None, depth=0, pixels=False, flatten=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=None, depth=0, pixels=False,
                  optim_lr=None, target_tau=None):
 
-        super().__init__()
-
-        assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
+        super().__init__(obs_shape, out_channels, 0, pixels)
 
         # Dimensions
         in_channels = obs_shape[0] + context_dim
         out_channels = obs_shape[0] if out_channels is None else out_channels
 
         # CNN
-        self.CNN = nn.Sequential(nn.Conv2d(in_channels, out_channels, (3, 3), padding=1),
-                                 nn.BatchNorm2d(out_channels),
-                                 nn.ReLU(),
-                                 *sum([(nn.Conv2d(out_channels, out_channels, (3, 3), padding=1),
-                                        nn.BatchNorm2d(out_channels),
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels, out_channels, 3, 'same'),
+                                        nn.BatchNorm2d(out_channels) if i < depth else nn.Identity(),
                                         nn.ReLU())
-                                       for _ in range(depth)], ()),
-                                 nn.Conv2d(out_channels, out_channels, (3, 3), padding=1),
-                                 nn.ReLU())
+                                       for i in range(depth + 1)], ()))
 
-        if flatten:
-            self.neck = nn.Flatten(-3)
-
-        self.init(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, depth=depth,
-                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
+        self.init(optim_lr, target_tau)
 
         # Isotropic
         assert obs_shape[-2] == self.repr_shape[1]
@@ -195,17 +156,15 @@ class IsotropicResidualBlockEncoder(CNNEncoder):
     e.g. Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf)
     """
 
-    def __init__(self, obs_shape, context_dim=0, out_channels=None, num_blocks=1, pixels=False, flatten=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=None, num_blocks=1, pixels=False,
                  optim_lr=None, target_tau=None):
-        super().__init__()
-
-        assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
+        super().__init__(obs_shape, out_channels, 0, pixels)
 
         # Dimensions
         in_channels = obs_shape[0] + context_dim
         out_channels = obs_shape[0] if out_channels is None else out_channels
 
-        # CNN  TODO this is the only difference with ResidualBlockEncoder
+        # CNN  Note: this is the only difference with ResidualBlockEncoder
         pre_residual = nn.Sequential(nn.Conv2d(in_channels, out_channels, 3, 2, 1, bias=False),
                                      nn.BatchNorm2d(out_channels))
 
@@ -215,11 +174,7 @@ class IsotropicResidualBlockEncoder(CNNEncoder):
                                  *[ResidualBlock(out_channels, out_channels)
                                    for _ in range(num_blocks)])
 
-        if flatten:
-            self.neck = nn.Flatten(-3)
-
-        self.init(obs_shape=obs_shape, context_dim=context_dim, out_channels=out_channels, num_blocks=num_blocks,
-                  pixels=pixels, flatten=flatten, optim_lr=optim_lr, target_tau=target_tau)
+        self.init(optim_lr, target_tau)
 
         # Isotropic
         assert obs_shape[-2] == self.repr_shape[1]
