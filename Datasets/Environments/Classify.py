@@ -11,7 +11,7 @@ import torchvision
 import torchvision.transforms as transforms
 from dm_env import specs, StepType
 
-from Datasets.Environments import Wrappers
+from Datasets.Environments import _Wrappers
 
 
 class ClassificationEnvironment:
@@ -33,12 +33,12 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch) for batch in next(self.batches)]
-        time_step = Wrappers.ExtendedTimeStep(observation=x, label=y)
+        time_step = _Wrappers.ExtendedTimeStep(observation=x, label=y)
         return time_step
 
     def step(self, action):
         x, y = [np.array(batch) for batch in next(self.batches)]
-        time_step = Wrappers.ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y)
+        time_step = _Wrappers.ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y)
         return time_step
 
     def observation_spec(self):
@@ -75,7 +75,7 @@ def make_env(task, batch_size=1, num_workers=1, train=True, **kwargs):
 
     env = ClassificationEnvironment(experiences, batch_size, num_workers)
 
-    env = Wrappers.ActionSpecWrapper(env, env.action_spec().dtype, discrete=True)
-    env = Wrappers.AugmentAttributesWrapper(env)
+    env = _Wrappers.ActionSpecWrapper(env, env.action_spec().dtype, discrete=True)
+    env = _Wrappers.AugmentAttributesWrapper(env)
 
     return env

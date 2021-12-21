@@ -43,7 +43,7 @@ seed: 1
 experiment: experiment_name
 
 environment:
-  _target_: Datasets.Play.Environment
+  _target_: Datasets.Play.Environments
   task_name: ${task_name}
   frame_stack: ${frame_stack}
   action_repeat: ${action_repeat}
@@ -64,6 +64,7 @@ agent:
   lr: ${lr}
   target_tau: 0.01
   discrete: ${discrete}
+  RL: ${RL}
   device: ${device}
   log: ${log_tensorboard}
 

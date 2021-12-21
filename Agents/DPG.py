@@ -23,11 +23,12 @@ class DPGAgent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, device, log, one_hot=False  # On-boarding
+                 discrete, RL, device, log, one_hot=False  # On-boarding
                  ):
         super().__init__()
 
         self.discrete = discrete  # Discrete supported!
+        self.RL = RL  # Classification too!!
         self.device = device
         self.log = log
         self.birthday = time.time()
@@ -132,10 +133,10 @@ class DPGAgent(torch.nn.Module):
             batch, self.device)
         traj_o, traj_a, traj_r, traj_l = traj
 
-        logs = {'episode': self.episode,
-                'step': self.step,
-                'batch_reward': reward.mean().item()} if self.log \
+        logs = {'episode': self.episode, 'step': self.step} if self.log \
             else None
+
+        # "Imitate Parents" / "Go To School" / "Learn By Instruction And/Or Empathy"
 
         # "Imagine" / "Envision"
 
