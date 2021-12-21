@@ -113,7 +113,7 @@ class ResidualBlockEncoder(CNNEncoder):
         if pre_residual:
             pre = Residual(pre)
 
-        # CNN
+        # CNN ResNet-ish
         self.CNN = nn.Sequential(pre,
                                  nn.ReLU(),  # MaxPool after this?
                                  *[ResidualBlock(hidden_channels if i == 0 else self.out_channels,

@@ -24,11 +24,11 @@ class ResidualBlock(nn.Module):
         super().__init__()
 
         pre_residual = nn.Sequential(nn.Conv2d(in_channels, out_channels,
-                                               kernel_size=3, stride=stride, bias=False),
+                                               kernel_size=3, padding=1, stride=stride, bias=False),
                                      nn.BatchNorm2d(out_channels),
                                      nn.ReLU(inplace=True),
                                      nn.Conv2d(out_channels, out_channels,
-                                               kernel_size=3, bias=False),
+                                               kernel_size=3, padding=1, bias=False),
                                      nn.BatchNorm2d(out_channels))
 
         self.Residual_block = nn.Sequential(Residual(pre_residual, down_sample),
