@@ -1,13 +1,12 @@
-import glob
 import sys
+from typing import MutableSequence
+import glob
 from pathlib import Path
 
-import os
-from typing import MutableSequence
-
-import pandas as pd
-os.environ['NUMEXPR_MAX_THREADS'] = '8'
 import numpy as np
+import os
+os.environ['NUMEXPR_MAX_THREADS'] = '8'
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns
