@@ -28,7 +28,6 @@ envs = []
 tasks = []
 
 for file in files:
-    print(file.split('/')[1:])
     agent_experiment, env, task_seed_eval = file.split('/')[2:]
 
     # Parse files
@@ -37,9 +36,7 @@ for file in files:
     agent_experiment = agent_experiment.split('_')
     agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
 
-    print(experiment, experiments)
-
-    if eval != 'Eval':
+    if 'Eval' not in eval:
         continue
     
     if experiment not in experiments:
