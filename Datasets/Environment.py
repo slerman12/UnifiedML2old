@@ -10,11 +10,11 @@ from Datasets.Suites import DMC, Atari, Classify
 
 class Environment:
     def __init__(self, task_name, frame_stack, action_repeat, max_episode_frames,
-                 truncate_episode_frames, seed, train=True, suite="DMC"):
+                 truncate_episode_frames, seed, train=True, suite="DMC", batch_size=1, num_workers=1):
         self.suite = suite
 
         self.env = self.raw_env.make(task_name, frame_stack, action_repeat, max_episode_frames,
-                                     truncate_episode_frames, train, seed)
+                                     truncate_episode_frames, train, seed, batch_size, num_workers)
 
         self.env.reset()
 

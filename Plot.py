@@ -1,30 +1,34 @@
+# Copyright (c) Sam Lerman. All Rights Reserved.
+#
+# This source code is licensed under the MIT license found in the
+# MIT_LICENSE file in the root directory of this source tree.
 import sys
 from typing import MutableSequence
 import glob
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 import numpy as np
 import os
 os.environ['NUMEXPR_MAX_THREADS'] = '8'  # To prevent Pandas warning
 import pandas as pd
 
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-
-def plot(path='./', experiments=None, environments=None, tasks=None, agents=None):
+def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
 
     path_dirs = path.split('/')
     path_dir = Path('/'.join(path_dirs[:-1]).replace('Agents.', ''))
     path_dir.mkdir(parents=True, exist_ok=True)
     path = path_dir / path_dirs[-1]
 
-    if experiments is None and environments is None and tasks is None and agents is None:
+    if experiments is None and suites is None and tasks is None and agents is None:
         return
     if experiments is not None and not isinstance(experiments, MutableSequence):
         experiments = [experiments]
-    if environments is not None and not isinstance(environments, MutableSequence):
-        environments = [environments]
+    if suites is not None and not isinstance(suites, MutableSequence):
+        suites = [suites]
     if tasks is not None and not isinstance(tasks, MutableSequence):
         tasks = [tasks]
     if agents is not None and not isinstance(agents, MutableSequence):
@@ -40,10 +44,10 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     files = glob.glob('./**/*.csv', recursive=True)
 
     df_list = []
-    tasks_ = set()
+    suite_tasks = set()
 
     for file in files:
-        agent_experiment, environment, task_seed_eval = file.split('/')[2:]
+        agent_experiment, suite, task_seed_eval = file.split('/')[2:]
 
         # Parse files
         task_seed = task_seed_eval.split('_')
@@ -55,7 +59,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
             continue
         if experiments is not None and experiment not in experiments:
             continue
-        if environments is not None and environment not in environments:
+        if suites is not None and suite not in suites:
             continue
         if tasks is not None and task not in tasks:
             continue
@@ -64,32 +68,32 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
         csv = pd.read_csv(file)
 
-        task = task + ' (' + environment.upper() + ')'
+        suite_task = task + ' (' + suite.upper() + ')'
 
         csv['Agent'] = agent + ' (' + experiment + ')'
-        csv['Task'] = task
+        csv['Task'] = suite_task
 
         df_list.append(csv)
-        tasks_.update({task})
+        suite_tasks.update({suite_task})
 
     if len(df_list) == 0:
         return
 
     df = pd.concat(df_list, ignore_index=True)
-    tasks_ = np.sort(list(tasks_))
+    suite_tasks = np.sort(list(suite_tasks))
 
     # Dynamically compute num columns
-    num_cols = int(np.floor(np.sqrt(len(tasks_))))
-    while len(tasks_) % num_cols != 0:
+    num_cols = int(np.floor(np.sqrt(len(suite_tasks))))
+    while len(suite_tasks) % num_cols != 0:
         num_cols -= 1
-    assert len(tasks_) % num_cols == 0, f'{tasks_.shape[0]} tasks, {num_cols} columns invalid'
+    assert len(suite_tasks) % num_cols == 0, f'{suite_tasks.shape[0]} tasks, {num_cols} columns invalid'
 
-    num_rows = len(tasks_) // num_cols
+    num_rows = len(suite_tasks) // num_cols
 
     fig, axs = plt.subplots(num_rows, num_cols, figsize=(4 * num_cols, 3 * num_rows))
 
     # Plot
-    for i, task in enumerate(tasks_):
+    for i, task in enumerate(suite_tasks):
         data = df[df['Task'] == task]
         task = ' '.join([task_name.capitalize() for task_name in task.split('_')])
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]

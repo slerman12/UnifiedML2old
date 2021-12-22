@@ -59,6 +59,9 @@ class DPGAgent(torch.nn.Module):
         self.exploit_schedule = 1  # Q_Pi utility non-entropy
         self.temp = 1  # Q_Pi entropy
 
+        if self.discrete:
+            self.actions = torch.eye(action_shape[-1], device=device).expand(obs_shape[0], -1, -1)
+
         # Birth
 
     # "Play"
@@ -67,48 +70,17 @@ class DPGAgent(torch.nn.Module):
             obs = torch.as_tensor(obs, device=self.device).unsqueeze(0)
 
             # "See"
-            obs = self.encoder(obs)
-
-            # Should also be able to do:
-            # actions = None if self.discrete else self.actor(obs, self.step).sample(self.num_actions)
-            # actions_log_prob = 0 if self.discrete else Pi.log_prob(actions).sum(-1, True)
-            # Or:
-            # Pi = self.actor(self.critic(obs), self.step) if self.discrete else self.actor(obs, self.step)
-            # action = Pi.sample()  # return this
+            actor_input = self.encoder(obs)
 
             if self.discrete:
-                actions = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
-                actions_log_prob = 0
-            else:
-                Pi = self.actor(obs, self.step)
-                # actions = Pi.sample(self.num_actions) if self.num_actions > 1 \
-                #     else Pi.mean
-                actions = Pi.sample(self.num_actions)
-                actions_log_prob = Pi.log_prob(actions).sum(-1, True)
+                # "Consider options"
+                actor_input = self.critic(actor_input, self.actions)
 
-            Q = self.critic(obs, actions)
+            Pi = self.actor(actor_input, self.step)
 
-            # prob = Pi.log_prob(Q.actions).sum(-1, True).exp()
-            # u = torch.softmax((1 - temp) * Q.sample() + temp * Q.stddev, -1)
-            # Q_Pi = Categorical((u + prob) / 2 / temp, -1)
-
-            # def creator(Q, Pi, meta):
-            #     prob = Pi.log_prob(Q.actions).sum(-1, True).exp()
-            #     u = torch.softmax(meta.opportunism * Q.sample() + (1 - meta.opportunism) * Q.stddev, -1)
-            #     Q_Pi = Categorical((u + prob) / 2 / meta.discovery, -1)
-            #     return Q_Pi
-
-            exploit_factor = Utils.schedule(self.exploit_schedule, self.step)
-            q = Q.sample() if self.sample_q else Q.mean
-            u = exploit_factor * q + (1 - exploit_factor) * Q.stddev
-            u_logits = u - u.max(dim=-1, keepdim=True)[0]
-            Q_Pi = Categorical(logits=u_logits / self.temp + actions_log_prob)
-
-            action = Utils.gather_indices(Q.action,
-                                          Q_Pi.sample() if self.training else torch.argmax(u, -1), 1).squeeze(1)
-
-            # Q_Pi = self.creator(self.critic(obs, actions), self.step, temp, sample_q, actions_log_prob)
-            # action = Q_Pi.sample() if self.training else Q_Pi.best
+            action = Pi.sample() if self.training \
+                else Pi.best if self.discrete \
+                else Pi.mean
 
             if self.training:
                 self.step += 1
@@ -118,7 +90,7 @@ class DPGAgent(torch.nn.Module):
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
-                action = torch.argmax(action, -1)
+                action = torch.argmax(action, -1)  # Since using one-hots
 
             return action
 

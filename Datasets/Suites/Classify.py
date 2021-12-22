@@ -52,7 +52,8 @@ class ClassificationEnvironment:
         return specs.BoundedArray((self.num_classes,), self.action.dtype, None, None, 'action')
 
 
-def make_env(task, batch_size=1, num_workers=1, train=True, **kwargs):
+def make_env(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
+             train=True, seed=1, batch_size=1, num_workers=1):
 
     transform = transforms.Compose(
         [transforms.ToTensor(),
@@ -60,18 +61,25 @@ def make_env(task, batch_size=1, num_workers=1, train=True, **kwargs):
 
     assert task in torchvision.datasets.__all__
 
+    # Options:
+    # torchvision.datasets.__all__ =
+    # ('LSUN', 'LSUNClass',
+    #  'ImageFolder', 'DatasetFolder', 'FakeData',
+    #  'CocoCaptions', 'CocoDetection',
+    #  'CIFAR10', 'CIFAR100', 'EMNIST', 'FashionMNIST', 'QMNIST',
+    #  'MNIST', 'KMNIST', 'STL10', 'SVHN', 'PhotoTour', 'SEMEION',
+    #  'Omniglot', 'SBU', 'Flickr8k', 'Flickr30k',
+    #  'VOCSegmentation', 'VOCDetection', 'Cityscapes', 'ImageNet',
+    #  'Caltech101', 'Caltech256', 'CelebA', 'WIDERFace', 'SBDataset',
+    #  'VisionDataset', 'USPS', 'Kinetics400', 'HMDB51', 'UCF101',
+    #  'Places365')
+
     dataset = __import__(task, fromlist=['torchvision.datasets'])
 
-    if train:
-        experiences = dataset(root='./Raw',
-                              train=True,
-                              download=True,
-                              transform=transform)
-    else:
-        experiences = dataset(root='./Raw',
-                              train=False,
-                              download=True,
-                              transform=transform)
+    experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
+                          train=train,
+                          download=True,
+                          transform=transform)
 
     env = ClassificationEnvironment(experiences, batch_size, num_workers)
 

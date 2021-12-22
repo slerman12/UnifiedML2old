@@ -51,6 +51,8 @@ environment:
   truncate_episode_frames: 1000
   seed: ${seed}
   suite: ${suite}
+  batch_size: ${batch_size}
+  num_workers: ${replay.num_workers}
 
 agent:
   _target_: ${Agent}
@@ -59,7 +61,7 @@ agent:
   feature_dim: ${feature_dim}
   hidden_dim: 1024
   explore_steps: 2000
-  stddev_schedule: ${stddev_schedule} # Specified in task/easy,medium,hard
+  stddev_schedule: ${stddev_schedule} # Specified in task/100K,500K,etc.
   stddev_clip: 0.3
   lr: ${lr}
   target_tau: 0.01
@@ -70,7 +72,7 @@ agent:
 
 replay:
   _target_: Datasets.ExperienceReplay.ExperienceReplay
-  path: ./Datasets/ReplayMemory/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_ReplayMemories
+  path: ./Datasets/ReplayBuffer/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Memories
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000
@@ -95,7 +97,7 @@ plotting:
   _target_: Plot.plot
   path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Plot.png
   experiments: ${experiment}
-  environments: null
+  suites: null
   tasks: null
   agents: null
 
