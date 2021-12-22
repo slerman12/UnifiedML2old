@@ -77,6 +77,9 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         df_list.append(csv)
         tasks_.update({task})
 
+    if len(df_list) == 0:
+        return
+
     df = pd.concat(df_list, ignore_index=True)
     tasks_ = np.sort(list(tasks_))
 
