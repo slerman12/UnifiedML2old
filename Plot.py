@@ -19,7 +19,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     path_dir.mkdir(parents=True, exist_ok=True)
     path = path_dir / path_dirs[-1]
 
-    print(experiments)
+    print(type(experiments))
     if experiments is None and environments is None and tasks is None and agents is None:
         return
     if experiments is not None and not isinstance(experiments, list):
