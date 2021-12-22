@@ -25,7 +25,7 @@ files = glob.glob('./**/*.csv', recursive=True)
 
 df_list = []
 envs = []
-tasks = {}
+tasks = set()
 
 for file in files:
     agent_experiment, env, task_seed_eval = file.split('/')[2:]
