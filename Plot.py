@@ -64,9 +64,9 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
         csv = pd.read_csv(file)
 
-        task = task + '(' + environment + ')'
+        task = task + ' (' + environment.upper() + ')'
 
-        csv['Agent'] = agent + '(' + experiment + ')'
+        csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = task
 
         df_list.append(csv)
