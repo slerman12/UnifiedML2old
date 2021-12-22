@@ -51,12 +51,11 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1]
         agent_experiment = agent_experiment.split('_')
         agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
-
+        print(agent_experiment, environment, task_seed_eval)
         if 'Eval' not in eval:
             continue
 
         if experiments is not None and experiment not in experiments:
-            print(experiments, experiment)
             continue
 
         if environments is not None and environment not in environments:
