@@ -41,25 +41,17 @@ class DPGAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      ensemble_size=2,
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                            discrete=discrete,
-                                            stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                            discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
 
-        self.num_actions = 1
-        self.sample_q = False
+        self.num_actions = action_shape[-1] if discrete else 1
         self.Q_reduction = 'min'
         self.dpg_Q_reduction = 'min'
         self.entropy_temp = 0  # Q current entropy
-        self.stddev_schedule = stddev_schedule  # Pi entropy
         self.exploit_schedule = 1  # Q_Pi utility non-entropy
-        self.temp = 1  # Q_Pi entropy
-
-        if self.discrete:
-            self.actions = torch.eye(action_shape[-1], device=device).expand(obs_shape[0], -1, -1)
 
         # Birth
 
@@ -120,7 +112,7 @@ class DPGAgent(torch.nn.Module):
                                                   obs, action, reward, discount, next_obs,
                                                   self.step, self.num_actions, self.Q_reduction,
                                                   self.exploit_schedule, self.entropy_temp,
-                                                  logs=logs)
+                                                  logs=logs)  # TODO Q_Pi Temp
 
         # Update critic
         Utils.optimize(critic_loss,

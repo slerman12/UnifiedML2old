@@ -18,10 +18,11 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         else:
             if actor.discrete:
                 # One-hots
-                action = Utils.one_hot(action, actor.action_dim)
+                next_actions = torch.eye(actor.action_dim, device=obs.device).expand(obs.shape[0], -1, -1)
                 next_actions_log_probs = 0
             else:
                 # Sample actions  Note: original DDPG used EMA target for this
+                # next_Pi = actor.target(next_obs, step)
                 next_Pi = actor(next_obs, step)
                 next_actions = next_Pi.rsample(num_actions)
                 next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1, keepdim=True)

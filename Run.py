@@ -18,7 +18,7 @@ cudnn.benchmark = True
 # hyper-param cfg files located in ./Hyperparams
 
 @hydra.main(config_path='Hyperparams', config_name='cfg')
-def main(args):
+def init(args):
 
     # Set seeds
     Utils.set_seed_everywhere(args.seed)
@@ -97,4 +97,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    main()
+    init()
