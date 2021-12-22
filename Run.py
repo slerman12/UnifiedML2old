@@ -77,6 +77,9 @@ def reinforce(args, save_path):
                 logger.log(logs, 'Eval')
             logger.dump_logs('Eval')
 
+            if args.plot:
+                instantiate(args.plotting)
+
             if args.log_video:
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
