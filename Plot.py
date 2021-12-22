@@ -6,9 +6,8 @@ import os
 from typing import MutableSequence
 
 import pandas as pd
-import numpy as np
-
 os.environ['NUMEXPR_MAX_THREADS'] = '8'
+import numpy as np
 
 import matplotlib.pyplot as plt
 import seaborn as sns
