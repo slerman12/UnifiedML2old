@@ -25,7 +25,7 @@ files = glob.glob('./**/*.csv', recursive=True)
 
 df_list = []
 envs = []
-tasks = []
+tasks = {}
 
 for file in files:
     agent_experiment, env, task_seed_eval = file.split('/')[2:]
@@ -52,7 +52,7 @@ for file in files:
 
     df_list.append(csv)
     envs.append(env)
-    tasks.append(task)
+    tasks.update({task})
     
 df = pd.concat(df_list, ignore_index=True)
 tasks = np.sort(tasks)
