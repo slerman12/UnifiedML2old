@@ -100,6 +100,8 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
 
+        print(task)
+
         sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
 
