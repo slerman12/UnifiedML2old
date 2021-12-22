@@ -2,13 +2,14 @@ import glob
 import sys
 from pathlib import Path
 
+import os
+os.environ['NUMEXPR_MAX_THREADS'] = '8'
+
 import pandas as pd
 import numpy as np
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
-os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 
 def plot(path='./', experiments=None, environments=None, tasks=None, agents=None):
