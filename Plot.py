@@ -5,10 +5,10 @@ from pathlib import Path
 import os
 from typing import MutableSequence
 
-os.environ['NUMEXPR_MAX_THREADS'] = '8'
-
 import pandas as pd
 import numpy as np
+
+os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -31,7 +31,6 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         tasks = [tasks]
     if agents is not None and not isinstance(agents, MutableSequence):
         agents = [agents]
-    print(experiments)
 
     # Style
     plt.style.use('bmh')
