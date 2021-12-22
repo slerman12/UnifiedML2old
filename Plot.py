@@ -10,6 +10,9 @@ import seaborn as sns
 
 def plot(path='./', experiments=None, environments=None, tasks=None, agents=None):
 
+    if experiments is None and environments is None and tasks is None and agents is None:
+        return
+
     print('Experiments:', *experiments)
 
     # Style
@@ -36,16 +39,16 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         if 'Eval' not in eval:
             continue
 
-        if experiment not in experiments and experiments is not None:
+        if experiments is not None and experiment not in experiments:
             continue
 
-        if environment not in environments and environments is not None:
+        if environments is not None and environment not in environments:
             continue
 
-        if task not in tasks and tasks is not None:
+        if tasks is not None and task not in tasks:
             continue
 
-        if agent not in agents and agents is not None:
+        if agents is not None and agent not in agents:
             continue
 
         print('Plotting', agent, experiment, environment, task, seed)
