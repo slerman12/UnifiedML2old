@@ -11,7 +11,7 @@ import seaborn as sns
 
 def plot(path='./', experiments=None, environments=None, tasks=None, agents=None):
 
-    path = Path(path)
+    path = Path('/'.join(path.split('/')[:-1]))
     path.mkdir(parents=True, exist_ok=True)
 
     if experiments is None and environments is None and tasks is None and agents is None:
