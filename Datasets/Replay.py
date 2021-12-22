@@ -21,7 +21,7 @@ class ExperienceReplay:
 
         # Episode storage
 
-        self.store_path = Path(path)
+        self.store_path = Path(path + '_' + str(datetime.datetime.now()))
         self.store_path.mkdir(exist_ok=True, parents=True)
 
         self.num_episodes = 0
