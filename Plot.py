@@ -69,7 +69,7 @@ fig, axs = plt.subplots(num_rows, num_cols, figsize=(4 * num_cols, 3 * num_rows)
 
 # Plot
 for i, task in enumerate(tasks):
-    data = df[df['task'] == task]
+    data = df[df['Task'] == task]
     task = ' '.join([task_name.capitalize() for task_name in task.split('_')])
     data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
