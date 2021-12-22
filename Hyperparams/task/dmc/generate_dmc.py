@@ -18,7 +18,14 @@ for task in easy + medium + hard:
   - _self_
 
 suite: dmc
-task_name: {}""".format('500K' if task in easy else '1M500K' if task in medium else '15M', task))
+task_name: {}
+
+hydra:
+  job:
+    env_set:
+      # Environment variables for MuJoCo
+      MKL_SERVICE_FORCE_INTEL: '1'
+      MUJOCO_GL: 'egl'""".format('500K' if task in easy else '1M500K' if task in medium else '15M', task))
     f.close()
     out += ' "' + task.lower() + '"'
 print(out)

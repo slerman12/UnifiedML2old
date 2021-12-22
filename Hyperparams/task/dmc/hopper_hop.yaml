@@ -4,3 +4,10 @@ defaults:
 
 suite: dmc
 task_name: hopper_hop
+
+hydra:
+  job:
+    env_set:
+      # Environment variables for MuJoCo
+      MKL_SERVICE_FORCE_INTEL: '1'
+      MUJOCO_GL: 'egl'
