@@ -55,7 +55,7 @@ for file in files:
     tasks.update({task})
     
 df = pd.concat(df_list, ignore_index=True)
-tasks = np.sort(tasks)
+tasks = np.sort(list(tasks))
 
 # Dynamically compute num columns
 num_cols = int(np.floor(np.sqrt(len(tasks))))
