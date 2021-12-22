@@ -9,12 +9,10 @@ import seaborn as sns
 
 
 # Pass in experiments to plot
-try:
-    experiments = sys.argv[1:]
-except:
-    experiments = ['Experiment']
+experiments = sys.argv[1:] if len(sys.argv) > 1 \
+    else ['Experiment']
 
-print('Experiments', *experiments)
+print('Experiments:', *experiments)
 
 # Style
 plt.style.use('bmh')
