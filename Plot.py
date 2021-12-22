@@ -22,16 +22,16 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     if experiments is None and environments is None and tasks is None and agents is None:
         return
 
-    if not isinstance(experiments, list):
+    if experiments is not None and not isinstance(experiments, list):
         experiments = [experiments]
 
-    if not isinstance(environments, list):
+    if environments is not None and not isinstance(environments, list):
         environments = [environments]
 
-    if not isinstance(tasks, list):
+    if tasks is not None and not isinstance(tasks, list):
         tasks = [tasks]
 
-    if not isinstance(agents, list):
+    if agents is not None and not isinstance(agents, list):
         agents = [agents]
 
     # Style
@@ -61,7 +61,6 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
             continue
 
         if environments is not None and environment not in environments:
-            print(environments)
             continue
 
         if tasks is not None and task not in tasks:
