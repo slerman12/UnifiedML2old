@@ -50,11 +50,9 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
         # Parse files
         task_seed = task_seed_eval.split('_')
-        task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1]
+        task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1].replace('.csv', '')
         agent_experiment = agent_experiment.split('_')
         agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
-        print(agent_experiment, environment, task_seed_eval)
-        print(agent, experiment, environment, task, seed, eval)
         if 'Eval' not in eval:
             continue
 
