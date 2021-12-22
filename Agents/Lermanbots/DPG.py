@@ -47,7 +47,7 @@ class DPGAgent(torch.nn.Module):
                                             discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
 
-        self.num_actions = action_shape[-1] if discrete else 1
+        self.num_actions = action_shape[-1] if self.discrete else 1
         self.Q_reduction = 'min'
         self.dpg_Q_reduction = 'min'
         self.entropy_temp = 0  # Q current entropy
@@ -63,7 +63,7 @@ class DPGAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            Pi = self.actor(obs, self.step)
+            Pi = self.actor(obs, self.step)  # actor
 
             action = Pi.sample() if self.training \
                 else Pi.mean

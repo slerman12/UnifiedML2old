@@ -272,4 +272,4 @@ class Experiences(IterableDataset):
     def __iter__(self):
         # Keep fetching, sampling, and building batches
         while True:
-            yield self.fetch_sample_process()  # Yields a single experience (or NaNs)
+            yield self.fetch_sample_process()  # Yields a single experience

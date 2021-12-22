@@ -1,4 +1,4 @@
-RAINBOW_ENVS = [
+ATARI_ENVS = [
     'Alien', 'Amidar', 'Assault', 'Asterix', 'BankHeist', 'BattleZone',
     'Boxing', 'Breakout', 'ChopperCommand', 'CrazyClimber', 'DemonAttack',
     'Freeway', 'Frostbite', 'Gopher', 'Hero', 'Jamesbond', 'Kangaroo', 'Krull',
@@ -7,7 +7,7 @@ RAINBOW_ENVS = [
 ]
 
 out = ""
-for task in RAINBOW_ENVS:
+for task in ATARI_ENVS:
     f = open(f"./{task.lower()}.yaml", "w")
     f.write(r"""defaults:
   - 100K

@@ -18,7 +18,7 @@ cudnn.benchmark = True
 # hyper-param cfg files located in ./Hyperparams
 
 @hydra.main(config_path='Hyperparams', config_name='cfg')
-def init(args):
+def main(args):
 
     # Set seeds
     Utils.set_seed_everywhere(args.seed)
@@ -29,11 +29,9 @@ def init(args):
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
     generalize = instantiate(args.environment, train=False, seed=args.seed + 11)
 
-    # Load
     if Path(args.save_path).exists():
-        agent, replay = Utils.load(args.save_path, 'agent', 'replay')
-
-        agent = Utils.to_agent(agent).to(args.device)
+        # Load
+        agent = Utils.load(args.save_path, 'agent').to(args.device)
     else:
         for arg in ('obs_shape', 'action_shape', 'discrete', 'obs_spec', 'action_spec'):
             setattr(args, arg, getattr(env, arg))
@@ -41,8 +39,8 @@ def init(args):
         # Agent
         agent = instantiate(args.agent).to(args.device)  # An instance of DQNDPGAgent, for example
 
-        # Experience replay
-        replay = instantiate(args.replay)  # An instance of PrioritizedExperienceReplay, for example
+    # Experience replay
+    replay = instantiate(args.replay)  # An instance of ExperienceReplay, for example
 
     # Loggers
     logger = instantiate(args.logger)
@@ -89,6 +87,7 @@ def init(args):
 
         # Update agent
         if agent.step > args.seed_steps and agent.step % args.update_per_steps == 0 or converged:
+
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent
 
@@ -97,4 +96,4 @@ def init(args):
 
 
 if __name__ == "__main__":
-    init()
+    main()

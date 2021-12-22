@@ -68,7 +68,7 @@ class DrQV2Agent(torch.nn.Module):
 
                 Pi = self.actor(Q)
                 action = torch.argmax(Pi.sample() if self.training
-                                      else Pi.best, -1)
+                                      else Pi.best, -1)  # all critic as opposed to DPG reliance on actor
             else:
                 Pi = self.actor(obs, self.step)
                 action = Pi.sample() if self.training \

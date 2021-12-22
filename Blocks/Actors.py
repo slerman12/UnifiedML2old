@@ -155,10 +155,11 @@ class SGDActor(nn.Module):
 class MetaActor(nn.Module):
     """A simple 'Meta Actor' who contains meta parameters like temps, etc.
     and optionally returns a Gaussian"""
-    def __init__(self, stddev_schedule, optim_lr=None, **metas):
+    def __init__(self, stddev_schedule, optim_lr=None, min=-1, max=1, **metas):
         super().__init__()
 
         self.stddev_schedule = stddev_schedule
+        self.min, self.max = min, max
 
         self.meta = Utils.Meta(optim_lr, **metas)
         if optim_lr is not None:
@@ -168,4 +169,4 @@ class MetaActor(nn.Module):
         stddev = None if step is None or self.stddev_schedule is None \
             else Utils.schedule(self.stddev_schedule, step)
         return self.meta(*names) if stddev is None \
-            else TruncatedNormal(self.meta(*names), stddev, -1, 1)
+            else TruncatedNormal(self.meta(*names), stddev, self.min, self.max)

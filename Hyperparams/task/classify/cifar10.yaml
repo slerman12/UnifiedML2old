@@ -1,0 +1,6 @@
+defaults:
+  - _self_
+
+suite: classify
+stddev_schedule: 'linear(1.0,0.1,100000)'
+task_name: CIFAR10
