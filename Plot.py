@@ -29,16 +29,16 @@ tasks = []
 
 for file in files:
     print(file.split('/')[1:])
-    agent_experiment, env, eval, task_seed = file.split('/')[2:]
+    agent_experiment, env, task_seed_eval = file.split('/')[2:]
+
+    # Parse files
+    task_seed = task_seed_eval.split('_')
+    task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1]
+    agent_experiment = agent_experiment.split('_')
+    agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
 
     if eval != 'Eval':
         continue
-
-    # Parse files
-    task_seed = task_seed.split('_')
-    task, seed = '_'.join(task_seed[:-1]), task_seed[-1]
-    agent_experiment = agent_experiment.split('_')
-    agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
     
     if experiment not in experiments:
         continue
