@@ -20,33 +20,18 @@ cudnn.benchmark = True
 @hydra.main(config_path='Hyperparams', config_name='cfg')
 def main(args):
 
-    # Setup
-
+    # Set seeds
     Utils.set_seed_everywhere(args.seed)
 
-    save_path = Path(args.save_path)
+    # All agents can convert seamlessly between RL, classification, or generative, discrete and continuous
 
-    # All agents can convert seamlessly between RL or classification
-
-    # RL vs. classification is automatically inferred based on task,
-    # e.g., task=dmc/humanoid_walk (RL), task=classify/mnist (classification)
-
-    if args.RL:
-        # Reinforcement Learning
-        reinforce(args, save_path)
-    else:
-        # Classification
-        classify(args, save_path)
-
-
-def reinforce(args, save_path):
     # Train, test environments
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
-    generalize = instantiate(args.environment, train=False, seed=2)
+    generalize = instantiate(args.environment, train=False, seed=args.seed + 11)
 
     # Load
-    if save_path.exists():
-        agent, replay = Utils.load(save_path, 'agent', 'replay')
+    if Path(args.save_path).exists():
+        agent, replay = Utils.load(args.save_path, 'agent', 'replay')
 
         agent = Utils.to_agent(agent).to(args.device)
     else:
@@ -71,7 +56,7 @@ def reinforce(args, save_path):
         if agent.step % args.evaluate_per_steps == 0:
 
             for ep in range(args.evaluate_episodes):
-                _, logs, vlogs = generalize.rollout(agent.eval(),
+                _, logs, vlogs = generalize.rollout(agent.eval(),  # agent.eval() just sets agent.training to False
                                                     vlog=args.log_video)
 
                 logger.log(logs, 'Eval')
@@ -84,7 +69,7 @@ def reinforce(args, save_path):
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
         # Rollout
-        experiences, logs, _ = env.rollout(agent.train(), steps=1)
+        experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
         replay.add(experiences)
 
@@ -95,64 +80,20 @@ def reinforce(args, save_path):
                 replay.add(store=True)  # Only store full episodes
 
             if args.save_session:
-                Utils.save(save_path, agent=agent, replay=replay)
+                Utils.save(args.save_path, agent=agent, replay=replay)
 
         if converged:
             break
 
-        converged = \
-            agent.step >= args.train_steps
+        converged = agent.step >= args.train_steps
 
         # Update agent
         if agent.step > args.seed_steps and agent.step % args.update_per_steps == 0 or converged:
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent
 
-                if args.log_tensorboard:
-                    logger.log_tensorboard(logs, 'Train')
-
-
-def classify(args, save_path):
-    # Agent
-    agent = Utils.load(save_path,
-                       'agent') if save_path.exists() \
-        else instantiate(args.agent)  # An instance of DQNDPGAgent, for example
-
-    # Convert to classifier
-    agent = Utils.to_classifier(agent)
-
-    # Experience replay (train, test)
-    replay, generalize = instantiate(args.replay)  # An instance of Cifar_10, for example
-
-    # Loggers
-    logger = instantiate(args.logger)
-
-    # Start training
-    step = 0
-    while step < args.train_steps:
-
-        if step % args.evaluate_per_steps == 0:
-
-            # Evaluate
-            logs = agent.eval().update(generalize)
-
-            logger.log(logs, 'Eval', dump=True)
-
-            # Save
-            if args.save_session:
-                Utils.save(save_path, agent=agent)
-
-        # Train
-        logs = agent.train().update(replay)
-
-        logger.log(logs, 'Train', dump=True)
-
-        if args.log_tensorboard:
-            logger.log_tensorboard(logs, 'Train')
-
-        step += 1
-
-    # Death
+                if args.agent.log:
+                    logger.log(logs, 'Train')
 
 
 if __name__ == "__main__":

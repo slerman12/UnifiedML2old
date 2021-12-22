@@ -7,7 +7,7 @@ import datetime
 from pathlib import Path
 from termcolor import colored
 
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 # import wandb
 
 
@@ -132,13 +132,14 @@ class Logger:
         writer.writerow(logs)
         file.flush()
 
-    def log_tensorboard(self, logs, name):
-        if self.tensorboard_writer is None:
-            self.tensorboard_writer = SummaryWriter(self.path + f'/{self.task}_{self.seed}_{name}_TensorBoard.csv')
-
-        for key in logs:
-            if key != 'step' and key != 'episode':
-                self.tensorboard_writer.add_scalar(f'{key}', logs[key], logs['step'])
+    # TODO
+    # def log_tensorboard(self, logs, name):
+    #     if self.tensorboard_writer is None:
+    #         self.tensorboard_writer = SummaryWriter(self.path + f'/{self.task}_{self.seed}_{name}_TensorBoard.csv')
+    #
+    #     for key in logs:
+    #         if key != 'step' and key != 'episode':
+    #             self.tensorboard_writer.add_scalar(f'{key}', logs[key], logs['step'])
 
     # def log_wandb(self, logs, name):
     #     if self.wandb is None:

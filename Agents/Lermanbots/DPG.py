@@ -5,7 +5,6 @@
 import time
 
 import torch
-from torch.distributions import Categorical
 
 import Utils
 
