@@ -12,7 +12,9 @@ import seaborn as sns
 try:
     experiments = sys.argv[1:]
 except:
-    experiments = []
+    experiments = ['Experiment']
+
+print('Experiments', *experiments)
 
 # Style
 plt.style.use('bmh')
@@ -24,7 +26,7 @@ plt.rcParams['legend.loc'] = 'lower right'
 files = glob.glob('./**/*.csv', recursive=True)
 
 df_list = []
-envs = []
+envs = set()
 tasks = set()
 
 for file in files:
@@ -51,10 +53,11 @@ for file in files:
     csv['Task'] = task
 
     df_list.append(csv)
-    envs.append(env)
+    envs.update({env})
     tasks.update({task})
     
 df = pd.concat(df_list, ignore_index=True)
+envs = np.sort(list(envs))  # TODO unique envs plotting
 tasks = np.sort(list(tasks))
 
 # Dynamically compute num columns
