@@ -70,16 +70,11 @@ class DPGAgent(torch.nn.Module):
             obs = torch.as_tensor(obs, device=self.device).unsqueeze(0)
 
             # "See"
-            actor_input = self.encoder(obs)
+            obs = self.encoder(obs)
 
-            if self.discrete:
-                # "Consider options"
-                actor_input = self.critic(actor_input, self.actions)
-
-            Pi = self.actor(actor_input, self.step)
+            Pi = self.actor(obs, self.step)
 
             action = Pi.sample() if self.training \
-                else Pi.best if self.discrete \
                 else Pi.mean
 
             if self.training:
@@ -90,7 +85,7 @@ class DPGAgent(torch.nn.Module):
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
-                action = torch.argmax(action, -1)  # Since using one-hots
+                action = torch.argmax(action, -1)  # Since DPG uses one-hots
 
             return action
 

@@ -71,7 +71,8 @@ class DrQV2Agent(torch.nn.Module):
                                       else Pi.best, -1)
             else:
                 Pi = self.actor(obs, self.step)
-                action = Pi.sample()
+                action = Pi.sample() if self.training \
+                    else Pi.mean
 
             if self.training:
                 self.step += 1
