@@ -56,6 +56,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
             continue
 
         if experiments is not None and experiment not in experiments:
+            print(experiments, experiment)
             continue
 
         if environments is not None and environment not in environments:
