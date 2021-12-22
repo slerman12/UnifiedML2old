@@ -13,8 +13,6 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     if experiments is None and environments is None and tasks is None and agents is None:
         return
 
-    print('Experiments:', *experiments)
-
     # Style
     plt.style.use('bmh')
     plt.rcParams['figure.dpi'] = 400
@@ -50,8 +48,6 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
         if agents is not None and agent not in agents:
             continue
-
-        print('Plotting', agent, experiment, environment, task, seed)
 
         csv = pd.read_csv(file)
 
