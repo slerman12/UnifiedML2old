@@ -37,6 +37,8 @@ for file in files:
     agent_experiment = agent_experiment.split('_')
     agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
 
+    print(experiment, experiments)
+
     if eval != 'Eval':
         continue
     
