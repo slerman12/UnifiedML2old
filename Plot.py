@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 
 import os
+from typing import MutableSequence
+
 os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 import pandas as pd
@@ -21,13 +23,13 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
     if experiments is None and environments is None and tasks is None and agents is None:
         return
-    if experiments is not None and not isinstance(experiments, list):
+    if experiments is not None and not isinstance(experiments, MutableSequence):
         experiments = [experiments]
-    if environments is not None and not isinstance(environments, list):
+    if environments is not None and not isinstance(environments, MutableSequence):
         environments = [environments]
-    if tasks is not None and not isinstance(tasks, list):
+    if tasks is not None and not isinstance(tasks, MutableSequence):
         tasks = [tasks]
-    if agents is not None and not isinstance(agents, list):
+    if agents is not None and not isinstance(agents, MutableSequence):
         agents = [agents]
     print(experiments)
 
