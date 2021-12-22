@@ -21,7 +21,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
                 action = Utils.one_hot(action, actor.action_dim)
                 next_actions_log_probs = 0
             else:
-                # Sample actions  Note: original DDPG used target for this
+                # Sample actions  Note: original DDPG used EMA target for this
                 next_Pi = actor(next_obs, step)
                 next_actions = next_Pi.rsample(num_actions)
                 next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1, keepdim=True)

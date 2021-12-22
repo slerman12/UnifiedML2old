@@ -36,6 +36,7 @@ plot: true
 # Misc
 device: cuda
 alias_device: cpu
+num_workers: 4
 RL: true
 # Experiment
 Agent: Agents.DPGAgent
@@ -52,7 +53,7 @@ environment:
   seed: ${seed}
   suite: ${suite}
   batch_size: ${batch_size}
-  num_workers: ${replay.num_workers}
+  num_workers: ${num_workers}
 
 agent:
   _target_: ${Agent}
@@ -77,7 +78,7 @@ replay:
   action_spec: ${action_spec}
   capacity: 1000000
   batch_size: ${batch_size}
-  num_workers: 4
+  num_workers: ${num_workers}
   nstep: ${nstep}
   discount: ${discount}
   save: false
