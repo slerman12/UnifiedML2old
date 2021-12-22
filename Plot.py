@@ -21,16 +21,12 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
 
     if experiments is None and environments is None and tasks is None and agents is None:
         return
-
     if experiments is not None and not isinstance(experiments, list):
         experiments = [experiments]
-
     if environments is not None and not isinstance(environments, list):
         environments = [environments]
-
     if tasks is not None and not isinstance(tasks, list):
         tasks = [tasks]
-
     if agents is not None and not isinstance(agents, list):
         agents = [agents]
 
@@ -54,18 +50,15 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1].replace('.csv', '')
         agent_experiment = agent_experiment.split('_')
         agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
+
         if 'Eval' not in eval:
             continue
-
         if experiments is not None and experiment not in experiments:
             continue
-
         if environments is not None and environment not in environments:
             continue
-
         if tasks is not None and task not in tasks:
             continue
-
         if agents is not None and agent not in agents:
             continue
 
