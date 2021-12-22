@@ -36,7 +36,7 @@ plot: true
 # Misc
 device: cuda
 alias_device: cpu
-RL: ??? # To be specified later
+RL: true
 # Experiment
 Agent: Agents.DPGAgent
 seed: 1

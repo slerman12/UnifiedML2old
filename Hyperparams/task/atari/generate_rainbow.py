@@ -7,14 +7,14 @@ RAINBOW_ENVS = [
 ]
 
 out = ""
-for env in RAINBOW_ENVS:
-    f = open(f"./{env.lower()}.yaml", "w")
+for task in RAINBOW_ENVS:
+    f = open(f"./{task.lower()}.yaml", "w")
     f.write(r"""defaults:
-  - easy
+  - 100K
   - _self_
 
 suite: atari
-task_name: {}""".format(env))
+task_name: {}""".format(task))
     f.close()
-    out += ' "' + env.lower() + '"'
+    out += ' "' + task.lower() + '"'
 print(out)

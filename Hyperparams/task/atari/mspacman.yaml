@@ -1,5 +1,5 @@
 defaults:
-  - easy
+  - 100K
   - _self_
 
 suite: atari

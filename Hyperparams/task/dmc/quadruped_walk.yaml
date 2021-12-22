@@ -1,13 +1,6 @@
 defaults:
-  - medium
+  - 1M500K
   - _self_
 
-task_name: quadruped_walk
-
 suite: dmc
-hydra:
-  job:
-    env_set:
-      # Environment variables for MuJoCo
-      MKL_SERVICE_FORCE_INTEL: '1'
-      MUJOCO_GL: 'egl'
+task_name: quadruped_walk
