@@ -7,6 +7,8 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 
 def plot(path='./', experiments=None, environments=None, tasks=None, agents=None):
@@ -52,6 +54,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         agent_experiment = agent_experiment.split('_')
         agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
         print(agent_experiment, environment, task_seed_eval)
+        print(agent, experiment, environment, task, seed, eval)
         if 'Eval' not in eval:
             continue
 
