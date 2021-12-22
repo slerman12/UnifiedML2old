@@ -11,7 +11,7 @@ import torchvision
 import torchvision.transforms as transforms
 from dm_env import specs, StepType
 
-from Datasets.Environments._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
+from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
 
 
 class ClassificationEnvironment:

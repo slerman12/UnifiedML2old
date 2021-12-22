@@ -6,7 +6,6 @@ import random
 import datetime
 import io
 import traceback
-import warnings
 from pathlib import Path
 
 import numpy as np
@@ -269,11 +268,6 @@ class Experiences(IterableDataset):
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into a compact experience
-        else:
-            empty = np.empty(11)
-            empty[:] = np.NaN
-            warnings.warn('Yielding empty experience in replay')
-            return empty
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import os
-os.environ['NUMEXPR_MAX_THREADS'] = '8'
+os.environ['NUMEXPR_MAX_THREADS'] = '8'  # To prevent Pandas warning
 import pandas as pd
 
 import matplotlib.pyplot as plt

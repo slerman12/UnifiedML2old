@@ -5,12 +5,12 @@
 import time
 from math import inf
 
-from Datasets.Environments import DMC, Atari, Classify
+from Datasets.Suites import DMC, Atari, Classify
 
 
-class Environments:
+class Environment:
     def __init__(self, task_name, frame_stack, action_repeat, max_episode_frames,
-                 truncate_episode_frames, seed, train=True, suite="dmc"):
+                 truncate_episode_frames, seed, train=True, suite="DMC"):
         self.suite = suite
 
         self.env = self.raw_env.make(task_name, frame_stack, action_repeat, max_episode_frames,

@@ -10,7 +10,7 @@ def make(task, frame_stack=3, action_repeat=2, max_episode_frames=None, truncate
     from dm_control import manipulation, suite
     from dm_control.suite.wrappers import action_scale, pixels
 
-    from Datasets.Environments._Wrappers import ActionSpecWrapper, ActionRepeatWrapper, FrameStackWrapper, \
+    from Datasets.Suites._Wrappers import ActionSpecWrapper, ActionRepeatWrapper, FrameStackWrapper, \
         TruncateWrapper, AugmentAttributesWrapper
 
     import numpy as np
