@@ -14,7 +14,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     path_dirs = path.split('/')
     path_dir = Path('/'.join(path_dirs[:-1]).replace('Agents.', ''))
     path_dir.mkdir(parents=True, exist_ok=True)
-    path = path_dir + '/' + path_dirs[-1]
+    path = path_dir / path_dirs[-1]
 
     if experiments is None and environments is None and tasks is None and agents is None:
         return
