@@ -7,13 +7,13 @@ from typing import MutableSequence
 import glob
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 import numpy as np
+import pandas as pd
+
+import matplotlib.pyplot as plt
 import os
 os.environ['NUMEXPR_MAX_THREADS'] = '8'  # To prevent Pandas warning
-import pandas as pd
+import seaborn as sns
 
 
 def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
