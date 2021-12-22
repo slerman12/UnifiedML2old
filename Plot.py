@@ -75,7 +75,8 @@ for i, task in enumerate(tasks):
 
     row = i // num_cols
     col = i % num_cols
-    ax = axs[row, col] if num_rows > 1 and num_cols > 1 else axs[col] if num_cols > 1 else axs
+    ax = axs[row, col] if num_rows > 1 and num_cols > 1 else axs[col] if num_cols > 1 \
+        else axs[row] if num_rows > 1 else axs
     hue_order = np.sort(data.Agent.unique())
 
     sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
