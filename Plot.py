@@ -28,6 +28,7 @@ envs = []
 tasks = []
 
 for file in files:
+    print(file.split('/')[1:])
     agent_experiment, env, task_seed = file.split('/')[1:]
 
     # Parse files
