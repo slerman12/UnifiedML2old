@@ -19,6 +19,7 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
     path_dir.mkdir(parents=True, exist_ok=True)
     path = path_dir / path_dirs[-1]
 
+    print(experiments)
     if experiments is None and environments is None and tasks is None and agents is None:
         return
     if experiments is not None and not isinstance(experiments, list):
@@ -99,8 +100,6 @@ def plot(path='./', experiments=None, environments=None, tasks=None, agents=None
         ax = axs[row, col] if num_rows > 1 and num_cols > 1 else axs[col] if num_cols > 1 \
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
-
-        print(task)
 
         sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
