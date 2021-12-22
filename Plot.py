@@ -29,7 +29,10 @@ tasks = []
 
 for file in files:
     print(file.split('/')[1:])
-    agent_experiment, env, task_seed = file.split('/')[1:]
+    agent_experiment, env, eval, task_seed = file.split('/')[2:]
+
+    if eval != 'Eval':
+        continue
 
     # Parse files
     task_seed = task_seed.split('_')
