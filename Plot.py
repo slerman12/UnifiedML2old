@@ -75,6 +75,7 @@ for i, task in enumerate(tasks):
 
     row = i // num_cols
     col = i % num_cols
+    print(num_rows, num_cols)
     ax = axs[row, col] if num_rows > 1 else axs[col] if num_cols > 1 else axs
     hue_order = np.sort(data.Agent.unique())
 
