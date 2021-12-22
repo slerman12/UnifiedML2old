@@ -68,7 +68,7 @@ agent:
 
 replay:
   _target_: Datasets.Replay.ExperienceReplay
-  path: ./Datasets/ReplayMemories/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Replay
+  path: ./Datasets/ReplayMemory/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_ReplayMemories
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000

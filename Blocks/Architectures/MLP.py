@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch import nn
 
@@ -57,21 +59,23 @@ class MLPBlock(nn.Module):
         self.MLP = MLP(in_features, out_dim, hidden_dim, depth=depth,
                        batch_norm=batch_norm, batch_norm_last=batch_norm_last, l2_norm=l2_norm)
 
+        self.init(optim_lr, target_tau)
+
+    def init(self, optim_lr=None, target_tau=None):
+        # Initialize weights
         self.apply(Utils.weight_init)
 
+        # Optimizer
         if optim_lr is not None:
             self.optim = torch.optim.Adam(self.parameters(), lr=optim_lr)
 
+        # EMA
         if target_tau is not None:
+            self.target = copy.deepcopy(self)
             self.target_tau = target_tau
-            target = self.__class__(in_dim=in_dim, out_dim=out_dim,
-                                    feature_dim=feature_dim, hidden_dim=hidden_dim, depth=depth, layer_norm=layer_norm,
-                                    batch_norm=batch_norm, batch_norm_last=batch_norm_last, l2_norm=l2_norm)
-            target.load_state_dict(self.state_dict())
-            self.target = target
 
     def update_target_params(self):
-        assert self.target_tau is not None
+        assert hasattr(self, 'target_tau')
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     def forward(self, *x):

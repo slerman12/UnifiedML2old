@@ -268,7 +268,7 @@ class Experiences(IterableDataset):
 
             episode = self.episodes[episode_name]
 
-            return self.process(episode)  # Process episode into an experience
+            return self.process(episode)  # Process episode into a compact experience
         else:
             empty = np.empty(11)
             empty[:] = np.NaN
