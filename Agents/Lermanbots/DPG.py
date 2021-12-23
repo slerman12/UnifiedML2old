@@ -63,8 +63,7 @@ class DPGAgent(torch.nn.Module):
 
             Pi = self.actor(obs, self.step)
 
-            action = Pi.sample(one_hot=self.discrete and self.one_hot) if self.training \
-                else Pi.mean
+            action = Pi.sample(one_hot=self.discrete and self.one_hot)
 
             if self.training:
                 self.step += 1
