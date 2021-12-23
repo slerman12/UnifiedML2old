@@ -10,17 +10,15 @@ import numpy as np
 from collections import deque
 from typing import NamedTuple, Any
 
-nan = np.full_like([1, 1], np.NaN)
-
 
 class ExtendedTimeStep(NamedTuple):
-    step_type: Any = nan
-    reward: Any = nan
+    step_type: Any = None
+    reward: Any = None
     discount: Any = 1
-    observation: Any = nan
-    action: Any = nan
-    step: int = nan
-    label: int = nan
+    observation: Any = None
+    action: Any = None
+    step: int = None
+    label: int = None
 
     def first(self):
         return self.step_type == StepType.FIRST
@@ -265,8 +263,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
                                 action=action,
                                 reward=time_step.reward,
                                 discount=time_step.discount or 1.0,
-                                step=time_step.step if hasattr(time_step, 'step') else nan,
-                                label=time_step.label if hasattr(time_step, 'label') else nan)
+                                step=time_step.step if hasattr(time_step, 'step') else None,
+                                label=time_step.label if hasattr(time_step, 'label') else None)
 
     @property
     def exp(self):
@@ -275,7 +273,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def to_attr_dict(self, exp):
         keys = ['step_type', 'reward', 'discount', 'observation', 'action', 'label', 'step',
                 'first', 'mid', 'last', 'episode_done', 'get_last']
-        return AttrDict({key: getattr(exp, key, nan) for key in keys})
+        return AttrDict({key: getattr(exp, key, None) for key in keys})
 
     @property
     def experience(self):
@@ -306,7 +304,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def simplify_spec(self, spec):
         # Return spec as a dict of basic primitives (that can be passed into Hydra)
         keys = ['shape', 'dtype', 'name', 'num_actions']
-        spec = {key: getattr(spec, key, nan) for key in keys}
+        spec = {key: getattr(spec, key, None) for key in keys}
         if not isinstance(spec['dtype'], str):
             spec['dtype'] = spec['dtype'].name
         return spec

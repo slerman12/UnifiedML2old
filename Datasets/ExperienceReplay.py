@@ -121,6 +121,8 @@ class ExperienceReplay:
     def store_episode(self):
         for spec in self.specs:
             self.episode[spec['name']] = np.array(self.episode[spec['name']], spec['dtype'])
+            if len(self.episode[spec['name']].shape) == 1:
+                self.episode[spec['name']] = self.episode[spec['name']].expand_dims(1)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
