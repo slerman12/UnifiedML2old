@@ -113,7 +113,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
 
 
 if __name__ == "__main__":
-    # Pass in experiments to plot
+    # Experiments to plot
     experiments = sys.argv[1:] if len(sys.argv) > 1 \
         else ['Exp']
 

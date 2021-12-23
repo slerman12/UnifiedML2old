@@ -266,7 +266,7 @@ def to_classifier(agent, regression=False):
 
         # "Predict" / "Learn" / "Grow"
 
-        dist = agent.actor(obs)
+        dist = agent.actorSAURUS(obs)
 
         y_pred = dist.logits if hasattr(dist, 'logits') \
             else dist.mean
@@ -277,7 +277,7 @@ def to_classifier(agent, regression=False):
 
         # Update
         if agent.training:
-            optimize(loss, agent.encoder, agent.actor)
+            optimize(loss, agent.encoder, agent.actorSAURUS)
 
         logs = {
             'step': agent.step,

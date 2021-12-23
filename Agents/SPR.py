@@ -5,25 +5,28 @@
 import time
 
 import torch
+from torch.nn.functional import cross_entropy
 
 import Utils
-from Blocks.Architectures.MLP import MLPBlock
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder, SPRCNNEncoder
-from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
+from Blocks.Actors import TruncatedGaussianActor
 from Blocks.Critics import EnsembleQCritic
+from Blocks.Architectures.MLP import MLPBlock
 
 from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
 class SPRAgent(torch.nn.Module):
-    """Self-Predictive Representations (https://arxiv.org/abs/2007.05929)"""
+    """Self-Predictive Representations (https://arxiv.org/abs/2007.05929)
+    Built on top of DPG for the discrete and continuous cases"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
+                 depth=1  # SPR
                  ):
         super().__init__()
 
@@ -35,21 +38,18 @@ class SPRAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
-        if not discrete:
-            print('Original SPR does not support continuous action spaces. Instantiating generalized...')
+        self.depth = depth
 
         # Models
         self.encoder = SPRCNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
         # self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      ensemble_size=2, discrete=False,  # False for now
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
-        self.actor = CategoricalCriticActor(stddev_schedule) if discrete \
-            else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                        stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                        optim_lr=lr).to(device)
+        self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                            discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                            optim_lr=lr).to(device)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],
                                              pixels=False, isotropic=True,
@@ -76,24 +76,20 @@ class SPRAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            if self.discrete:
-                action = torch.eye(self.actor.action_dim, device=self.device).expand(obs.shape[0], -1, -1)
-                Q = self.critic(obs, action)
+            Pi = self.actor(obs, self.step)
 
-                Pi = self.actor(Q)
-                action = torch.argmax(Pi.sample() if self.training
-                                      else Pi.best, -1)
-            else:
-                Pi = self.actor(obs, self.step)
-                action = Pi.sample()
+            action = Pi.sample() if self.training \
+                else Pi.mean
 
             if self.training:
                 self.step += 1
 
                 # Explore phase
                 if self.step < self.explore_steps and self.training:
-                    action = torch.randint(self.actor.action_dim, size=action.shape) if self.discrete \
-                        else action.uniform_(-1, 1)
+                    action = action.uniform_(-1, 1)
+
+            if self.discrete:
+                action = torch.argmax(action, -1)  # Since discrete is using vector representations
 
             return action
 
@@ -106,9 +102,6 @@ class SPRAgent(torch.nn.Module):
             batch, self.device)
         traj_o, traj_a, traj_r, traj_l = traj
 
-        logs = {'episode': self.episode, 'step': self.step} if self.log \
-            else None
-
         # "Imagine" / "Envision"
 
         # Augment
@@ -120,36 +113,68 @@ class SPRAgent(torch.nn.Module):
         with torch.no_grad():
             next_obs = self.encoder(next_obs)
 
-        # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
+        # "Journal teachings"
 
-        # Critic loss
-        critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                  obs.flatten(-3), action, reward, discount, next_obs,
-                                                  self.step, logs=logs)
+        logs = {'episode': self.episode, 'step': self.step} if self.log else None
 
-        # Convert discrete action trajectories to one-hot
-        if self.discrete:
-            traj_a = Utils.one_hot(traj_a, num_classes=self.actor.action_dim)
+        instruction = -torch.isnan(label.flatten(1).sum(1))
 
-        # Dynamics loss
-        dynamics_loss = SelfSupervisedLearning.dynamicsLearning(obs, traj_o, traj_a, traj_r,
-                                                                self.encoder, self.dynamics, self.projector,
-                                                                self.predictor, depth=5, logs=logs)
+        # "Acquire Wisdom"
 
-        # Update critic, dynamics
-        Utils.optimize(critic_loss + dynamics_loss,
-                       self.encoder,
-                       self.critic,
-                       self.dynamics, self.projector, self.predictor)
+        if instruction.any():
+            # "Via Example" / "Parental Support" / "School"
 
-        self.critic.update_target_params()
+            # Infer
+            action = self.actor(obs[instruction], self.step)
 
-        # Actor loss
-        actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.flatten(-3).detach(),
-                                                       self.step, logs=logs)
+            mistake = cross_entropy(action, label[instruction], reduction='none')
 
-        # Update actor
-        Utils.optimize(actor_loss,
-                       self.actor)
+            # Supervised loss
+            supervised_loss = mistake.mean()
+
+            if self.log:
+                logs.update({'supervised_loss': supervised_loss.item()})
+
+            # Update actor
+            Utils.optimize(supervised_loss,
+                           self.encoder,
+                           self.actor)
+
+            if self.RL:
+                # Auxiliary reinforcement
+                reward[instruction] = -mistake
+
+        if self.RL:
+            # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
+
+            # Critic loss
+            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
+                                                      obs.flatten(-3), action, reward, discount, next_obs,
+                                                      self.step, logs=logs)
+
+            # Convert discrete action trajectories to one-hot
+            if self.discrete:
+                traj_a = Utils.one_hot(traj_a, num_classes=self.actor.action_dim)
+
+            # Dynamics loss
+            dynamics_loss = SelfSupervisedLearning.dynamicsLearning(obs, traj_o, traj_a, traj_r,
+                                                                    self.encoder, self.dynamics, self.projector,
+                                                                    self.predictor, depth=5, logs=logs)
+
+            # Update critic, dynamics
+            Utils.optimize(critic_loss + dynamics_loss,
+                           self.encoder,
+                           self.critic,
+                           self.dynamics, self.projector, self.predictor)
+
+            self.critic.update_target_params()
+
+            # Actor loss
+            actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.flatten(-3).detach(),
+                                                           self.step, logs=logs)
+
+            # Update actor
+            Utils.optimize(actor_loss,
+                           self.actor)
 
         return logs

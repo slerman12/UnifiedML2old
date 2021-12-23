@@ -13,18 +13,19 @@ import Utils
 
 # A Gaussian Normal distribution with its standard deviation clipped
 class TruncatedNormal(pyd.Normal):
-    def __init__(self, loc, scale, low=None, high=None, eps=1e-6, stddev_clip=None):
+    def __init__(self, loc, scale, low=None, high=None, eps=1e-6, stddev_clip=None, one_hot=False):
         super().__init__(loc, scale)
         self.low, self.high = low, high
         self.eps = eps
         self.stddev_clip = stddev_clip
+        self.one_hot = one_hot
 
     # No grad, defaults to no clip
-    def sample(self, to_clip=False, to_one_hot=False, sample_shape=torch.Size()):
+    def sample(self, to_clip=False, one_hot=False, sample_shape=torch.Size()):
         with torch.no_grad():
             return self.rsample(to_clip=to_clip, sample_shape=sample_shape)
 
-    def rsample(self, to_clip=True, to_one_hot=False, sample_shape=torch.Size()):
+    def rsample(self, to_clip=True, one_hot=False, sample_shape=torch.Size()):
         shape = self._extended_shape(sample_shape)
 
         rand = _standard_normal(shape, dtype=self.loc.dtype, device=self.loc.device)  # Explore
@@ -34,7 +35,7 @@ class TruncatedNormal(pyd.Normal):
             dev = Utils.rclamp(dev, -self.stddev_clip, self.stddev_clip)  # Don't explore /too/ much
         x = self.loc + dev
 
-        if to_one_hot:
+        if one_hot:
             # Differentiable one-hot
             return Utils.rone_hot(x)
 

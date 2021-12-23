@@ -1,10 +1,11 @@
 # Copyright (c) Sam Lerman. All Rights Reserved.
 #
-# This source code is licensed under the MIT license found in the
+# This SOURCE is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import time
 
 import torch
+from torch.nn.functional import cross_entropy
 
 import Utils
 
@@ -22,7 +23,8 @@ class DPGAgent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, RL, device, log  # On-boarding
+                 discrete, RL, device, log,  # On-boarding
+                 one_hot=True, bellman_Q_reduction='min', dpg_Q_reduction='min' # DPG
                  ):
         super().__init__()
 
@@ -33,6 +35,8 @@ class DPGAgent(torch.nn.Module):
         self.birthday = time.time()
         self.step = self.episode = 0
         self.explore_steps = explore_steps
+
+        self.one_hot, self.bm_Q_reduction, self.dpg_Q_reduction = one_hot, bellman_Q_reduction, dpg_Q_reduction
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
@@ -47,12 +51,6 @@ class DPGAgent(torch.nn.Module):
                                             discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                             optim_lr=lr).to(device)
 
-        self.num_actions = action_shape[-1] if self.discrete else 1
-        self.Q_reduction = 'min'
-        self.dpg_Q_reduction = 'min'
-        self.entropy_temp = 0  # Q current entropy
-        self.exploit_schedule = 1  # Q_Pi utility non-entropy
-
         # Birth
 
     # "Play"
@@ -63,9 +61,9 @@ class DPGAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            Pi = self.actor(obs, self.step)  # actor
+            Pi = self.actor(obs, self.step)
 
-            action = Pi.sample() if self.training \
+            action = Pi.sample(one_hot=self.discrete and self.one_hot) if self.training \
                 else Pi.mean
 
             if self.training:
@@ -76,7 +74,7 @@ class DPGAgent(torch.nn.Module):
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
-                action = torch.argmax(action, -1)  # Since DPG uses one-hots
+                action = torch.argmax(action, -1)  # Since discrete is using vector representations
 
             return action
 
@@ -84,15 +82,9 @@ class DPGAgent(torch.nn.Module):
     def update(self, replay):
         # "Recollect"
 
-        batch = replay.sample()  # Can also write 'batch = next(replay)'
+        batch = next(replay)
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
-        traj_o, traj_a, traj_r, traj_l = traj
-
-        logs = {'episode': self.episode, 'step': self.step} if self.log \
-            else None
-
-        # "Imitate Parents" / "Go To School" / "Learn By Instruction And/Or Example"
 
         # "Imagine" / "Envision"
 
@@ -105,30 +97,59 @@ class DPGAgent(torch.nn.Module):
         with torch.no_grad():
             next_obs = self.encoder(next_obs)
 
-        # "Predict" / "Discern" / "Learn" / "Grow"
+        # "Journal teachings"
 
-        # Critic loss
-        critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                  obs, action, reward, discount, next_obs,
-                                                  self.step, self.num_actions, self.Q_reduction,
-                                                  self.exploit_schedule, self.entropy_temp,
-                                                  logs=logs)  # TODO Q_Pi Temp
+        logs = {'episode': self.episode, 'step': self.step} if self.log else None
 
-        # Update critic
-        Utils.optimize(critic_loss,
-                       self.encoder,
-                       self.critic)
+        instruction = -torch.isnan(label.flatten(1).sum(1))
 
-        self.critic.update_target_params()
+        # "Acquire Wisdom"
 
-        # Actor loss
-        actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
-                                                       self.step, self.num_actions, self.dpg_Q_reduction,
-                                                       self.exploit_schedule,
-                                                       logs=logs)
+        if instruction.any():
+            # "Via Example" / "Parental Support" / "School"
 
-        # Update actor
-        Utils.optimize(actor_loss,
-                       self.actor)
+            # Infer
+            action = self.actor(obs[instruction], self.step)
 
+            mistake = cross_entropy(action, label[instruction], reduction='none')
+
+            # Supervised loss
+            supervised_loss = mistake.mean()
+
+            if self.log:
+                logs.update({'supervised_loss': supervised_loss.item()})
+
+            # Update actor
+            Utils.optimize(supervised_loss,
+                           self.encoder,
+                           self.actor)
+
+            if self.RL:
+                # Auxiliary reinforcement
+                reward[instruction] = -mistake
+
+        if self.RL:
+            # "Predict" / "Discern" / "Learn" / "Grow"
+
+            # Critic loss
+            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
+                                                      obs, action, reward, discount, next_obs,
+                                                      self.step, Q_reduction=self.bm_Q_reduction,
+                                                      logs=logs)
+
+            # Update critic
+            Utils.optimize(critic_loss,
+                           self.encoder,
+                           self.critic)
+
+            self.critic.update_target_params()
+
+            # Actor loss
+            actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
+                                                           self.step, Q_reduction=self.dpg_Q_reduction,
+                                                           logs=logs)
+
+            # Update actor
+            Utils.optimize(actor_loss,
+                           self.actor)
         return logs

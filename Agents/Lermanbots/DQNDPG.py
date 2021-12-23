@@ -1,6 +1,6 @@
 # Copyright (c) Sam Lerman. All Rights Reserved.
 #
-# This source code is licensed under the MIT license found in the
+# This SOURCE is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import time
 
@@ -11,15 +11,14 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import TruncatedGaussianActor
+from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
 
 
-class DrQV2Agent(torch.nn.Module):
-    """Data-Regularized Q-Network V2 (https://arxiv.org/abs/2107.09645)
-    Generalizes to DPGAgent in the Discrete case"""
+class DQNDPGAgent(torch.nn.Module):
+    """Deep Q Network, Deep Policy Gradient"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
@@ -28,26 +27,27 @@ class DrQV2Agent(torch.nn.Module):
                  ):
         super().__init__()
 
-        self.discrete = discrete  # Discrete supported!
-        self.RL = RL  # And classification...
+        self.discrete = discrete
+        self.RL = RL
         self.device = device
         self.log = log
         self.birthday = time.time()
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
+        # Data augmentation
+        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      optim_lr=lr, target_tau=target_tau).to(device)
+                                      discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
 
-        self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                            discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                            optim_lr=lr).to(device)
-
-        # Data augmentation
-        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+        self.actor = CategoricalCriticActor(stddev_schedule) if discrete \
+            else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                        stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                        optim_lr=lr).to(device)
 
         # Birth
 
@@ -59,9 +59,12 @@ class DrQV2Agent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            Pi = self.actor(obs, self.step)
+            # Critic is needed for DQN
+            actor_input = self.critic(obs) if self.discrete else obs
+            Pi = self.actor(actor_input, self.step)
 
             action = Pi.sample() if self.training \
+                else Pi.best if self.discrete \
                 else Pi.mean
 
             if self.training:
@@ -69,10 +72,8 @@ class DrQV2Agent(torch.nn.Module):
 
                 # Explore phase
                 if self.step < self.explore_steps and self.training:
-                    action = action.uniform_(-1, 1)
-
-            if self.discrete:
-                action = torch.argmax(action, -1)  # Since discrete is using vector representations
+                    action = torch.randint(self.actor.action_dim, size=action.shape) if self.discrete \
+                        else action.uniform_(-1, 1)
 
             return action
 
@@ -106,8 +107,12 @@ class DrQV2Agent(torch.nn.Module):
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
+            # DQN uses critic directly
+            actor_input = self.critic(obs[instruction]) if self.discrete \
+                else obs[instruction]
+
             # Infer
-            action = self.actor(obs[instruction], self.step)
+            action = self.actor(actor_input, self.step)
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
@@ -141,12 +146,13 @@ class DrQV2Agent(torch.nn.Module):
 
             self.critic.update_target_params()
 
-            # Actor loss
-            actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
-                                                           self.step, logs=logs)
+            if not self.discrete:
+                # Actor loss
+                actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
+                                                               self.step, logs=logs)
 
-            # Update actor
-            Utils.optimize(actor_loss,
-                           self.actor)
+                # Update actor
+                Utils.optimize(actor_loss,
+                               self.actor)
 
         return logs

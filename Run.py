@@ -14,20 +14,19 @@ from torch.backends import cudnn
 cudnn.benchmark = True
 
 
-# Hydra conveniently and cleanly manages sys args;
-# hyper-param cfg files located in ./Hyperparams
+# Hydra conveniently and cleanly manages sys args
+# Hyper-param cfg files located in ./Hyperparams
 
 @hydra.main(config_path='Hyperparams', config_name='cfg')
 def main(args):
-
     # Set seeds
     Utils.set_seed_everywhere(args.seed)
 
-    # All agents can convert seamlessly between RL, classification, or generative, discrete and continuous
+    # All agents can convert seamlessly between RL, generative, or classification environments
 
     # Train, test environments
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
-    generalize = instantiate(args.environment, train=False, seed=args.seed + 11)
+    generalize = instantiate(args.environment, train=False, seed=args.seed + 1234)
 
     if Path(args.save_path).exists():
         # Load

@@ -10,41 +10,61 @@ from torch.nn.functional import cross_entropy
 import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
-from Blocks.Encoders import CNNEncoder
+from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder
 from Blocks.Actors import TruncatedGaussianActor
 from Blocks.Critics import EnsembleQCritic
+from Blocks.Architectures.MLP import MLPBlock
 
-from Losses import QLearning, PolicyLearning
+from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
-class DrQV2Agent(torch.nn.Module):
-    """Data-Regularized Q-Network V2 (https://arxiv.org/abs/2107.09645)
-    Generalizes to DPGAgent in the Discrete case"""
+class DynoSOARAgent(torch.nn.Module):
+    """Dinosaur Agent: 'Dynamics W/ Reward' Prediction"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
+                 depth=1  # DynoSAUR
                  ):
         super().__init__()
 
-        self.discrete = discrete  # Discrete supported!
-        self.RL = RL  # And classification...
+        self.discrete = discrete
+        self.RL = RL
         self.device = device
         self.log = log
         self.birthday = time.time()
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
+        self.depth = depth
+
         # Models
-        self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
+        self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                      ensemble_size=2, discrete=False,  # False for now
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
-        self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                            discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                            optim_lr=lr).to(device)
+        self.actorSAURUS = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                                  discrete=discrete, stddev_schedule=stddev_schedule,
+                                                  stddev_clip=stddev_clip,
+                                                  optim_lr=lr).to(device)
+
+        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],
+                                             pixels=False, isotropic=True,
+                                             optim_lr=lr).to(device)
+
+        self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
+                                  depth=2, layer_norm=True,
+                                  target_tau=target_tau, optim_lr=lr).to(device)
+
+        self.obs_predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
+                                      depth=2, layer_norm=True,
+                                      optim_lr=lr).to(device)
+        self.reward_predictor = MLPBlock(hidden_dim, 1, hidden_dim, hidden_dim,
+                                         depth=2, layer_norm=True,
+                                         optim_lr=lr).to(device)
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
@@ -83,6 +103,7 @@ class DrQV2Agent(torch.nn.Module):
         batch = next(replay)
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
+        traj_o, traj_a, traj_r, traj_l = traj
 
         # "Imagine" / "Envision"
 
@@ -91,7 +112,7 @@ class DrQV2Agent(torch.nn.Module):
         next_obs = self.aug(next_obs)
 
         # Encode
-        obs = self.encoder(obs)
+        obs = self.encoder(obs, flatten=False)
         with torch.no_grad():
             next_obs = self.encoder(next_obs)
 
@@ -107,7 +128,7 @@ class DrQV2Agent(torch.nn.Module):
             # "Via Example" / "Parental Support" / "School"
 
             # Infer
-            action = self.actor(obs[instruction], self.step)
+            action = self.actorSAURUS(obs[instruction], self.step)
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
@@ -127,26 +148,38 @@ class DrQV2Agent(torch.nn.Module):
                 reward[instruction] = -mistake
 
         if self.RL:
-            # "Predict" / "Discern" / "Learn" / "Grow"
+            # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                      obs, action, reward, discount, next_obs,
+            critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
+                                                      obs.flatten(-3), action, reward, discount, next_obs,
                                                       self.step, logs=logs)
 
-            # Update critic
-            Utils.optimize(critic_loss,
+            # Convert discrete action trajectories to one-hot
+            if self.discrete:
+                traj_a = Utils.one_hot(traj_a, num_classes=self.actorSAURUS.action_dim)
+
+            future = -torch.isnan(next_obs.flatten(1).sum(1))
+
+            # Dynamics loss
+            dynamics_loss = SelfSupervisedLearning.dynamicsLearning(
+                obs[future], traj_o[future], traj_a[future], traj_r[future], self.encoder, self.dynamics,
+                self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
+            )
+
+            # Update critic, dynamics
+            Utils.optimize(critic_loss + dynamics_loss,
                            self.encoder,
-                           self.critic)
+                           self.critic,
+                           self.dynamics, self.projector, self.obs_predictor, self.reward_predictor)
 
             self.critic.update_target_params()
 
             # Actor loss
-            actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
+            actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs.flatten(-3).detach(),
                                                            self.step, logs=logs)
 
             # Update actor
             Utils.optimize(actor_loss,
-                           self.actor)
-
+                           self.actorSAURUS)
         return logs
