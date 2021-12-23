@@ -55,7 +55,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         # u = torch.softmax((1 - temp) * next_q + temp * next_Q.stddev, -1)
         temp = 1
         exploit_factor = Utils.schedule(exploit_schedule, step)
-        u = exploit_factor * torch.min(next_Q.Qs, 0) + (1 - exploit_factor) * next_Q.stddev
+        u = exploit_factor * torch.min(next_Q.Qs, 0)[0] + (1 - exploit_factor) * next_Q.stddev
         # u = exploit_factor * next_Q.sample() + (1 - exploit_factor) * next_Q.stddev
         u_logits = u - u.max(dim=-1, keepdim=True)[0]
         next_probs = torch.softmax(u_logits / temp + next_actions_log_probs, -1)
