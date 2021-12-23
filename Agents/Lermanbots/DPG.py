@@ -45,10 +45,12 @@ class DPGAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                      # l2_norm=True,
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                             discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                            # l2_norm=True,
                                             optim_lr=lr).to(device)
 
         # Birth
@@ -63,7 +65,7 @@ class DPGAgent(torch.nn.Module):
 
             Pi = self.actor(obs, self.step)
 
-            action = Pi.sample(one_hot=self.discrete and self.one_hot) if self.training \
+            action = Pi.sample() if self.training \
                 else Pi.mean  # ideally same as dpg_Q_reduction, maybe they should be deterministic mean and just bm_q_red stochastic
 
             if self.training:

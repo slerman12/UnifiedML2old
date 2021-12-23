@@ -8,11 +8,13 @@ import Utils
 
 
 # TODO modularize (don't need to initialize losses in __init__, can just keep current agent structure, pass agent as arg
-def deepPolicyGradient(actor, critic, obs, step, num_actions=1, Q_reduction='min', exploit_schedule=1, logs=None):
+def deepPolicyGradient(actor, critic, obs, step, num_actions=1, one_hot=True, Q_reduction='min', exploit_schedule=1, logs=None):
     Pi = actor(obs, step)
 
     actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
     # actions = Pi.rsample(num_actions)
+    if one_hot:
+        actions = Utils.one_hot(actions, actor.action_dim)
 
     Q = critic(obs, actions)
 
