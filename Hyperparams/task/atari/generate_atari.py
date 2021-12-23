@@ -14,6 +14,8 @@ for task in ATARI_ENVS:
   - _self_
 
 suite: atari
+action_repeat: 4
+frame_stack: 3
 task_name: {}""".format(task))
     f.close()
     out += ' "' + task.lower() + '"'

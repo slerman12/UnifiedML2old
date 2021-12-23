@@ -3,4 +3,6 @@ defaults:
   - _self_
 
 suite: atari
+action_repeat: 4
+frame_stack: 3
 task_name: ChopperCommand

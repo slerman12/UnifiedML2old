@@ -63,7 +63,8 @@ class DPGAgent(torch.nn.Module):
 
             Pi = self.actor(obs, self.step)
 
-            action = Pi.sample(one_hot=self.discrete and self.one_hot)
+            action = Pi.sample(one_hot=self.discrete and self.one_hot) if self.training \
+                else Pi.mean  # ideally same as dpg_Q_reduction, maybe they should be deterministic mean and just bm_q_red stochastic
 
             if self.training:
                 self.step += 1
@@ -74,6 +75,7 @@ class DPGAgent(torch.nn.Module):
 
             if self.discrete:
                 action = torch.argmax(action, -1)  # Since discrete is using vector representations
+                # action = Categorical(logits=action)  # Since discrete is using vector representations
 
             return action
 

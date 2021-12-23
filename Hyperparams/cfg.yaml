@@ -3,9 +3,6 @@ defaults:
   - task@_global_: dmc/cheetah_run
   - override hydra/launcher: submitit_local
 
-# Environment
-frame_stack: 3
-action_repeat: 2
 # Agent
 obs_shape: ???  # To be specified later
 action_shape: ??? # To be specified later

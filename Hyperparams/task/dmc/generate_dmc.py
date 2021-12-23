@@ -18,6 +18,8 @@ for task in easy + medium + hard:
   - _self_
 
 suite: dmc
+action_repeat: 2
+frame_stack: 3
 task_name: {}
 
 hydra:
