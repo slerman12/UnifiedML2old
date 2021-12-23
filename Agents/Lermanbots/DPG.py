@@ -101,8 +101,7 @@ class DPGAgent(torch.nn.Module):
 
         logs = {'episode': self.episode, 'step': self.step} if self.log else None
 
-        print(label.shape, reward.shape)
-        instruction = -torch.isnan(label.flatten(-1).sum(1))
+        instruction = ~torch.isnan(label.flatten(-1).sum(1))
 
         # "Acquire Wisdom"
 
