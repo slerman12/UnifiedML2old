@@ -21,11 +21,11 @@ class TruncatedNormal(pyd.Normal):
         self.one_hot = one_hot
 
     # No grad, defaults to no clip
-    def sample(self, to_clip=False, one_hot=False, sample_shape=torch.Size()):
+    def sample(self, to_clip=False, sample_shape=torch.Size()):
         with torch.no_grad():
             return self.rsample(to_clip=to_clip, sample_shape=sample_shape)
 
-    def rsample(self, to_clip=True, one_hot=False, sample_shape=torch.Size()):
+    def rsample(self, to_clip=True, sample_shape=torch.Size()):
         shape = self._extended_shape(sample_shape)
 
         rand = _standard_normal(shape, dtype=self.loc.dtype, device=self.loc.device)  # Explore
@@ -34,10 +34,6 @@ class TruncatedNormal(pyd.Normal):
         if to_clip:
             dev = Utils.rclamp(dev, -self.stddev_clip, self.stddev_clip)  # Don't explore /too/ much
         x = self.loc + dev
-
-        if one_hot:
-            # Differentiable one-hot
-            return Utils.rone_hot(x)
 
         if self.low is not None and self.high is not None:
             # Differentiable truncation
