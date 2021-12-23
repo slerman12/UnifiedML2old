@@ -18,7 +18,7 @@ class ExtendedTimeStep(NamedTuple):
     observation: Any = None
     action: Any = None
     step: int = None
-    label: int = None
+    label: int = np.full_like([1, 1], np.NaN)
 
     def first(self):
         return self.step_type == StepType.FIRST
