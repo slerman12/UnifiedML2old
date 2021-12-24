@@ -22,7 +22,7 @@ def main(args):
     # Set seeds
     Utils.set_seed_everywhere(args.seed)
 
-    # All agents can convert seamlessly between RL, generative, or classification environments
+    # All agents can convert seamlessly between RL or classification environments
 
     # Train, test environments
     env = instantiate(args.environment)  # An instance of DeepMindControl, for example
