@@ -138,6 +138,7 @@ class DPGAgent(torch.nn.Module):
             critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
                                                       obs, action, reward, discount, next_obs,
                                                       self.step, Q_reduction=self.bm_Q_reduction,
+                                                      one_hot=self.one_hot and self.discrete,
                                                       logs=logs)
 
             # Update critic

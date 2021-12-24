@@ -9,14 +9,14 @@ import Utils
 
 
 def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
-                      num_actions=1, Q_reduction='min', exploit_schedule=1, entropy_temp=0, logs=None):
+                      num_actions=1, Q_reduction='min', one_hot=False, exploit_schedule=1, entropy_temp=0, logs=None):
     with torch.no_grad():
         if critic.discrete:
             # All actions
             next_Q = critic.target(next_obs)
             next_actions_log_probs = 0
         else:
-            if actor.discrete:
+            if actor.discrete and one_hot:
                 # One-hots
                 action = Utils.one_hot(action, actor.action_dim)
                 next_actions = torch.eye(actor.action_dim, device=obs.device).expand(obs.shape[0], -1, -1)
