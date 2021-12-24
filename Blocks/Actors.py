@@ -118,7 +118,7 @@ class GaussianActorEnsemble(TruncatedGaussianActor):
                  l2_norm=False, discrete=False, stddev_schedule=None,  stddev_clip=None,
                  target_tau=None, optim_lr=None):
         super().__init__(repr_shape, feature_dim, hidden_dim, action_dim, l2_norm,
-                         discrete, stddev_schedule, stddev_clip, target_tau, optim_lr)
+                         discrete, stddev_schedule, stddev_clip)
 
         out_dim = action_dim * 2 if stddev_schedule is None else action_dim
 
@@ -129,15 +129,13 @@ class GaussianActorEnsemble(TruncatedGaussianActor):
 
 
 class SGDActor(nn.Module):
-    def __init__(self, module, low=-1, high=1, lr=0.01, steps=1):
+    def __init__(self, critic, low=-1, high=1, lr=0.01, steps=1):
         super().__init__()
 
-        self.module = module
+        self.critic = critic
         self.low, self.high = low, high
         self.optim_lr = lr
         self.steps = steps
-
-        self.Q_reduction = lambda Qs: torch.min(Qs, 0)[0]
 
     def forward(self, obs, start_action=None):
         if start_action is None:
@@ -147,7 +145,7 @@ class SGDActor(nn.Module):
             low = high = start_action
             assert obs.shape[0] == start_action.shape[0]
 
-        Pi = SGAUniform(module=partial(self.module, obs=obs),
+        Pi = SGAUniform(module=lambda action: torch.min(self.critic(obs, action).Qs, 0)[0],
                         low=low, high=high, optim_lr=self.optim_lr, steps=self.steps, descent=True)
         return Pi
 

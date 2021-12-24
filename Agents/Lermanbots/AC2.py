@@ -18,7 +18,7 @@ from Blocks.Architectures.MLP import MLPBlock
 from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
-class SPRAgent(torch.nn.Module):
+class AC2Agent(torch.nn.Module):
     """Actor Critic Creator (AC2) Agent"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
