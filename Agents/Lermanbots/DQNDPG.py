@@ -24,7 +24,7 @@ class DQNDPGAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 ):
+                 num_actions=2):  # DQNDPG
         super().__init__()
 
         self.discrete = discrete
@@ -35,19 +35,23 @@ class DQNDPGAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
+        self.num_actions = num_actions
+
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
+        if not discrete:  # Continuous actions creator
+            self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                                  stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                                  optim_lr=lr).to(device)
+
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
 
-        self.actor = CategoricalCriticActor(stddev_schedule) if discrete \
-            else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                        stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                        optim_lr=lr).to(device)
+        self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Birth
 
@@ -59,13 +63,15 @@ class DQNDPGAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            # Critic is needed for DQN
-            actor_input = self.critic(obs) if self.discrete else obs
-            Pi = self.actor(actor_input, self.step)
+            # "Candidate actions"
+            creations = None if self.discrete \
+                else self.creator(obs).sample(self.num_actions)
+
+            # DQN actor is based on critic
+            Pi = self.actor(self.critic(obs, creations), self.step)
 
             action = Pi.sample() if self.training \
-                else Pi.best if self.discrete \
-                else Pi.mean
+                else Pi.best
 
             if self.training:
                 self.step += 1
@@ -107,12 +113,12 @@ class DQNDPGAgent(torch.nn.Module):
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
-            # DQN uses critic directly
-            actor_input = self.critic(obs[instruction]) if self.discrete \
-                else obs[instruction]
+            # "Candidate actions"
+            creations = None if self.discrete \
+                else self.critic(self.creator(obs[instruction]).sample(self.num_actions))
 
             # Infer
-            action = self.actor(actor_input, self.step)
+            action = self.actor(self.critic(obs[instruction], creations), self.step)
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
@@ -135,9 +141,9 @@ class DQNDPGAgent(torch.nn.Module):
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                      obs, action, reward, discount, next_obs,
-                                                      self.step, logs=logs)
+            critic_loss = QLearning.ensembleQLearning(self.actor if self.discrete else self.creator,
+                                                      self.critic, obs, action, reward, discount, next_obs,
+                                                      self.step, self.num_actions, logs=logs)
 
             # Update critic
             Utils.optimize(critic_loss,
@@ -147,12 +153,12 @@ class DQNDPGAgent(torch.nn.Module):
             self.critic.update_target_params()
 
             if not self.discrete:
-                # Actor loss
-                actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
-                                                               self.step, logs=logs)
+                # Creator loss
+                actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.detach(),
+                                                               self.step, self.num_actions, logs=logs)
 
-                # Update actor
+                # Update creator
                 Utils.optimize(actor_loss,
-                               self.actor)
+                               self.creator)
 
         return logs
