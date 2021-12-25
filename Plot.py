@@ -110,6 +110,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
 
     plt.tight_layout()
     plt.savefig(path)
+    plt.close()
 
 
 if __name__ == "__main__":
