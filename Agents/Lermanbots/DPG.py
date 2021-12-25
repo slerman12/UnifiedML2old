@@ -39,8 +39,8 @@ class DPGAgent(torch.nn.Module):
         self.one_hot, self.bm_Q_reduction, self.dpg_Q_reduction = one_hot, bellman_Q_reduction, dpg_Q_reduction
 
         # Data augmentation
-        # self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
-        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
+        # self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
