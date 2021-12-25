@@ -19,13 +19,13 @@ from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
 class DynoSOARAgent(torch.nn.Module):
-    """Dinosaur Agent: 'Dynamics W/ Reward' Prediction"""
+    """Dinosaur Agent: 'Dynamics W/ Reward' Maximization"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=1  # DynoSAUR
+                 depth=1  # DynoSOAR
                  ):
         super().__init__()
 

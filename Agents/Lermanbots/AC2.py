@@ -19,13 +19,14 @@ from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
 class AC2Agent(torch.nn.Module):
+    # TODO CREATOR! This is DPG-Creator + Dyno
     """Actor Critic Creator (AC2) Agent"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 critic_ensemble_size=3, actor_ensemble_size=2  # AC2
+                 num_critics=3, num_actors=2  # AC2
                  ):
         super().__init__()
 
@@ -41,12 +42,12 @@ class AC2Agent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      critic_ensemble_size, discrete=False,  # False for now
+                                      num_critics, discrete=False,  # False for now
                                       optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = CategoricalCriticActor(stddev_schedule) if discrete \
             else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                       actor_ensemble_size, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                       num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                        optim_lr=lr).to(device)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],

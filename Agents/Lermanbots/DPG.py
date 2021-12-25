@@ -46,11 +46,11 @@ class DPGAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      l2_norm=True, optim_lr=lr, target_tau=target_tau).to(device)
+                                      l2_norm=False, optim_lr=lr, target_tau=target_tau).to(device)
 
         self.actor = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                             discrete=discrete, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                            l2_norm=True, optim_lr=lr).to(device)
+                                            l2_norm=False, optim_lr=lr).to(device)
 
         # Birth
 
