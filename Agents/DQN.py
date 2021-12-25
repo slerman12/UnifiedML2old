@@ -1,6 +1,6 @@
 # Copyright (c) Sam Lerman. All Rights Reserved.
 #
-# This source code is licensed under the MIT license found in the
+# This SOURCE is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import time
 
@@ -10,26 +10,24 @@ from torch.nn.functional import cross_entropy
 import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
-from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder
-from Blocks.Actors import GaussianActorEnsemble, CategoricalCriticActor
+from Blocks.Encoders import CNNEncoder
+from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
-from Blocks.Architectures.MLP import MLPBlock
 
-from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
+from Losses import QLearning, PolicyLearning
 
 
-class DQNDPGAgent(torch.nn.Module):
-    """Deep Q Network, Deep Policy Gradient (DQN-DPG) Agent"""
+class DQNAgent(torch.nn.Module):
+    """Deep Q Network"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 num_actions=2, one_hot=True, bellman_Q_reduction='min', dpg_Q_reduction='min'  # DQNDPG
-                 ):
+                 num_actions=2):  # DQN continuous
         super().__init__()
 
-        self.discrete = discrete
+        self.discrete = discrete  # Continuous supported
         self.RL = RL
         self.device = device
         self.log = log
@@ -37,23 +35,23 @@ class DQNDPGAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
-        self.num_actions, self.one_hot, self.bm_Q_reduction, self.dpg_Q_reduction = \
-            num_actions, one_hot, bellman_Q_reduction, dpg_Q_reduction
-
-        # Models
-        self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
-
-        self.creator = GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                             stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                             optim_lr=lr).to(device)
-
-        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      optim_lr=lr, target_tau=target_tau).to(device)
-
-        self.actor = CategoricalCriticActor(stddev_schedule)
+        self.num_actions = num_actions
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+
+        # Models
+        self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
+
+        if not discrete:  # Continuous actions creator
+            self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                                  stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                                  optim_lr=lr).to(device)
+
+        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                      discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
+
+        self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Birth
 
@@ -65,23 +63,23 @@ class DQNDPGAgent(torch.nn.Module):
             # "See"
             obs = self.encoder(obs)
 
-            # DPG "Candidate actions"
-            creation = self.creator(obs, self.step).sample(self.num_actions)
+            # "Candidate actions"
+            creations = None if self.discrete \
+                else self.creator(obs).sample(self.num_actions)
 
-            # DQN component is based on critic
-            Pi = self.actor(self.critic(obs, creation), self.step)
+            # DQN actor is based on critic
+            Pi = self.actor(self.critic(obs, creations), self.step)
 
-            action = Pi.sample() if self.training else Pi.best
+            action = Pi.sample() if self.training \
+                else Pi.best
 
             if self.training:
                 self.step += 1
 
                 # Explore phase
                 if self.step < self.explore_steps and self.training:
-                    action = action.uniform_(-1, 1)
-
-            if self.discrete:
-                action = torch.argmax(action, -1)  # Since discrete is using vector representations
+                    action = torch.randint(self.actor.action_dim, size=action.shape) if self.discrete \
+                        else action.uniform_(-1, 1)
 
             return action
 
@@ -92,7 +90,6 @@ class DQNDPGAgent(torch.nn.Module):
         batch = next(replay)
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
-        traj_o, traj_a, traj_r, traj_l = traj
 
         # "Imagine" / "Envision"
 
@@ -109,7 +106,7 @@ class DQNDPGAgent(torch.nn.Module):
 
         logs = {'episode': self.episode, 'step': self.step} if self.log else None
 
-        instruction = ~torch.isnan(label.flatten(-1).sum(1))
+        instruction = ~torch.isnan(label.flatten(1).sum(1))
 
         # "Acquire Wisdom"
 
@@ -117,10 +114,11 @@ class DQNDPGAgent(torch.nn.Module):
             # "Via Example" / "Parental Support" / "School"
 
             # "Candidate actions"
-            creations = self.creator(obs[instruction]).sample(self.num_actions)
+            creations = None if self.discrete \
+                else self.creator(obs[instruction]).sample(self.num_actions)
 
             # Infer
-            action = self.actor(self.critic(creations), self.step).sample()
+            action = self.actor(self.critic(obs[instruction], creations), self.step)
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
@@ -143,11 +141,9 @@ class DQNDPGAgent(torch.nn.Module):
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
-                                                      obs, action, reward, discount, next_obs,
-                                                      self.step, Q_reduction=self.bm_Q_reduction,
-                                                      one_hot=self.one_hot and self.discrete,
-                                                      logs=logs)
+            critic_loss = QLearning.ensembleQLearning(self.actor if self.discrete else self.creator,
+                                                      self.critic, obs, action, reward, discount, next_obs,
+                                                      self.step, self.num_actions, logs=logs)
 
             # Update critic
             Utils.optimize(critic_loss,
@@ -156,13 +152,13 @@ class DQNDPGAgent(torch.nn.Module):
 
             self.critic.update_target_params()
 
-            # Actor loss
-            actor_loss = PolicyLearning.deepPolicyGradient(self.actor, self.critic, obs.detach(),
-                                                           self.step, Q_reduction=self.dpg_Q_reduction,
-                                                           one_hot=self.one_hot and self.discrete,
-                                                           logs=logs)
+            if not self.discrete:
+                # Creator loss
+                actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.detach(),
+                                                               self.step, self.num_actions, logs=logs)
 
-            # Update actor
-            Utils.optimize(actor_loss,
-                           self.creator)
+                # Update creator
+                Utils.optimize(actor_loss,
+                               self.creator)
+
         return logs
