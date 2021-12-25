@@ -9,7 +9,6 @@ from pathlib import Path
 
 import Utils
 
-# If input sizes consistent, will lead to better performance.
 from torch.backends import cudnn
 cudnn.benchmark = True
 
@@ -22,10 +21,8 @@ def main(args):
     # Set seeds
     Utils.set_seed_everywhere(args.seed)
 
-    # All agents can convert seamlessly between RL or classification environments
-
     # Train, test environments
-    env = instantiate(args.environment)  # An instance of DeepMindControl, for example
+    env = instantiate(args.environment)
     generalize = instantiate(args.environment, train=False, seed=args.seed + 1234)
 
     if Path(args.save_path).exists():
@@ -36,10 +33,10 @@ def main(args):
             setattr(args, arg, getattr(env, arg))
 
         # Agent
-        agent = instantiate(args.agent).to(args.device)  # An instance of DQNDPGAgent, for example
+        agent = instantiate(args.agent).to(args.device)
 
     # Experience replay
-    replay = instantiate(args.replay)  # An instance of ExperienceReplay, for example
+    replay = instantiate(args.replay)
 
     # Loggers
     logger = instantiate(args.logger)

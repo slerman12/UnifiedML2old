@@ -28,7 +28,7 @@ class DQNAgent(torch.nn.Module):
         super().__init__()
 
         self.discrete = discrete  # Continuous supported
-        self.RL = RL
+        self.RL = RL  # And classification too...
         self.device = device
         self.log = log
         self.birthday = time.time()
@@ -113,7 +113,7 @@ class DQNAgent(torch.nn.Module):
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
-            # "Candidate actions"
+            # "Candidate classifications"
             creations = None if self.discrete \
                 else self.creator(obs[instruction]).sample(self.num_actions)
 
