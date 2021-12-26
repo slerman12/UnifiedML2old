@@ -106,4 +106,4 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         logs['target_q'] = target_q.mean().item()
         logs['td_error'] = td_error.item()
 
-    return td_error - entropy
+    return td_error
