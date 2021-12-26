@@ -37,7 +37,7 @@ class DQNAgent(torch.nn.Module):
         self.explore_steps = explore_steps
         self.action_dim = action_shape[-1]
 
-        self.num_actions = num_actions
+        self.num_actions = num_actions  # Num actions per actor
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
@@ -67,7 +67,7 @@ class DQNAgent(torch.nn.Module):
 
             # "Candidate actions"
             creations = None if self.discrete \
-                else self.creator(obs, self.step).sample([self.num_actions])
+                else self.creator(obs, self.step).sample(self.num_actions)
 
             # DQN actor is based on critic
             Pi = self.actor(self.critic(obs, creations), self.step)

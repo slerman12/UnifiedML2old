@@ -25,7 +25,9 @@ class TruncatedNormal(pyd.Normal):
         with torch.no_grad():
             return self.rsample(sample_shape=sample_shape, to_clip=to_clip)
 
-    def rsample(self, sample_shape=torch.Size([1]), to_clip=True, ):
+    def rsample(self, sample_shape=torch.Size([1]), to_clip=True):
+        if isinstance(sample_shape, int):
+            sample_shape = [sample_shape]
         shape = self._extended_shape(sample_shape)  # Draw multiple samples
 
         rand = _standard_normal(shape, dtype=self.loc.dtype, device=self.loc.device)  # Explore
