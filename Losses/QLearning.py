@@ -41,7 +41,6 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         # elif Q_reduction == 'sample':
         #     next_q = next_Q.sample()
         next_q, _ = torch.min(next_Q.Qs, 0)
-        print(next_q.shape)
 
         # Value V = expected Q
         # next_probs = torch.softmax(next_Pi_log_probs, -1)
@@ -60,6 +59,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         next_u = exploit_factor * next_q + (1 - exploit_factor) * next_Q.stddev  # dpg_Q_reduction, I think
         # u = exploit_factor * next_Q.sample() + (1 - exploit_factor) * next_Q.stddev
         next_u_logits = next_u - next_u.max(dim=-1, keepdim=True)[0]
+        print(next_u_logits.shape, next_actions_log_probs.shape)
         next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
         next_v = torch.sum(next_q * next_probs, -1, keepdim=True)
 
