@@ -64,7 +64,7 @@ class SPRAgent(torch.nn.Module):
                                   depth=2, layer_norm=True,
                                   optim_lr=lr).to(device)
 
-        self.actor = CategoricalCriticActor(stddev_schedule)
+        self.actor = CategoricalCriticActor(stddev_schedule).to(device)
 
         # Data augmentation
         self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))

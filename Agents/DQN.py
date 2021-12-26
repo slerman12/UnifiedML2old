@@ -42,17 +42,17 @@ class DQNAgent(torch.nn.Module):
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
 
         # Models
-        self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
+        self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
 
         if not discrete:  # Continuous actions creator
             self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                                   num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                                  optim_lr=lr).to(device)
+                                                  optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
+                                      discrete=discrete, optim_lr=lr, target_tau=target_tau)
 
-        self.actor = CategoricalCriticActor(stddev_schedule).to(device)
+        self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Birth
 
