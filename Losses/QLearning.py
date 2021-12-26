@@ -29,6 +29,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             else:
                 # Sample actions  Note: original DDPG used EMA target for this
                 # next_Pi = actor.target(next_obs, step)
+                next_actions = None
                 if has_future.any():
                     next_Pi = actor(next_obs[has_future], step)
                     next_actions = next_Pi.rsample(num_actions, batch_first=False)
