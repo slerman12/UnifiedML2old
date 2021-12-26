@@ -94,6 +94,8 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     # Re-prioritize based on certainty e.g., https://arxiv.org/pdf/2007.04938.pdf
     td_error *= torch.sigmoid(-Q.stddev * priority_temp) + 0.5
 
+    td_error = td_error.mean()
+
     # Judgement/humility - Pi, Q, Q_Pi entropy, and log_prob (the latter might help discovery by reducing past prob)
     # entropy = entropy_temp * Q.stddev.mean()
     # entropy = entropy_temp * Q.entropy().mean()  # Can also use this in deepPolicyGradient and Creator
