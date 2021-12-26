@@ -63,12 +63,10 @@ class TruncatedGaussianActor(nn.Module):
         if self.stddev_schedule is None or step is None:
             mean_tanh, log_stddev = self.Pi_head(h).chunk(2, dim=-1)
             stddev = torch.exp(log_stddev)
-            print(mean_tanh.shape)
         else:
             mean_tanh = self.Pi_head(h)
             stddev = torch.full_like(mean_tanh,
                                      Utils.schedule(self.stddev_schedule, step))
-            print("ya", mean_tanh.shape)
 
         self.mean_tanh = mean_tanh  # Pre-Tanh mean can be regularized (https://openreview.net/pdf?id=9xhgmsNVHu)
         mean = torch.tanh(self.mean_tanh)
