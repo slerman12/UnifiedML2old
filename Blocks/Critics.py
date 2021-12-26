@@ -77,7 +77,7 @@ class EnsembleQCritic(nn.Module):
             assert action is not None and \
                    action.shape[-1] == self.action_dim, f'action with dim={self.action_dim} needed for continuous space'
 
-            action = action.view(obs.shape[0], -1, self.action_dim)  # [b, n, d]
+            action = action.reshape(obs.shape[0], -1, self.action_dim)  # [b, n, d]
 
             h = h.unsqueeze(1).expand(*action.shape[:-1], -1)
 
