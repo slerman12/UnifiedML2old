@@ -35,9 +35,10 @@ class TruncatedNormal(pyd.Normal):
             dev = Utils.rclamp(dev, -self.stddev_clip, self.stddev_clip)  # Don't explore /too/ much
         x = self.loc.expand(shape) + dev
 
+        x = x.transpose(0, len(sample_shape))  # Batch dim first
+
         if self.low is not None and self.high is not None:
             # Differentiable truncation
-            print(x.shape)
             return Utils.rclamp(x, self.low + self.eps, self.high - self.eps)
 
         return x
