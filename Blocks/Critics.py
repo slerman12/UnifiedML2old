@@ -57,6 +57,9 @@ class EnsembleQCritic(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     def forward(self, obs, action=None, context=None):
+        if len(obs) == 0:
+            return
+
         h = self.trunk(obs)
 
         if context is None:
