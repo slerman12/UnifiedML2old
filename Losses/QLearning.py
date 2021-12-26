@@ -26,7 +26,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
                 # next_Pi = actor.target(next_obs, step)
                 next_Pi = actor(next_obs, step)
                 next_actions = next_Pi.rsample(num_actions)
-                print(next_actions.shape)
+                print(next_Pi.rsample(1).shape, next_Pi.rsample(2).shape, next_Pi.rsample(5).shape)
                 next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).view(obs.shape[0], -1, 1)
             next_Q = critic.target(next_obs, next_actions)
 
