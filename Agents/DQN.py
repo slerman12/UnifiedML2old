@@ -83,7 +83,7 @@ class DQNAgent(torch.nn.Module):
                     action = torch.randint(self.actor.action_dim, size=action.shape) if self.discrete \
                         else action.uniform_(-1, 1)
 
-            return action
+            return action[0]
 
     # "Dream"
     def update(self, replay):
