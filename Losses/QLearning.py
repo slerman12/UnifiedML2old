@@ -25,10 +25,9 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
                 # Sample actions  Note: original DDPG used EMA target for this
                 # next_Pi = actor.target(next_obs, step)
                 next_Pi = actor(next_obs, step)
-                next_actions = next_Pi.rsample(num_actions)
-                sampled_next_actions = next_actions.transpose(0, 1)
-                next_actions_log_probs = next_Pi.log_prob(sampled_next_actions).sum(-1).transpose(0, 1).flatten(1)
-            next_Q = critic.target(next_obs, next_actions)
+                next_actions = next_Pi.rsample(num_actions, batch_first=False)
+                next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).transpose(0, 1).flatten(1)
+            next_Q = critic.target(next_obs, next_actions.transpose(0, 1))
 
         # How to reduce Q ensembles
         # if Q_reduction == 'min':
