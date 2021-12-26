@@ -52,7 +52,7 @@ class DQNAgent(torch.nn.Module):
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
 
-        self.actor = CategoricalCriticActor(stddev_schedule)
+        self.actor = CategoricalCriticActor(stddev_schedule).to(device)
 
         # Birth
 
