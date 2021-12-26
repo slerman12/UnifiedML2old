@@ -37,8 +37,8 @@ class TruncatedNormal(pyd.Normal):
 
         if self.low is not None and self.high is not None:
             # Differentiable truncation
+            print(x.shape)
             return Utils.rclamp(x, self.low + self.eps, self.high - self.eps)
-        print(x.shape)
 
         return x
 
