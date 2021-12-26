@@ -25,7 +25,6 @@ class TruncatedGaussianActor(nn.Module):
 
         self.discrete = discrete
         self.action_dim = action_dim
-        print(action_dim)
 
         self.stddev_schedule = stddev_schedule
         self.stddev_clip = stddev_clip
@@ -122,6 +121,7 @@ class GaussianActorEnsemble(TruncatedGaussianActor):
                          discrete, stddev_schedule, stddev_clip)
 
         out_dim = action_dim * 2 if stddev_schedule is None else action_dim
+        print(out_dim)
 
         self.Pi_head = Utils.Ensemble([MLP(feature_dim, out_dim, hidden_dim, 2, l2_norm=l2_norm)
                                        for _ in range(ensemble_size)])
