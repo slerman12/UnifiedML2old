@@ -26,7 +26,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
                 # next_Pi = actor.target(next_obs, step)
                 next_Pi = actor(next_obs, step)
                 next_actions = next_Pi.rsample(num_actions)
-                next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).view(obs.shape[0], -1, 1)
+                next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).flatten(1)
             next_Q = critic.target(next_obs, next_actions)
 
         # How to reduce Q ensembles
@@ -59,7 +59,6 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         next_u = exploit_factor * next_q + (1 - exploit_factor) * next_Q.stddev  # dpg_Q_reduction, I think
         # u = exploit_factor * next_Q.sample() + (1 - exploit_factor) * next_Q.stddev
         next_u_logits = next_u - next_u.max(dim=-1, keepdim=True)[0]
-        print(next_u_logits.shape, next_actions_log_probs.shape)
         next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
         next_v = torch.sum(next_q * next_probs, -1, keepdim=True)
 
