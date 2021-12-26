@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
+from Blocks.Actors import CategoricalCriticActor, GaussianActorEnsemble
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
@@ -35,6 +35,7 @@ class DQNAgent(torch.nn.Module):
         self.birthday = time.time()
         self.step = self.episode = 0
         self.explore_steps = explore_steps
+        self.action_dim = action_shape[-1]
 
         self.num_actions = num_actions
 
@@ -45,11 +46,11 @@ class DQNAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
 
         if not discrete:  # Continuous actions creator
-            self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                                  num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                                  optim_lr=lr)
+            self.creator = GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
+                                                 num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                                 optim_lr=lr)
 
-        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau)
 
         self.actor = CategoricalCriticActor(stddev_schedule)
@@ -79,7 +80,7 @@ class DQNAgent(torch.nn.Module):
 
                 # Explore phase
                 if self.step < self.explore_steps and self.training:
-                    action = torch.randint(self.actor.action_dim, size=action.shape) if self.discrete \
+                    action = torch.randint(self.action_dim, size=action.shape) if self.discrete \
                         else action.uniform_(-1, 1)
 
             return action[0]
