@@ -99,8 +99,6 @@ class Ensemble(nn.Module):
         self.dim = dim
 
     def forward(self, *x):
-        print(torch.stack([module(*x) for module in self.ensemble],
-                          self.dim).shape)
         return torch.stack([module(*x) for module in self.ensemble],
                            self.dim)
 
