@@ -70,6 +70,7 @@ class TruncatedGaussianActor(nn.Module):
 
         self.mean_tanh = mean_tanh  # Pre-Tanh mean can be regularized (https://openreview.net/pdf?id=9xhgmsNVHu)
         mean = torch.tanh(self.mean_tanh)
+        print(mean.shape)
 
         Pi = TruncatedNormal(mean, stddev, low=-1, high=1, stddev_clip=self.stddev_clip)
 
