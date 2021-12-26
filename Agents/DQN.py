@@ -74,7 +74,6 @@ class DQNAgent(torch.nn.Module):
 
             action = Pi.sample() if self.training \
                 else Pi.best
-            print(action.shape)
 
             if self.training:
                 self.step += 1
