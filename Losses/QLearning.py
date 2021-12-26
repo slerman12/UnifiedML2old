@@ -36,7 +36,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
 
         if has_future.any():
 
-            next_Q = critic.target(next_obs[has_future], next_actions)
+            next_Q = critic.target(next_obs, next_actions)
 
             # How to reduce Q ensembles
             # if Q_reduction == 'min':
