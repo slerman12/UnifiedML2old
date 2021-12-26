@@ -98,6 +98,7 @@ class CategoricalCriticActor(nn.Module):
 
         def action_sampler(sample_shape=torch.Size()):
             i = sample(sample_shape)
+            print(u_logits.shape)
             print(i.shape)
             print(Utils.gather_indices(Q.action, i, 1).shape)
             return Utils.gather_indices(Q.action, i, 1)
