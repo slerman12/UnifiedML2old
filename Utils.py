@@ -200,28 +200,16 @@ def optimize(loss=None, *models, clear_grads=True, backward=True, step_optim=Tru
             model.optim.step()
 
 
-# Increment/decrement a value in proportion to a step count based on a string-formatted schedule
-def schedule(sched, step):
+# Increment/decrement a value in proportion to a step count based on a string-formatted schedule (only supports linear)
+def schedule(schedule, step):
     try:
-        return float(sched)
+        return float(schedule)
     except ValueError:
-        match = re.match(r'linear\((.+),(.+),(.+)\)', sched)
+        match = re.match(r'linear\((.+),(.+),(.+)\)', schedule)
         if match:
-            init, final, duration = [float(g) for g in match.groups()]
+            start, stop, duration = [float(g) for g in match.groups()]
             mix = np.clip(step / duration, 0.0, 1.0)
-            return (1.0 - mix) * init + mix * final
-        match = re.match(r'step_linear\((.+),(.+),(.+),(.+),(.+)\)', sched)
-        if match:
-            init, final1, duration1, final2, duration2 = [
-                float(g) for g in match.groups()
-            ]
-            if step <= duration1:
-                mix = np.clip(step / duration1, 0.0, 1.0)
-                return (1.0 - mix) * init + mix * final1
-            else:
-                mix = np.clip((step - duration1) / duration2, 0.0, 1.0)
-                return (1.0 - mix) * final1 + mix * final2
-    raise NotImplementedError(sched)
+            return (1.0 - mix) * start + mix * stop
 
 
 # Helps contain learnable meta coefficients like temperatures, etc.
@@ -241,68 +229,3 @@ class Meta(nn.Module):
         if len(names) == 0:
             names = self.metas
         return torch.cat([getattr(self, meta) for meta in names])
-
-
-# Converts an agent to a classifier
-def to_classifier(agent, regression=False):
-    def update(replay):
-
-        if agent.training:
-            agent.step += 1
-
-        # "Recollect"
-
-        batch = replay.sample()  # Can also write 'batch = next(replay)'
-        obs, y_label = to_torch(batch, agent.device)
-
-        # "Imagine" / "Envision"
-
-        # Augment
-        if agent.training and hasattr(agent, 'aug'):
-            obs = agent.aug(obs)
-
-        # Encode
-        obs = agent.encoder(obs)
-
-        # "Predict" / "Learn" / "Grow"
-
-        dist = agent.actorSAURUS(obs)
-
-        y_pred = dist.logits if hasattr(dist, 'logits') \
-            else dist.mean
-
-        # Regression or classification
-        loss = nn.MSELoss()(y_pred, y_label) if regression \
-            else nn.CrossEntropyLoss()(y_pred, y_label)
-
-        # Update
-        if agent.training:
-            optimize(loss, agent.encoder, agent.actorSAURUS)
-
-        logs = {
-            'step': agent.step,
-            'loss': loss.item()
-        }
-
-        if not regression:
-            logs.update({
-                'accuracy': torch.sum(torch.argmax(y_pred, -1)
-                                      == y_label, -1) / y_pred.shape[0]
-            })
-
-        return logs
-
-    setattr(agent, 'original_update', agent.update)
-    setattr(agent, 'update', update)
-
-    return agent
-
-
-# Converts a classifier to an agent
-def to_agent(classifier):
-
-    if hasattr(classifier, 'original_update'):
-        update = getattr(classifier, 'original_update')
-        setattr(classifier, 'update', update)
-
-    return classifier

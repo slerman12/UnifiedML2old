@@ -18,13 +18,14 @@ from Losses import QLearning, PolicyLearning
 
 
 class DQNAgent(torch.nn.Module):
-    """Deep Q Network"""
+    """Deep Q Network
+    Generalized to continuous action spaces and classification"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 num_actions=2):  # DQN continuous
+                 num_actors=2, num_actions=2):  # DQN continuous
         super().__init__()
 
         self.discrete = discrete  # Continuous supported
@@ -45,7 +46,7 @@ class DQNAgent(torch.nn.Module):
 
         if not discrete:  # Continuous actions creator
             self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                                  stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                                  num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                                   optim_lr=lr).to(device)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],

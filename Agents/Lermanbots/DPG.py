@@ -18,13 +18,14 @@ from Losses import QLearning, PolicyLearning
 
 
 class DPGAgent(torch.nn.Module):
-    """Deep Policy Gradient"""
+    """Our generalized Deep Policy Gradient
+    with optional one-hot of discrete actions and varying Q reductions"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 one_hot=True, bellman_Q_reduction='min', dpg_Q_reduction='min' # DPG
+                 one_hot=False, bellman_Q_reduction='min', dpg_Q_reduction='min'  # DPG
                  ):
         super().__init__()
 
@@ -39,8 +40,7 @@ class DPGAgent(torch.nn.Module):
         self.one_hot, self.bm_Q_reduction, self.dpg_Q_reduction = one_hot, bellman_Q_reduction, dpg_Q_reduction
 
         # Data augmentation
-        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
-        # self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
+        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
@@ -76,7 +76,6 @@ class DPGAgent(torch.nn.Module):
 
             if self.discrete:
                 action = torch.argmax(action, -1)  # Since discrete is using vector representations
-                # action = Categorical(logits=action)  # Since discrete is using vector representations
 
             return action
 

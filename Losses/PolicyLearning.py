@@ -11,8 +11,8 @@ import Utils
 def deepPolicyGradient(actor, critic, obs, step, num_actions=1, Q_reduction='min', one_hot=False, exploit_schedule=1, logs=None):
     Pi = actor(obs, step)
 
-    actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
-    # actions = Pi.rsample(num_actions)
+    # actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
+    actions = Pi.rsample(num_actions)
     if actor.discrete and one_hot:
         actions = Utils.rone_hot(actions)
 

@@ -94,6 +94,8 @@ Monitor results:
 tensorboard --logdir exp_local
 ```
 
+If you are only interested in the RL portion, check out our UnifiedRL. It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.
+
 
 If you want to run a state-of-art RL algorithm using only code meant to spoon-feed a baby, use python RunSimpleExample.py
 

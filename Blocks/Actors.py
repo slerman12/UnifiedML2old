@@ -76,20 +76,20 @@ class TruncatedGaussianActor(nn.Module):
         return Pi
 
 
-class CategoricalCriticActor(nn.Module):  # "Creator" for short
-    def __init__(self, exploit_schedule=1):
+class CategoricalCriticActor(nn.Module):
+    def __init__(self, entropy_sched=1):
         super().__init__()
 
-        self.exploit_schedule = exploit_schedule
+        self.entropy_sched = entropy_sched
 
-    def forward(self, Q, step=None, temp=1, sample_q=True, actions_log_prob=0):
+    def forward(self, Q, step=None, exploit_temp=1, sample_q=False, actions_log_prob=0):
         # Sample q or mean
         q = Q.rsample() if sample_q else Q.mean
 
-        exploit_factor = Utils.schedule(self.exploit_schedule, step)
-        u = exploit_factor * q + (1 - exploit_factor) * Q.stddev
+        entropy_temp = Utils.schedule(self.entropy_sched, step)
+        u = exploit_temp * q + (1 - exploit_temp) * Q.stddev
         u_logits = u - u.max(dim=-1, keepdim=True)[0]
-        Q_Pi = Categorical(logits=u_logits / temp + actions_log_prob)
+        Q_Pi = Categorical(logits=u_logits / entropy_temp + actions_log_prob)
 
         best_eps, best_ind = torch.max(u, -1)
         best_action = Utils.gather_indices(Q.action, best_ind, 1)
