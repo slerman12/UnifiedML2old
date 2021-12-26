@@ -11,7 +11,6 @@ import Utils
 def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
                       num_actions=1, priority_temp=0, Q_reduction='min', one_hot=False, exploit_schedule=1, logs=None):
     with torch.no_grad():
-        next_obs[:] = float('nan')
         has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
 
         next_v = torch.zeros_like(discount)
@@ -29,47 +28,48 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             else:
                 # Sample actions  Note: original DDPG used EMA target for this
                 # next_Pi = actor.target(next_obs, step)
-                next_actions = None
                 if has_future.any():
                     next_Pi = actor(next_obs[has_future], step)
                     next_actions = next_Pi.rsample(num_actions, batch_first=False)
                     next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).transpose(0, 1).flatten(1)
                     next_actions = next_actions.transpose(0, 1)
 
-        next_Q = critic.target(next_obs[has_future], next_actions)
+        if has_future.any():
 
-        # How to reduce Q ensembles
-        # if Q_reduction == 'min':
-        #     next_q, _ = torch.min(next_Q.Qs, 0)
-        # elif Q_reduction == 'sample_reduce':
-        #     next_q = next_Q.sample() - next_Q.stddev
-        # elif Q_reduction == 'mean_reduce':
-        #     next_q = next_Q.mean - next_Q.stddev
-        # elif Q_reduction == 'mean':
-        #     next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
-        # elif Q_reduction == 'sample':
-        #     next_q = next_Q.sample()
-        next_q, _ = torch.min(next_Q.Qs, 0)
+            next_Q = critic.target(next_obs[has_future], next_actions)
 
-        # Value V = expected Q
-        # next_probs = torch.softmax(next_Pi_log_probs, -1)
+            # How to reduce Q ensembles
+            # if Q_reduction == 'min':
+            #     next_q, _ = torch.min(next_Q.Qs, 0)
+            # elif Q_reduction == 'sample_reduce':
+            #     next_q = next_Q.sample() - next_Q.stddev
+            # elif Q_reduction == 'mean_reduce':
+            #     next_q = next_Q.mean - next_Q.stddev
+            # elif Q_reduction == 'mean':
+            #     next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
+            # elif Q_reduction == 'sample':
+            #     next_q = next_Q.sample()
+            next_q, _ = torch.min(next_Q.Qs, 0)
 
-        # prob = next_Pi_log_probs.exp()
-        # Overconfident on what we know -- Q-value bias, which needs correction via, e.g., min-reducing,
-        # but fail to evaluate the potential of the unknown, e.g., when to explore confidently into the unknown, bravely
-        # In Q learning, future uncertainty is over-confidence -- confirmation bias
-        # An independent judge, such as actor entropy, is better -- can be optimistic about uncertainty
-        # Uncertainty shouldn't sway uncertainty! Confidence shouldn't compound!
-        # The confidence of the explorer should be curtailed by the cynicism of the objective observer/oracle
-        # u = torch.softmax((1 - temp) * next_q + temp * next_Q.stddev, -1)
-        temp = 1
-        exploit_factor = Utils.schedule(exploit_schedule, step)
-        # next_u = exploit_factor * next_Q.mean + (1 - exploit_factor) * next_Q.stddev
-        next_u = exploit_factor * next_q + (1 - exploit_factor) * next_Q.stddev  # dpg_Q_reduction, I think
-        # u = exploit_factor * next_Q.sample() + (1 - exploit_factor) * next_Q.stddev
-        next_u_logits = next_u - next_u.max(dim=-1, keepdim=True)[0]
-        next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
-        next_v[has_future] = torch.sum(next_q * next_probs, -1, keepdim=True)
+            # Value V = expected Q
+            # next_probs = torch.softmax(next_Pi_log_probs, -1)
+
+            # prob = next_Pi_log_probs.exp()
+            # Overconfident on what we know -- Q-value bias, which needs correction via, e.g., min-reducing,
+            # but fail to evaluate the potential of the unknown, e.g., when to explore confidently into the unknown, bravely
+            # In Q learning, future uncertainty is over-confidence -- confirmation bias
+            # An independent judge, such as actor entropy, is better -- can be optimistic about uncertainty
+            # Uncertainty shouldn't sway uncertainty! Confidence shouldn't compound!
+            # The confidence of the explorer should be curtailed by the cynicism of the objective observer/oracle
+            # u = torch.softmax((1 - temp) * next_q + temp * next_Q.stddev, -1)
+            temp = 1
+            exploit_factor = Utils.schedule(exploit_schedule, step)
+            # next_u = exploit_factor * next_Q.mean + (1 - exploit_factor) * next_Q.stddev
+            next_u = exploit_factor * next_q + (1 - exploit_factor) * next_Q.stddev  # dpg_Q_reduction, I think
+            # u = exploit_factor * next_Q.sample() + (1 - exploit_factor) * next_Q.stddev
+            next_u_logits = next_u - next_u.max(dim=-1, keepdim=True)[0]
+            next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
+            next_v[has_future] = torch.sum(next_q * next_probs, -1, keepdim=True)
 
         # "Entropy maximization"
         # Future-action uncertainty maximization in reward
