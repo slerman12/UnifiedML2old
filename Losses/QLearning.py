@@ -11,6 +11,7 @@ import Utils
 def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
                       num_actions=1, priority_temp=0, Q_reduction='min', one_hot=False, exploit_schedule=1, logs=None):
     with torch.no_grad():
+        next_obs[:] = float('nan')
         has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
 
         next_v = torch.zeros_like(discount)
