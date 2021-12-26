@@ -25,6 +25,7 @@ class TruncatedGaussianActor(nn.Module):
 
         self.discrete = discrete
         self.action_dim = action_dim
+        print(action_dim)
 
         self.stddev_schedule = stddev_schedule
         self.stddev_clip = stddev_clip
@@ -70,7 +71,6 @@ class TruncatedGaussianActor(nn.Module):
 
         self.mean_tanh = mean_tanh  # Pre-Tanh mean can be regularized (https://openreview.net/pdf?id=9xhgmsNVHu)
         mean = torch.tanh(self.mean_tanh)
-        print(mean.shape)
 
         Pi = TruncatedNormal(mean, stddev, low=-1, high=1, stddev_clip=self.stddev_clip)
 
