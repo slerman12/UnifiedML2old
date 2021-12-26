@@ -92,13 +92,15 @@ class CategoricalCriticActor(nn.Module):
         Q_Pi = Categorical(logits=u_logits / entropy_temp + actions_log_prob)
 
         best_eps, best_ind = torch.max(u, -1)
-        best_action = Utils.gather_indices(Q.action, best_ind, 1).squeeze(-1)
+        best_action = Utils.gather_indices(Q.action, best_ind, 1)
 
         sample = Q_Pi.sample
 
         def action_sampler(sample_shape=torch.Size()):
             i = sample(sample_shape)
-            return Utils.gather_indices(Q.action, i, 1).squeeze(-1)
+            print(i.shape)
+            print(Utils.gather_indices(Q.action, i, 1).shape)
+            return Utils.gather_indices(Q.action, i, 1)
 
         Q_Pi.__dict__.update({'best': best_action,
                               'best_u': best_eps,

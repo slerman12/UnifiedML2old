@@ -72,8 +72,8 @@ class DQNAgent(torch.nn.Module):
             # DQN actor is based on critic
             Pi = self.actor(self.critic(obs, creations), self.step)
 
-            action = Pi.sample() if self.training \
-                else Pi.best
+            action = Pi.sample()[0] if self.training \
+                else Pi.best[0]
 
             if self.training:
                 self.step += 1
