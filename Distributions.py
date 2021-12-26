@@ -29,6 +29,7 @@ class TruncatedNormal(pyd.Normal):
         shape = self._extended_shape(torch.Size([num_samples]))  # Draw multiple samples
 
         rand = _standard_normal(shape, dtype=self.loc.dtype, device=self.loc.device)  # Explore
+        print(rand.shape)
         dev = rand * self.scale.expand(shape)  # Deviate
 
         if to_clip:
@@ -38,8 +39,6 @@ class TruncatedNormal(pyd.Normal):
         if self.low is not None and self.high is not None:
             # Differentiable truncation
             return Utils.rclamp(x, self.low + self.eps, self.high - self.eps)
-
-        x = x.transpose(0, 1)  # Put num samples in the 1st dim
 
         return x
 
