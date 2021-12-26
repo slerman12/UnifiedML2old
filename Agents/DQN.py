@@ -39,9 +39,6 @@ class DQNAgent(torch.nn.Module):
 
         self.num_actions = num_actions  # Num actions per actor
 
-        # Data augmentation
-        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
-
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
 
@@ -54,6 +51,9 @@ class DQNAgent(torch.nn.Module):
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau)
 
         self.actor = CategoricalCriticActor(stddev_schedule)
+
+        # Data augmentation
+        self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
 
         # Birth
 
