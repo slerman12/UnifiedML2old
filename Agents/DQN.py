@@ -25,7 +25,7 @@ class DQNAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 num_actors=2, num_actions=4):  # DQN continuous
+                 num_actors=2, num_actions=1):  # DQN continuous
         super().__init__()
 
         self.discrete = discrete  # Continuous supported
@@ -72,8 +72,8 @@ class DQNAgent(torch.nn.Module):
             # DQN actor is based on critic
             Pi = self.actor(self.critic(obs, creations), self.step)
 
-            action = Pi.sample()[0] if self.training \
-                else Pi.best[0]
+            action = Pi.sample() if self.training \
+                else Pi.best
 
             if self.training:
                 self.step += 1
