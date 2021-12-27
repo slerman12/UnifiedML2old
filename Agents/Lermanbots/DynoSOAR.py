@@ -198,10 +198,13 @@ class DynoSOARAgent(torch.nn.Module):
             # SOAR via gradient ascent
             obs[future] = next_obs[future]
 
+            discount = torch.ones_like(discount)
+            discount[future] = replay.experiences.discount ** (self.mstep + 1)
+
             # Actor loss
             actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs,
                                                            self.step, predicted_reward=reward,
-                                                           logs=logs)
+                                                           discount=discount, logs=logs)
 
             # Update actor
             Utils.optimize(actor_loss,

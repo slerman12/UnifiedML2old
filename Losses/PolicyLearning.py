@@ -9,7 +9,7 @@ import Utils
 
 # TODO modularize (don't need to initialize losses in __init__, can just keep current agent structure, pass agent as arg
 def deepPolicyGradient(actor, critic, obs, step, num_actions=1, priority_temp=0, Q_reduction='min',
-                       one_hot=False, predicted_reward=0, exploit_schedule=1, logs=None):
+                       one_hot=False, predicted_reward=0, discount=1, exploit_schedule=1, logs=None):
     Pi = actor(obs, step)
 
     # actions = Pi.rsample(num_actions) if num_actions > 1 else Pi.mean
@@ -27,7 +27,8 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=1, priority_temp=0,
     elif Q_reduction == 'min':
         q = torch.min(Q.Qs, 0)[0]
 
-    q += reward
+    q *= discount
+    q += predicted_reward
 
     # Exploitation-exploration tradeoff
     exploit_factor = Utils.schedule(exploit_schedule, step)
