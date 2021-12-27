@@ -108,7 +108,7 @@ class DQNAgent(torch.nn.Module):
 
         logs = {'episode': self.episode, 'step': self.step} if self.log else None
 
-        instruction = ~torch.isnan(label.flatten(1).sum(1))
+        instruction = ~torch.isnan(label)
 
         # "Acquire Wisdom"
 
