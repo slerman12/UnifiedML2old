@@ -18,8 +18,8 @@ class ClassificationEnvironment:
     def __init__(self, experiences, batch_size, num_workers):
 
         def worker_init_fn(worker_id):
-            seed = np.random.get_state()[1][0] + worker_id
-            np.random.seed(seed)
+            # seed = np.random.get_state()[1][0] + worker_id
+            # np.random.seed(seed)
             random.seed(seed)
 
         self.num_classes = len(experiences.classes)
@@ -83,7 +83,6 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     #  'VisionDataset', 'USPS', 'Kinetics400', 'HMDB51', 'UCF101',
     #  'Places365')
 
-    # dataset = __import__(task, fromlist=['torchvision.datasets'])
     dataset = getattr(torchvision.datasets, task)
 
     experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
