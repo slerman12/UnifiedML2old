@@ -53,6 +53,7 @@ class ClassificationEnvironment:
     def observation_spec(self):
         if not hasattr(self, 'observation'):
             self.observation = np.array(self.batch[0])
+        print(self.observation.shape)
         return specs.BoundedArray(self.observation.shape, self.observation.dtype, 0, 255, 'observation')
 
     def action_spec(self):
@@ -82,8 +83,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     dataset = getattr(torchvision.datasets, task)
 
     transform = transforms.Compose(
-        [
-            # transforms.ToTensor(),
+        [transforms.ToTensor(),
          transforms.Normalize((0.5,), (0.5,))])
 
     experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
