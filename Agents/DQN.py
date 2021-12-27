@@ -99,11 +99,6 @@ class DQNAgent(torch.nn.Module):
         obs = self.aug(obs)
         next_obs = self.aug(next_obs)
 
-        # Encode
-        obs = self.encoder(obs)
-        with torch.no_grad():
-            next_obs = self.encoder(next_obs)
-
         # "Journal teachings"
 
         logs = {'episode': self.episode, 'step': self.step} if self.log else None
@@ -115,11 +110,14 @@ class DQNAgent(torch.nn.Module):
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
+            # Supervised data
+            x = self.encoder(obs)
+
             # "Candidate classifications"
-            creations = self.creator(obs[instruction], self.step).sample(self.num_actions)
+            creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
 
             # Infer
-            action = self.actor(self.critic(obs[instruction], creations), self.step).best
+            action = self.actor(self.critic(x[instruction], creations), self.step).best
 
             mistake = cross_entropy(action, label[instruction].long(), reduction='none')
 
@@ -139,6 +137,11 @@ class DQNAgent(torch.nn.Module):
                 reward[instruction] = -mistake
 
         if self.RL:
+            # Encode
+            obs = self.encoder(obs)
+            with torch.no_grad():
+                next_obs = self.encoder(next_obs)
+
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss
