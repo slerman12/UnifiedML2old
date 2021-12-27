@@ -32,24 +32,24 @@ class ClassificationEnvironment:
                                                    worker_init_fn=worker_init_fn)
 
     def reset(self):
-        x, y = [np.array(batch) for batch in next(self.batches)]
+        x, y = [np.array(batch) for batch in next(iter(self.batches))]
         time_step = ExtendedTimeStep(observation=x, label=y)
         return time_step
 
     def step(self, action):
-        x, y = [np.array(batch) for batch in next(self.batches)]
+        x, y = [np.array(batch) for batch in next(iter(self.batches))]
         time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y,
                                      reward=int(y == torch.argmax(action, -1)))
         return time_step
 
     def observation_spec(self):
         if not hasattr(self, 'observation'):
-            self.observation = np.array(next(self.batches)[0])
+            self.observation = np.array(next(iter(self.batches))[0])
         return specs.BoundedArray(self.observation.shape, self.observation.dtype, None, None, 'observation')
 
     def action_spec(self):
         if not hasattr(self, 'action'):
-            self.action = np.array(next(self.batches)[1])
+            self.action = np.array(next(iter(self.batches))[1])
         return specs.BoundedArray((self.num_classes,), self.action.dtype, None, None, 'action')
 
 
