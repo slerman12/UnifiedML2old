@@ -129,7 +129,7 @@ class DQNAgent(torch.nn.Module):
 
             # Update actor
             Utils.optimize(supervised_loss,
-                           self.encoder,
+                           # self.encoder,
                            self.creator)
 
             if self.RL:
@@ -140,7 +140,7 @@ class DQNAgent(torch.nn.Module):
             # "Visualize"
 
             # Encode
-            obs = self.encoder(obs.detach())
+            obs = self.encoder(obs)
             with torch.no_grad():
                 next_obs = self.encoder(next_obs)
 
