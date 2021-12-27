@@ -18,10 +18,9 @@ class ClassificationEnvironment:
     def __init__(self, experiences, batch_size, num_workers):
 
         def worker_init_fn(worker_id):
-            # seed = np.random.get_state()[1][0] + worker_id
-            # np.random.seed(seed)
-            # random.seed(seed)
-            pass
+            seed = np.random.get_state()[1][0] + worker_id
+            np.random.seed(seed)
+            random.seed(seed)
 
         self.num_classes = len(experiences.classes)
 
@@ -53,21 +52,17 @@ class ClassificationEnvironment:
 
     def observation_spec(self):
         if not hasattr(self, 'observation'):
-            self.observation = np.array(self.batch[0])
-        return specs.BoundedArray(self.observation.shape, self.observation.dtype, None, None, 'observation')
+            self.observation = np.copy(np.array(self.batch[0]))
+        return specs.BoundedArray(self.observation.shape, self.observation.dtype, 0, 255, 'observation')
 
     def action_spec(self):
         if not hasattr(self, 'action'):
-            self.action = np.array(self.batch[1])
-        return specs.BoundedArray((self.num_classes,), self.action.dtype, None, None, 'action')
+            self.action = np.copy(np.array(self.batch[1]))
+        return specs.BoundedArray((self.num_classes,), self.action.dtype, 0, self.num_classes - 1, 'action')
 
 
 def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
          train=True, seed=1, batch_size=1, num_workers=1):
-
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.5,), (0.5,))])
 
     assert task in torchvision.datasets.__all__
 
@@ -85,6 +80,10 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     #  'Places365')
 
     dataset = getattr(torchvision.datasets, task)
+
+    transform = transforms.Compose(
+        [transforms.ToTensor(),
+         transforms.Normalize((0.5,), (0.5,))])
 
     experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
                           train=train,
