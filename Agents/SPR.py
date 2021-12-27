@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder, SPRCNNEncoder
-from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
+from Blocks.Actors import CategoricalCriticActor, GaussianActorEnsemble
 from Blocks.Critics import EnsembleQCritic
 from Blocks.Architectures.MLP import MLPBlock
 
@@ -44,10 +44,10 @@ class SPRAgent(torch.nn.Module):
         # self.encoder = SPRCNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
 
-        if not discrete:  # Continuous actions creator
-            self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                                  num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                                  optim_lr=lr).to(device)
+        # Continuous actions creator
+        self.creator = None if self.discrete \
+            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim, num_actors,
+                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip, optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       optim_lr=lr, target_tau=target_tau).to(device)

@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import TruncatedGaussianActor, CategoricalCriticActor
+from Blocks.Actors import CategoricalCriticActor, GaussianActorEnsemble
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
@@ -45,10 +45,10 @@ class SUNRISEAgent(torch.nn.Module):
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr).to(device)
 
-        if not discrete:  # Continuous actions creator
-            self.creator = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                                  num_actors, stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                                  optim_lr=lr).to(device)
+        # Continuous actions creator
+        self.creator = None if self.discrete \
+            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim, num_actors,
+                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip, optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                       num_critics, discrete=discrete, optim_lr=lr, target_tau=target_tau).to(device)
