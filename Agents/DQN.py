@@ -134,7 +134,7 @@ class DQNAgent(torch.nn.Module):
 
             if self.RL:
                 # Auxiliary reinforcement
-                reward[instruction] = -mistake
+                reward[instruction] = -mistake.view(-1, 1)
 
         if self.RL:
             # Encode
