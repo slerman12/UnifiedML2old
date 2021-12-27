@@ -83,7 +83,7 @@ def make_env(task, frame_stack=4, action_repeat=4, max_episode_frames=None, trun
 
     env = ClassificationEnvironment(experiences, batch_size, num_workers)
 
-    env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=True)
+    env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env)
 
     return env

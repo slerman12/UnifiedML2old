@@ -173,7 +173,7 @@ class DynoSOARAgent(torch.nn.Module):
                 )
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
+            critic_loss = QLearning.ensembleQLearning(self.critic, self.actorSAURUS,
                                                       obs.flatten(-3), action, reward, discount,
                                                       next_next_obs.flatten(-3).detach(),
                                                       self.step, logs=logs)

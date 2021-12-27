@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import Utils
 
 
-def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, step,
+def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, step,
                       num_actions=1, priority_temp=0, Q_reduction='min', one_hot=False, exploit_schedule=1, logs=None):
     with torch.no_grad():
         has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
@@ -23,12 +23,11 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
         else:
             if actor.discrete and one_hot:
                 # One-hots
-                action = Utils.one_hot(action, actor.action_dim)
-                next_actions = torch.eye(actor.action_dim, device=obs.device).expand(has_future.nansum(), -1, -1)
+                action = Utils.one_hot(action, critic.action_dim)
+                next_actions = torch.eye(critic.action_dim, device=obs.device).expand(has_future.nansum(), -1, -1)
                 next_actions_log_probs = 0
             else:
-                # Sample actions  Note: original DDPG used EMA target for this
-                # next_Pi = actor.target(next_obs, step)
+                # Sample actions
                 if next_obs.shape[0] > 0:
                     next_Pi = actor(next_obs, step)
                     next_actions = next_Pi.rsample(num_actions, batch_first=False)

@@ -130,7 +130,7 @@ class DrQV2Agent(torch.nn.Module):
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor, self.critic,
+            critic_loss = QLearning.ensembleQLearning(self.critic, self.actor,
                                                       obs, action, reward, discount, next_obs,
                                                       self.step, logs=logs)
 

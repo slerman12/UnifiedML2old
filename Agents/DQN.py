@@ -116,8 +116,7 @@ class DQNAgent(torch.nn.Module):
             # "Via Example" / "Parental Support" / "School"
 
             # "Candidate classifications"
-            creations = None if self.discrete \
-                else self.creator(obs[instruction], self.step).sample(self.num_actions)
+            creations = self.creator(obs[instruction], self.step).sample(self.num_actions)
 
             # Infer
             action = self.actor(self.critic(obs[instruction], creations), self.step)
@@ -133,7 +132,8 @@ class DQNAgent(torch.nn.Module):
             # Update actor
             Utils.optimize(supervised_loss,
                            self.encoder,
-                           self.actor)
+                           self.creator,
+                           self.critic)
 
             if self.RL:
                 # Auxiliary reinforcement
@@ -143,8 +143,8 @@ class DQNAgent(torch.nn.Module):
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor if self.discrete else self.creator,
-                                                      self.critic, obs, action, reward, discount, next_obs,
+            critic_loss = QLearning.ensembleQLearning(self.critic, self.creator,
+                                                      obs, action, reward, discount, next_obs,
                                                       self.step, self.num_actions, logs=logs)
 
             # Update critic

@@ -131,8 +131,7 @@ class SPRAgent(torch.nn.Module):
             # "Via Example" / "Parental Support" / "School"
 
             # "Candidate classifications"
-            creations = None if self.discrete \
-                else self.creator(obs[instruction].flatten(-3)).sample(self.num_actions)
+            creations = self.creator(obs[instruction].flatten(-3)).sample(self.num_actions)
 
             # Infer
             action = self.actor(self.critic(obs[instruction].flatten(-3), creations), self.step)
@@ -148,7 +147,8 @@ class SPRAgent(torch.nn.Module):
             # Update actor
             Utils.optimize(supervised_loss,
                            self.encoder,
-                           self.actor)
+                           self.creator,
+                           self.critic)
 
             if self.RL:
                 # Auxiliary reinforcement
@@ -158,7 +158,7 @@ class SPRAgent(torch.nn.Module):
             # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
 
             # Critic loss
-            critic_loss = QLearning.ensembleQLearning(self.actor if self.discrete else self.creator, self.critic,
+            critic_loss = QLearning.ensembleQLearning(self.critic, self.creator,
                                                       obs.flatten(-3), action, reward, discount, next_obs, self.step,
                                                       logs=logs)
 
