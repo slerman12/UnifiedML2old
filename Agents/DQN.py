@@ -118,6 +118,7 @@ class DQNAgent(torch.nn.Module):
 
             # "Candidate classifications"
             creations = self.creator(obs[instruction], self.step).sample(self.num_actions)
+            print(creations.shape, self.num_actions)
 
             # Infer
             action = self.actor(self.critic(obs[instruction], creations), self.step).best
