@@ -57,7 +57,6 @@ class ClassificationEnvironment:
                                               observation=x.squeeze(0),  # Squeezes if batch size 1
                                               action=action, label=y,
                                               reward=int(y == np.argmax(action, -1)))
-            print(action)
         self.batched = not self.batched
         return self.time_step
 
