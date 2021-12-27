@@ -19,6 +19,7 @@ for task in IMAGE_DATASETS:
 
 suite: classify
 stddev_schedule: 'linear(1.0,0.1,100000)'
+frame_stack: 1
 task_name: {}""".format(task))
     f.close()
     out += ' "' + task.lower() + '"'
