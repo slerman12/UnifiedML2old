@@ -40,12 +40,12 @@ class ClassificationEnvironment:
         return batch
 
     def reset(self):
-        x, y = [np.array(batch) for batch in self.batch]
+        x, y = [np.array(batch).squeeze(0) for batch in self.batch]
         time_step = ExtendedTimeStep(observation=x, label=y)
         return time_step
 
     def step(self, action):
-        x, y = [np.array(batch) for batch in self.batch]
+        x, y = [np.array(batch).squeeze(0) for batch in self.batch]
         time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y,
                                      reward=int(y == torch.argmax(action, -1)))
         return time_step
@@ -90,7 +90,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           download=True,
                           transform=transform)
 
-    env = ClassificationEnvironment(experiences, batch_size, num_workers)
+    env = ClassificationEnvironment(experiences, 1, num_workers)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env)
