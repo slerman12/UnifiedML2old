@@ -7,6 +7,7 @@ defaults:
 obs_shape: ???  # To be specified later
 action_shape: ??? # To be specified later
 feature_dim: 50
+explore_steps: 2000
 lr: 1e-4
 discrete: ??? # To be specified later
 # Replay
@@ -57,7 +58,7 @@ agent:
   action_shape: ${action_shape}
   feature_dim: ${feature_dim}
   hidden_dim: 1024
-  explore_steps: 2000
+  explore_steps: ${explore_steps}
   stddev_schedule: ${stddev_schedule} # Specified in task/100K,500K,etc.
   stddev_clip: 0.3
   lr: ${lr}

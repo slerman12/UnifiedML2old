@@ -17,6 +17,8 @@ from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrappe
 class ClassificationEnvironment:
     def __init__(self, experiences, batch_size, num_workers):
 
+        print("Seeding replay... training has not begin yet.")
+
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
             np.random.seed(seed)
@@ -42,22 +44,19 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        time_step = ExtendedTimeStep(step_type=StepType.FIRST,
-                                     observation=x.squeeze(0), label=y)  # Squeezes if batch size 1
-        return time_step
+        self.time_step = ExtendedTimeStep(observation=x.squeeze(0), label=y,  # Squeezes if batch size 1
+                                          step_type=StepType.FIRST, reward=0)
+        return self.time_step
 
     def step(self, action):
-        # ExperienceReplay expects at least a reset state and 'next obs'
-        self.batched = getattr(self, 'batched', False)
-        if self.batched:
-            self.time_step = self.time_step._replace(step_type=StepType.LAST)
+        # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
+        self.next = getattr(self, 'next', False)
+        if self.next:
+            self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
         else:
-            x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-            self.time_step = ExtendedTimeStep(step_type=StepType.MID,
-                                              observation=x.squeeze(0),  # Squeezes if batch size 1
-                                              action=action, label=y,
-                                              reward=int(y == np.argmax(action, -1)))
-        self.batched = not self.batched
+            self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
+            self.reward = int(y == np.argmax(action, -1))
+        self.next = not self.next
         return self.time_step
 
     def observation_spec(self):
