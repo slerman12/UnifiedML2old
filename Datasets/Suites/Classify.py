@@ -24,12 +24,12 @@ class ClassificationEnvironment:
 
         self.num_classes = len(experiences.classes)
 
-        self.batches = torch.utils.data.DataLoader(dataset=experiences,
-                                                   batch_size=batch_size,
-                                                   shuffle=False,
-                                                   num_workers=num_workers,
-                                                   pin_memory=True,
-                                                   worker_init_fn=worker_init_fn)
+        self.batches = iter(torch.utils.data.DataLoader(dataset=experiences,
+                                                        batch_size=batch_size,
+                                                        shuffle=False,
+                                                        num_workers=num_workers,
+                                                        pin_memory=True,
+                                                        worker_init_fn=worker_init_fn))
 
     @property
     def batch(self):
