@@ -159,7 +159,7 @@ class DynoSOARAgent(torch.nn.Module):
                                       * discount[future]
                     discount[future] *= replay.experiences.discount
                     next_action = self.actorSAURUS(next_obs[future].flatten(-3), self.step).sample()
-                    next_obs[future] = self.dynamics(next_obs[future], next_action)
+                    next_obs[future] = self.dynamics(next_obs[future], next_action, flatten=False)
 
                 # Discrete action trajectories to one-hot
                 if self.discrete:
@@ -199,7 +199,7 @@ class DynoSOARAgent(torch.nn.Module):
             obs[future] = next_obs[future]
 
             discount = torch.ones_like(discount)
-            discount[future] = replay.experiences.discount ** (self.mstep + 1)
+            discount[future] = replay.experiences.discount ** self.mstep
 
             # Actor loss
             actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs,
