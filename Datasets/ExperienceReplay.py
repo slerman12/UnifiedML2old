@@ -30,10 +30,10 @@ class ExperienceReplay:
             obs_spec = {'name': 'obs', 'shape': (1,), 'dtype': 'float64'},
 
         self.specs = (obs_spec, action_spec,
-                      {'name': 'label', 'shape': (1,), 'dtype': 'float64'},
+                      {'name': 'label', 'shape': (1,), 'dtype': 'float32'},
                       {'name': 'reward', 'shape': (1,), 'dtype': 'float32'},
                       {'name': 'discount', 'shape': (1,), 'dtype': 'float32'},
-                      {'name': 'step', 'shape': (1,), 'dtype': 'float64'},)
+                      {'name': 'step', 'shape': (1,), 'dtype': 'float32'},)
 
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
@@ -109,7 +109,6 @@ class ExperienceReplay:
                     exp[spec['name']] = np.full(spec['shape'], exp[spec['name']], spec['dtype'])
                 self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
                 if exp[spec['name']] is not None:
-                    print(spec['name'], spec['dtype'], exp[spec['name']].dtype.name)
                     assert spec['shape'] == exp[spec['name']].shape
                     assert spec['dtype'] == exp[spec['name']].dtype.name
 
