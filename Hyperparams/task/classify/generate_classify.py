@@ -15,10 +15,10 @@ out = ""
 for task in IMAGE_DATASETS:
     f = open(f"./{task.lower()}.yaml", "w")
     f.write(r"""defaults:
+  - 500K
   - _self_
 
 suite: classify
-stddev_schedule: 'linear(1.0,0.1,100000)'
 frame_stack: null
 action_repeat: null
 task_name: {}""".format(task))
