@@ -73,13 +73,13 @@ class DynoSOARAgent(torch.nn.Module):
 
     # "Play"
     def act(self, obs):
-        with torch.no_grad(), Utils.act_mode(self.encoder, self.actor):
+        with torch.no_grad(), Utils.act_mode(self.encoder, self.actorSAURUS):
             obs = torch.as_tensor(obs, device=self.device).unsqueeze(0)
 
             # "See"
             obs = self.encoder(obs)
 
-            Pi = self.actor(obs, self.step)
+            Pi = self.actorSAURUS(obs, self.step)
 
             action = Pi.sample() if self.training \
                 else Pi.mean
@@ -141,7 +141,7 @@ class DynoSOARAgent(torch.nn.Module):
             # Update actor
             Utils.optimize(supervised_loss,
                            self.encoder,
-                           self.actor)
+                           self.actorSAURUS)
 
             if self.RL:
                 # Auxiliary reinforcement
@@ -158,7 +158,7 @@ class DynoSOARAgent(torch.nn.Module):
                 for _ in range(self.mstep):
                     reward[future] += self.reward_predictor(self.projector(next_obs[future])) * discount[future]
                     discount[future] *= replay.experiences.discount
-                    next_action = self.actor(next_obs[future], self.step).sample()
+                    next_action = self.actorSAURUS(next_obs[future], self.step).sample()
                     next_obs[future] = self.dynamics(next_obs[future], next_action)
 
                 # Discrete action trajectories to one-hot
@@ -189,7 +189,7 @@ class DynoSOARAgent(torch.nn.Module):
             #     for i in range(1, self.mstep + 1):
             #         reward[future] += self.reward_predictor(self.projector(obs[future])) \
             #                           * (replay.experiences.discount ** i)
-            #         action = self.actor(obs[future], self.step).sample()
+            #         action = self.actorSAURUS(obs[future], self.step).sample()
             #         obs[future] = self.dynamics(obs[future], action)
 
             obs = obs.flatten(-3)
