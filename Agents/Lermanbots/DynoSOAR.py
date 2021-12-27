@@ -25,7 +25,7 @@ class DynoSOARAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=1, lstep=1, mstep=1  # DynoSOAR
+                 depth=1, lstep=0, mstep=1  # DynoSOAR
                  ):
         super().__init__()
 
