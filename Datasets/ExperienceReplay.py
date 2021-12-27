@@ -238,7 +238,7 @@ class Experiences(IterableDataset):
         next_obs = episode['observation'][idx - 1 + self.nstep]
         reward = np.full_like(episode['reward'][idx], np.NaN)
         discount = np.ones_like(episode['discount'][idx])
-        label = episode['label'][idx - 1]
+        label = episode['label'][idx - 1].squeeze()
         step = episode['step'][idx - 1]
 
         # Trajectory
