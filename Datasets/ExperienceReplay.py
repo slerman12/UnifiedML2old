@@ -77,7 +77,6 @@ class ExperienceReplay:
     def __iter__(self):
         return self.replay.__iter__()
 
-    # Cycles
     @property
     def replay(self):
         if self._replay is None:
