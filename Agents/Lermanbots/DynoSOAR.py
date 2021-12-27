@@ -25,7 +25,7 @@ class DynoSOARAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=1, mstep=1  # DynoSOAR
+                 depth=1, lstep=1, mstep=1  # DynoSOAR
                  ):
         super().__init__()
 
@@ -37,7 +37,7 @@ class DynoSOARAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
-        self.depth, self.mstep = depth, mstep
+        self.depth, self.lstep, self.mstep = depth, lstep, mstep
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
@@ -155,7 +155,7 @@ class DynoSOARAgent(torch.nn.Module):
             dynamics_loss = 0
             if future.any():
                 # Predicted cumulative rewards (for Bellman target)
-                for i in range(1, self.mstep + 1):
+                for i in range(1, self.lstep + 1):
                     reward[future] += self.reward_predictor(self.projector(next_next_obs[future].flatten(-3))) \
                                       * discount[future]
                     discount[future] *= replay.experiences.discount
