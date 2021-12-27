@@ -5,5 +5,5 @@ defaults:
 suite: classify
 frame_stack: null
 action_repeat: null
-nstep: 0
+nstep: 1
 task_name: Caltech101

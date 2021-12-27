@@ -21,7 +21,7 @@ for task in IMAGE_DATASETS:
 suite: classify
 frame_stack: null
 action_repeat: null
-nstep: 0
+nstep: 1
 task_name: {}""".format(task))
     f.close()
     out += ' "' + task.lower() + '"'

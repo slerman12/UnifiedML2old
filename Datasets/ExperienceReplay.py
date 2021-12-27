@@ -235,8 +235,7 @@ class Experiences(IterableDataset):
         # Transition
         obs = episode['observation'][idx - 1]
         action = episode['action'][idx]
-        next_obs = episode['observation'][idx - 1 + self.nstep] if self.nstep > 0 \
-            else np.full_like(obs, np.NaN)
+        next_obs = episode['observation'][idx - 1 + self.nstep]
         reward = np.full_like(episode['reward'][idx], np.NaN)
         discount = np.ones_like(episode['discount'][idx])
         label = episode['label'][idx - 1]
