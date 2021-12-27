@@ -17,8 +17,8 @@ class ExtendedTimeStep(NamedTuple):
     discount: Any = 1
     observation: Any = None
     action: Any = None
-    step: int = None
-    label: int = None
+    step: Any = None
+    label: Any = None
 
     def first(self):
         return self.step_type == StepType.FIRST

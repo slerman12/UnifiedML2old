@@ -42,12 +42,12 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch).squeeze(0) for batch in self.batch]
-        time_step = ExtendedTimeStep(observation=x, label=y)
+        time_step = ExtendedTimeStep(observation=x, label=[y])
         return time_step
 
     def step(self, action):
         x, y = [np.array(batch).squeeze(0) for batch in self.batch]
-        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y,
+        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=[y],
                                      reward=int(y == np.argmax(action, -1)))
         return time_step
 
