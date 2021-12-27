@@ -186,21 +186,19 @@ class DynoSOARAgent(torch.nn.Module):
 
             self.critic.update_target_params()
 
+            obs = obs.detach()
+            discount = torch.ones_like(discount)
+
             # SOAR: predict rewards for gradient Ascent
             predicted_reward = torch.zeros_like(reward)
             if future.any():
                 # Predicted cumulative rewards for SOAR
                 for i in range(1, self.mstep + 1):
-                    predicted_reward[future] += self.reward_predictor(self.projector(next_obs[future].flatten(-3))) \
+                    predicted_reward[future] += self.reward_predictor(self.projector(obs[future].flatten(-3))) \
                                                 * replay.experiences.discount ** i
-                    next_action = self.actorSAURUS(next_obs[future].flatten(-3), self.step).sample()
-                    next_obs[future] = self.dynamics(next_obs[future], next_action, flatten=False)
-
-            obs = obs.detach()
-            obs[future] = next_obs[future]
-
-            discount = torch.ones_like(discount)
-            discount[future] = replay.experiences.discount ** self.mstep
+                    next_action = self.actorSAURUS(obs[future].flatten(-3), self.step).sample()
+                    obs[future] = self.dynamics(obs[future], next_action, flatten=False)
+                discount[future] = replay.experiences.discount ** self.mstep
 
             # Actor loss
             actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs.flatten(-3),
