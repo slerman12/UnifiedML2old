@@ -135,6 +135,7 @@ class ExperienceReplay:
             buffer.seek(0)
             with save_path.open('wb') as f:
                 f.write(buffer.read())
+                print("ya")
 
         self.num_episodes += 1
         self.num_experiences_stored += self.episode_len
@@ -209,7 +210,6 @@ class Experiences(IterableDataset):
         load_path = random.choice(self.load_paths)
 
         episode_names = sorted(load_path.glob('*.npz'), reverse=True)  # Episodes
-        print(len(episode_names))
         num_fetched = 0
         # Find one new episode
         for episode_name in episode_names:
