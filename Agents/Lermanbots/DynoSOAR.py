@@ -113,7 +113,8 @@ class DynoSOARAgent(torch.nn.Module):
 
         # Encode
         obs = self.encoder(obs, flatten=False)
-        next_obs = self.encoder(next_obs, flatten=False).detach()
+        with torch.no_grad():
+            next_obs = self.encoder(next_obs, flatten=False)
 
         # "Journal teachings"
 
@@ -154,7 +155,7 @@ class DynoSOARAgent(torch.nn.Module):
 
             dynamics_loss = 0
             if future.any():
-                # Predicted cumulative rewards
+                # Predicted cumulative rewards (for Bellman target)
                 for i in range(1, self.mstep + 1):
                     reward[future] += self.reward_predictor(self.projector(next_next_obs[future].flatten(-3))) \
                                       * discount[future]
@@ -189,13 +190,14 @@ class DynoSOARAgent(torch.nn.Module):
             # SOAR: predict rewards for gradient Ascent
             predicted_reward = torch.zeros_like(reward)
             if future.any():
-                # Predicted cumulative rewards
+                # Predicted cumulative rewards for SOAR
                 for i in range(1, self.mstep + 1):
                     predicted_reward[future] += self.reward_predictor(self.projector(next_obs[future].flatten(-3))) \
                                                 * replay.experiences.discount ** i
                     next_action = self.actorSAURUS(next_obs[future].flatten(-3), self.step).sample()
                     next_obs[future] = self.dynamics(next_obs[future], next_action, flatten=False)
 
+            obs = obs.detach()
             obs[future] = next_obs[future]
 
             discount = torch.ones_like(discount)
