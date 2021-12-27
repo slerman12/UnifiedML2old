@@ -152,29 +152,29 @@ class DynoSOARAgent(torch.nn.Module):
 
             future = ~torch.isnan(next_obs.flatten(1).sum(1))
 
-            # Predicted cumulative rewards
+            dynamics_loss = 0
             if future.any():
+                # Predicted cumulative rewards
                 for _ in range(self.mstep):
-                    reward[future] += self.reward_predictor(self.projector(next_obs[future]))
+                    reward[future] += self.reward_predictor(self.projector(next_obs[future])) * discount[future]
+                    discount[future] *= replay.experiences.discount
                     next_action = self.actor(next_obs[future], self.step).sample()
                     next_obs[future] = self.dynamics(next_obs[future], next_action)
+
+                # Discrete action trajectories to one-hot
+                if self.discrete:
+                    traj_a = Utils.one_hot(traj_a, num_classes=self.actorSAURUS.action_dim)
+
+                # Dynamics loss
+                dynamics_loss = SelfSupervisedLearning.dynamicsLearning(
+                    obs[future], traj_o[future], traj_a[future], traj_r[future], self.encoder, self.dynamics,
+                    self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
+                )
 
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
                                                       obs.flatten(-3), action, reward, discount, next_obs.detach(),
                                                       self.step, logs=logs)
-
-            # Convert discrete action trajectories to one-hot
-            if self.discrete:
-                traj_a = Utils.one_hot(traj_a, num_classes=self.actorSAURUS.action_dim)
-
-            # Dynamics loss
-            dynamics_loss = 0
-            if future.any():
-                dynamics_loss = SelfSupervisedLearning.dynamicsLearning(
-                    obs[future], traj_o[future], traj_a[future], traj_r[future], self.encoder, self.dynamics,
-                    self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
-                )
 
             # Update critic, dynamics
             Utils.optimize(critic_loss + dynamics_loss,
@@ -184,13 +184,22 @@ class DynoSOARAgent(torch.nn.Module):
 
             self.critic.update_target_params()
 
+            # if future.any():
+            #     # Predicted future
+            #     for i in range(1, self.mstep + 1):
+            #         reward[future] += self.reward_predictor(self.projector(obs[future])) \
+            #                           * (replay.experiences.discount ** i)
+            #         action = self.actor(obs[future], self.step).sample()
+            #         obs[future] = self.dynamics(obs[future], action)
+
             obs = obs.flatten(-3)
             # SOAR via gradient ascent
-            obs[future] = next_obs
+            obs[future] = next_obs[future]
 
             # Actor loss
             actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs,
-                                                           self.step, logs=logs)
+                                                           self.step, predicted_reward=reward,
+                                                           logs=logs)
 
             # Update actor
             Utils.optimize(actor_loss,

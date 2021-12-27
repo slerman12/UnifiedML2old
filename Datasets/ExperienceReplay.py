@@ -77,6 +77,7 @@ class ExperienceReplay:
     def __iter__(self):
         return self.replay.__iter__()
 
+    # Cycles
     @property
     def replay(self):
         if self._replay is None:
@@ -226,7 +227,8 @@ class Experiences(IterableDataset):
         episode_name = random.choice(episode_names)  # Uniform sampling of experiences
         return episode_name
 
-    def process(self, episode):  # N-step cumulative discounted rewards
+    # N-step cumulative discounted rewards
+    def process(self, episode):
         episode_len = next(iter(episode.values())).shape[0] - 1
         idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
 
