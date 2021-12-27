@@ -96,8 +96,8 @@ class DQNAgent(torch.nn.Module):
         # "Imagine" / "Envision"
 
         # Augment
-        obs = self.aug(obs).detach()
-        next_obs = self.aug(next_obs).detach()
+        obs = self.aug(obs)
+        next_obs = self.aug(next_obs)
 
         # "Journal teachings"
 
@@ -117,9 +117,9 @@ class DQNAgent(torch.nn.Module):
             creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
 
             # Infer
-            action = self.actor(self.critic(x[instruction], creations), self.step).best
+            y_predicted = self.actor(self.critic(x[instruction], creations), self.step).best
 
-            mistake = cross_entropy(action, label[instruction].long(), reduction='none')
+            mistake = cross_entropy(y_predicted, label[instruction].long(), reduction='none')
 
             # Supervised loss
             supervised_loss = mistake.mean()
@@ -134,15 +134,15 @@ class DQNAgent(torch.nn.Module):
 
             if self.RL:
                 # Auxiliary reinforcement
-                reward[instruction] = -mistake.detach()[:, None].detach()
+                reward[instruction] = -mistake[:, None].detach()
 
         if self.RL:
             # "Visualize"
 
             # Encode
-            obs = self.encoder(obs.detach())
+            obs = self.encoder(obs)
             with torch.no_grad():
-                next_obs = self.encoder(next_obs.detach())
+                next_obs = self.encoder(next_obs)
 
             # "Predict" / "Discern" / "Learn" / "Grow"
 
