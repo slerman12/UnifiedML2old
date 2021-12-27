@@ -38,7 +38,8 @@ class ClassificationEnvironment:
 
     def step(self, action):
         x, y = [np.array(batch) for batch in next(self.batches)]
-        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y)
+        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x, action=action, label=y,
+                                     reward=int(y == torch.argmax(action, -1)))
         return time_step
 
     def observation_spec(self):
