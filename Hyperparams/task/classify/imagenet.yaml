@@ -5,5 +5,4 @@ defaults:
 suite: classify
 frame_stack: null
 action_repeat: null
-seed_steps: 10
 task_name: ImageNet
