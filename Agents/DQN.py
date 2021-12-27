@@ -96,8 +96,8 @@ class DQNAgent(torch.nn.Module):
         # "Imagine" / "Envision"
 
         # Augment
-        obs = self.aug(obs)
-        next_obs = self.aug(next_obs)
+        obs = self.aug(obs).detach()
+        next_obs = self.aug(next_obs).detach()
 
         # "Journal teachings"
 
@@ -137,6 +137,8 @@ class DQNAgent(torch.nn.Module):
                 reward[instruction] = -mistake.view(-1, 1)
 
         if self.RL:
+            # "Visualize"
+
             # Encode
             obs = self.encoder(obs)
             with torch.no_grad():
