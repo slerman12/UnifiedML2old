@@ -53,8 +53,8 @@ class ClassificationEnvironment:
         return specs.BoundedArray((self.num_classes,), self.action.dtype, None, None, 'action')
 
 
-def make_env(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
-             train=True, seed=1, batch_size=1, num_workers=1):
+def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
+         train=True, seed=1, batch_size=1, num_workers=1):
 
     transform = transforms.Compose(
         [transforms.ToTensor(),
