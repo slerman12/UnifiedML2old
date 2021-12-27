@@ -42,15 +42,19 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        time_step = ExtendedTimeStep(step_type=StepType.LAST,
+        time_step = ExtendedTimeStep(step_type=StepType.FIRST,
                                      observation=x.squeeze(0), label=y)  # Squeezes if batch size 1
         return time_step
 
     def step(self, action):
-        x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x.squeeze(0), action=action, label=y,
-                                     reward=int(y == np.argmax(action, -1)))  # Squeezes if batch size 1
-        return time_step
+        self.batched = getattr(self, 'batched', False)
+        if not self.batched:
+            x, y = [np.array(batch, dtype='float32') for batch in self.batch]
+            self.time_step = ExtendedTimeStep(step_type=StepType.LAST if self.batched else StepType.MID,
+                                              observation=x.squeeze(0), action=action, label=y,
+                                              reward=int(y == np.argmax(action, -1)))  # Squeezes if batch size 1
+        self.batched = not self.batched
+        return self.time_step
 
     def observation_spec(self):
         if not hasattr(self, 'observation'):

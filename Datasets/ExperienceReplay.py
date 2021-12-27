@@ -231,12 +231,12 @@ class Experiences(IterableDataset):
     def process(self, episode):
         episode_len = next(iter(episode.values())).shape[0] - 1
         idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
-        print(idx, episode_len)
 
         # Transition
         obs = episode['observation'][idx - 1]
         action = episode['action'][idx]
-        next_obs = episode['observation'][idx - 1 + self.nstep]
+        next_obs = episode['observation'][idx - 1 + self.nstep] if self.nstep > 0 \
+            else np.full_like(obs, np.NaN)
         reward = np.full_like(episode['reward'][idx], np.NaN)
         discount = np.ones_like(episode['discount'][idx])
         label = episode['label'][idx - 1]
