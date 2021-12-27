@@ -42,7 +42,8 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        time_step = ExtendedTimeStep(observation=x.squeeze(0), label=y)  # Squeezes if batch size 1
+        time_step = ExtendedTimeStep(step_type=StepType.LAST,
+                                     observation=x.squeeze(0), label=y)  # Squeezes if batch size 1
         return time_step
 
     def step(self, action):
