@@ -150,9 +150,9 @@ class DynoSOARAgent(torch.nn.Module):
             # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
 
             future = ~torch.isnan(next_obs.flatten(1).sum(1))
+            next_next_obs = next_obs.clone()
 
             dynamics_loss = 0
-            next_next_obs = next_obs.clone()
             if future.any():
                 # Predicted cumulative rewards
                 for i in range(1, self.mstep + 1):
@@ -174,7 +174,7 @@ class DynoSOARAgent(torch.nn.Module):
 
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
-                                                      obs, action, reward, discount,
+                                                      obs.flatten(-3), action, reward, discount,
                                                       next_next_obs.flatten(-3).detach(),
                                                       self.step, logs=logs)
 
