@@ -82,9 +82,9 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     dataset = getattr(torchvision.datasets, task)
 
     transform = transforms.Compose(
-        [transforms.ToTensor(),
+        [
+            # transforms.ToTensor(),
          transforms.Normalize((0.5,), (0.5,))])
-    print("HMMMMMM")
 
     experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
                           train=train,
