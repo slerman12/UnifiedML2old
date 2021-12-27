@@ -129,12 +129,12 @@ class DQNAgent(torch.nn.Module):
 
             # Update actor
             Utils.optimize(supervised_loss,
-                           # self.encoder,
+                           self.encoder,
                            self.creator)
 
             if self.RL:
                 # Auxiliary reinforcement
-                reward[instruction] = -mistake.view(-1, 1)
+                reward[instruction] = -mistake[:, None].detach()
 
         if self.RL:
             # "Visualize"
