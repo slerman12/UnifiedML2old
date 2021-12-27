@@ -231,6 +231,7 @@ class Experiences(IterableDataset):
     def process(self, episode):
         episode_len = next(iter(episode.values())).shape[0] - 1
         idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
+        print(idx, episode_len)
 
         # Transition
         obs = episode['observation'][idx - 1]
