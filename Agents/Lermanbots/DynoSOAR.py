@@ -25,7 +25,7 @@ class DynoSOARAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=1  # DynoSOAR
+                 depth=1, mstep=1  # DynoSOAR
                  ):
         super().__init__()
 
@@ -37,7 +37,7 @@ class DynoSOARAgent(torch.nn.Module):
         self.step = self.episode = 0
         self.explore_steps = explore_steps
 
-        self.depth = depth
+        self.depth, self.mstep = depth, mstep
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
