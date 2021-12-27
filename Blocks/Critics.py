@@ -57,6 +57,7 @@ class EnsembleQCritic(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     def forward(self, obs, action=None, context=None):
+        print(obs.shape)
         h = self.trunk(obs)
 
         if context is None:
@@ -78,7 +79,6 @@ class EnsembleQCritic(nn.Module):
                    action.shape[-1] == self.action_dim, f'action with dim={self.action_dim} needed for continuous space'
 
             action = action.reshape(obs.shape[0], -1, self.action_dim)  # [b, n, d]
-            print(obs.shape)
 
             h = h.unsqueeze(1).expand(*action.shape[:-1], -1)
 
