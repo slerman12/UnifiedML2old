@@ -152,14 +152,15 @@ class DynoSOARAgent(torch.nn.Module):
             future = ~torch.isnan(next_obs.flatten(1).sum(1))
 
             dynamics_loss = 0
+            next_next_obs = next_obs.clone()
             if future.any():
                 # Predicted cumulative rewards
                 for i in range(1, self.mstep + 1):
-                    reward[future] += self.reward_predictor(self.projector(next_obs[future].flatten(-3))) \
+                    reward[future] += self.reward_predictor(self.projector(next_next_obs[future].flatten(-3))) \
                                       * discount[future]
                     discount[future] *= replay.experiences.discount
-                    next_action = self.actorSAURUS(next_obs[future].flatten(-3), self.step).sample()
-                    next_obs[future] = self.dynamics(next_obs[future], next_action, flatten=False)
+                    next_action = self.actorSAURUS(next_next_obs[future].flatten(-3), self.step).sample()
+                    next_next_obs[future] = self.dynamics(next_next_obs[future], next_action, flatten=False)
 
                 # Discrete action trajectories to one-hot
                 if self.discrete:
@@ -173,10 +174,11 @@ class DynoSOARAgent(torch.nn.Module):
 
             obs = obs.flatten(-3)
             next_obs = next_obs.flatten(-3)
+            next_next_obs = next_next_obs.flatten(-3)
 
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
-                                                      obs, action, reward, discount, next_obs.detach(),
+                                                      obs, action, reward, discount, next_next_obs.detach(),
                                                       self.step, logs=logs)
 
             # Update critic, dynamics
