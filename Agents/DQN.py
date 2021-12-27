@@ -120,7 +120,7 @@ class DQNAgent(torch.nn.Module):
 
             # Infer
             action = self.actor(self.critic(obs[instruction], creations), self.step).best
-
+            print(action.shape, label.shape)
             mistake = cross_entropy(action, label[instruction].long(), reduction='none')
 
             # Supervised loss
