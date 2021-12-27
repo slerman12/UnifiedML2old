@@ -172,13 +172,10 @@ class DynoSOARAgent(torch.nn.Module):
                     self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
                 )
 
-            obs = obs.flatten(-3)
-            next_obs = next_obs.flatten(-3)
-            next_next_obs = next_next_obs.flatten(-3)
-
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
-                                                      obs, action, reward, discount, next_next_obs.detach(),
+                                                      obs, action, reward, discount,
+                                                      next_next_obs.flatten(-3).detach(),
                                                       self.step, logs=logs)
 
             # Update critic, dynamics
@@ -205,7 +202,7 @@ class DynoSOARAgent(torch.nn.Module):
             discount[future] = replay.experiences.discount ** self.mstep
 
             # Actor loss
-            actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs,
+            actor_loss = PolicyLearning.deepPolicyGradient(self.actorSAURUS, self.critic, obs.flatten(-3),
                                                            self.step, predicted_reward=predicted_reward,
                                                            discount=discount, logs=logs)
 
