@@ -75,7 +75,8 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     #  'VisionDataset', 'USPS', 'Kinetics400', 'HMDB51', 'UCF101',
     #  'Places365')
 
-    dataset = __import__(task, fromlist=['torchvision.datasets'])
+    # dataset = __import__(task, fromlist=['torchvision.datasets'])
+    dataset = getattr(torchvision.datasets, task)
 
     experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
                           train=train,
