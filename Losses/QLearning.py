@@ -13,6 +13,7 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
     with torch.no_grad():
         next_obs[0] = float('nan')
         has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
+        next_obs = next_obs[has_future]
 
         next_v = torch.zeros_like(discount)
 
@@ -29,13 +30,13 @@ def ensembleQLearning(actor, critic, obs, action, reward, discount, next_obs, st
             else:
                 # Sample actions  Note: original DDPG used EMA target for this
                 # next_Pi = actor.target(next_obs, step)
-                if has_future.any():
+                if next_obs.shape[0] > 0:
                     next_Pi = actor(next_obs, step)
                     next_actions = next_Pi.rsample(num_actions, batch_first=False)
                     next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).transpose(0, 1).flatten(1)
                     next_actions = next_actions.transpose(0, 1)
 
-        if has_future.any():
+        if next_obs.shape[0] > 0:
 
             next_Q = critic.target(next_obs, next_actions)
 
