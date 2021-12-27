@@ -116,7 +116,6 @@ class ExperienceReplay:
         self.episode_len += len(experiences)
 
         if store:
-            print("YA")
             self.store_episode()  # Stores them in file system
 
     # Stores episode (to file in system)
