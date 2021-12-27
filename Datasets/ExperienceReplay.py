@@ -27,7 +27,7 @@ class ExperienceReplay:
         self.num_experiences_stored = 0
 
         if obs_spec is None:
-            obs_spec = {'name': 'obs', 'shape': (1,), 'dtype': 'float64'},
+            obs_spec = {'name': 'obs', 'shape': (1,), 'dtype': 'float32'},
 
         self.specs = (obs_spec, action_spec,
                       {'name': 'label', 'shape': (1,), 'dtype': 'float32'},
@@ -108,9 +108,8 @@ class ExperienceReplay:
                 if np.isscalar(exp[spec['name']]):
                     exp[spec['name']] = np.full(spec['shape'], exp[spec['name']], spec['dtype'])
                 self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
-                if exp[spec['name']] is not None:
-                    assert spec['shape'] == exp[spec['name']].shape
-                    assert spec['dtype'] == exp[spec['name']].dtype.name
+                assert spec['shape'] == exp[spec['name']].shape
+                assert spec['dtype'] == exp[spec['name']].dtype.name
 
         self.episode_len += len(experiences)
 
