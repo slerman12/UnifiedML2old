@@ -156,7 +156,7 @@ class DQNAgent(torch.nn.Module):
 
             if not self.discrete:
                 # Creator loss
-                actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.detach(),
+                actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, next_obs.detach(),
                                                                self.step, self.num_actions, logs=logs)
 
                 # Update creator
