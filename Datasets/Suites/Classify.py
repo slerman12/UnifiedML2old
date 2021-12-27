@@ -53,8 +53,7 @@ class ClassificationEnvironment:
     def observation_spec(self):
         if not hasattr(self, 'observation'):
             self.observation = np.array(self.batch[0])
-        print(self.observation.shape)
-        return specs.BoundedArray(self.observation.shape, self.observation.dtype, 0, 255, 'observation')
+        return specs.BoundedArray(self.observation.shape[1:], self.observation.dtype, 0, 255, 'observation')
 
     def action_spec(self):
         if not hasattr(self, 'action'):
