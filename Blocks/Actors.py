@@ -91,10 +91,9 @@ class CategoricalCriticActor(nn.Module):
         entropy_temp = Utils.schedule(self.entropy_sched, step)
         Q_Pi = Categorical(logits=u_logits / entropy_temp + actions_log_prob)
 
+        print(u.shape)
         best_eps, best_ind = torch.max(u, -1)
         best_action = Utils.gather_indices(Q.action, best_ind, 1).squeeze(1)
-        print(best_ind.shape, Q_Pi.sample().shape, best_action.shape,
-              Utils.gather_indices(Q.action, Q_Pi.sample(), 1).squeeze(1).shape)
 
         sample = Q_Pi.sample
 
