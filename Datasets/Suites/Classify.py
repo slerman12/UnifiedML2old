@@ -52,12 +52,12 @@ class ClassificationEnvironment:
 
     def observation_spec(self):
         if not hasattr(self, 'observation'):
-            self.observation = np.copy(np.array(self.batch[0]))
+            self.observation = np.array(self.batch[0])
         return specs.BoundedArray(self.observation.shape, self.observation.dtype, 0, 255, 'observation')
 
     def action_spec(self):
         if not hasattr(self, 'action'):
-            self.action = np.copy(np.array(self.batch[1]))
+            self.action = np.array(self.batch[1])
         return specs.BoundedArray((self.num_classes,), self.action.dtype, 0, self.num_classes - 1, 'action')
 
 
@@ -89,6 +89,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           train=train,
                           download=True,
                           transform=transform)
+    print("HMMMMMM")
 
     env = ClassificationEnvironment(experiences, batch_size, num_workers)
 
