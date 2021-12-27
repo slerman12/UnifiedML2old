@@ -41,24 +41,23 @@ class ClassificationEnvironment:
         return batch
 
     def reset(self):
-        x, y = [np.array(batch) for batch in self.batch]
-        time_step = ExtendedTimeStep(observation=x.squeeze(0), label=y.astype('float64'))  # Squeezes if batch size 1
+        x, y = [np.array(batch, dtype='float32') for batch in self.batch]
+        time_step = ExtendedTimeStep(observation=x.squeeze(0), label=y)  # Squeezes if batch size 1
         return time_step
 
     def step(self, action):
-        x, y = [np.array(batch) for batch in self.batch]
-        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x.squeeze(0), action=action,
-                                     label=y.astype('float64'),
+        x, y = [np.array(batch, dtype='float32') for batch in self.batch]
+        time_step = ExtendedTimeStep(step_type=StepType.LAST, observation=x.squeeze(0), action=action, label=y,
                                      reward=int(y == np.argmax(action, -1)))  # Squeezes if batch size 1
         return time_step
 
     def observation_spec(self):
         if not hasattr(self, 'observation'):
             self.observation = np.array(self.batch[0])
-        return specs.BoundedArray(self.observation.shape[1:], 'float64', 0, 255, 'observation')
+        return specs.BoundedArray(self.observation.shape[1:], self.observation.dtype, 0, 255, 'observation')
 
     def action_spec(self):
-        return specs.BoundedArray((self.num_classes,), 'float64', 0, self.num_classes - 1, 'action')
+        return specs.BoundedArray((self.num_classes,), 'float32', 0, self.num_classes - 1, 'action')
 
 
 def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
