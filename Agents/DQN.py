@@ -119,7 +119,7 @@ class DQNAgent(torch.nn.Module):
             creations = self.creator(obs[instruction], self.step).sample(self.num_actions)
 
             # Infer
-            action = self.actor(self.critic(obs[instruction], creations), self.step)
+            action = self.actor(self.critic(obs[instruction], creations), self.step).best
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
@@ -132,8 +132,7 @@ class DQNAgent(torch.nn.Module):
             # Update actor
             Utils.optimize(supervised_loss,
                            self.encoder,
-                           self.creator,
-                           self.critic)
+                           self.creator)
 
             if self.RL:
                 # Auxiliary reinforcement
