@@ -114,7 +114,7 @@ class DynoSOARAgent(torch.nn.Module):
         # Encode
         obs = self.encoder(obs, flatten=False)
         with torch.no_grad():
-            next_obs = self.encoder(next_obs)
+            next_obs = self.encoder(next_obs, flatten=False)
 
         # "Journal teachings"
 
@@ -156,9 +156,10 @@ class DynoSOARAgent(torch.nn.Module):
             if future.any():
                 # Predicted cumulative rewards
                 for _ in range(self.mstep):
-                    reward[future] += self.reward_predictor(self.projector(next_obs[future])) * discount[future]
+                    reward[future] += self.reward_predictor(self.projector(next_obs[future].flatten(-3))) \
+                                      * discount[future]
                     discount[future] *= replay.experiences.discount
-                    next_action = self.actorSAURUS(next_obs[future], self.step).sample()
+                    next_action = self.actorSAURUS(next_obs[future].flatten(-3), self.step).sample()
                     next_obs[future] = self.dynamics(next_obs[future], next_action)
 
                 # Discrete action trajectories to one-hot
@@ -170,6 +171,8 @@ class DynoSOARAgent(torch.nn.Module):
                     obs[future], traj_o[future], traj_a[future], traj_r[future], self.encoder, self.dynamics,
                     self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
                 )
+
+            next_obs = next_obs.flatten(-3)
 
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.actorSAURUS, self.critic,
