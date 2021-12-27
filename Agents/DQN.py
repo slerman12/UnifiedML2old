@@ -96,8 +96,8 @@ class DQNAgent(torch.nn.Module):
         # "Imagine" / "Envision"
 
         # Augment
-        obs = self.aug(obs)
-        next_obs = self.aug(next_obs)
+        obs = self.aug(obs).detach()
+        next_obs = self.aug(next_obs).detach()
 
         # "Journal teachings"
 
@@ -134,15 +134,15 @@ class DQNAgent(torch.nn.Module):
 
             if self.RL:
                 # Auxiliary reinforcement
-                reward[instruction] = -mistake[:, None].detach()
+                reward[instruction] = -mistake.detach()[:, None].detach()
 
         if self.RL:
             # "Visualize"
 
             # Encode
-            obs = self.encoder(obs)
+            obs = self.encoder(obs.detach())
             with torch.no_grad():
-                next_obs = self.encoder(next_obs)
+                next_obs = self.encoder(next_obs.detach())
 
             # "Predict" / "Discern" / "Learn" / "Grow"
 
