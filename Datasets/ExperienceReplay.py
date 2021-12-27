@@ -107,6 +107,8 @@ class ExperienceReplay:
             for spec in self.specs:
                 if np.isscalar(exp[spec['name']]):
                     exp[spec['name']] = np.full(spec['shape'], exp[spec['name']], spec['dtype'])
+                if exp[spec['name']] is None:
+                    exp[spec['name']] = np.full(spec['shape'], np.NaN, spec['dtype'])
                 self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
                 assert spec['shape'] == exp[spec['name']].shape
                 assert spec['dtype'] == exp[spec['name']].dtype.name
