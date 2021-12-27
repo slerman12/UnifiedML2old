@@ -68,7 +68,6 @@ def main(args):
         replay.add(experiences)
 
         if env.episode_done:
-            print("ya")
             logger.log(logs, 'Train', dump=True)
 
             if env.last_episode_len >= args.nstep:
