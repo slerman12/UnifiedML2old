@@ -114,13 +114,14 @@ class DQNAgent(torch.nn.Module):
 
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
+            print(obs.shape, obs[instruction].shape)
 
             # "Candidate classifications"
             creations = self.creator(obs[instruction], self.step).sample(self.num_actions)
 
             # Infer
             action = self.actor(self.critic(obs[instruction], creations), self.step).best
-            print(action.shape)
+
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
             # Supervised loss
