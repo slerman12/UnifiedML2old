@@ -209,6 +209,7 @@ class Experiences(IterableDataset):
         load_path = random.choice(self.load_paths)
 
         episode_names = sorted(load_path.glob('*.npz'), reverse=True)  # Episodes
+        print(len(episode_names))
         num_fetched = 0
         # Find one new episode
         for episode_name in episode_names:
@@ -259,18 +260,14 @@ class Experiences(IterableDataset):
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
     def fetch_sample_process(self):
-        print('1')
         try:
             self.worker_fetch_episodes()  # Populate workers with up-to-date data
-            print('1.2')
         except:
             traceback.print_exc()
-        print('2')
 
         self.samples_since_last_fetch += 1
 
         if len(self.episode_names) > 0:
-            print('3')
             episode_name = self.sample(self.episode_names)  # Sample an episode
 
             episode = self.episodes[episode_name]
