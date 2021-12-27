@@ -113,8 +113,7 @@ class DynoSOARAgent(torch.nn.Module):
 
         # Encode
         obs = self.encoder(obs, flatten=False)
-        with torch.no_grad():
-            next_obs = self.encoder(next_obs, flatten=False)
+        next_obs = self.encoder(next_obs, flatten=False).detach()
 
         # "Journal teachings"
 
