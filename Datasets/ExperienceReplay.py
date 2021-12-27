@@ -172,6 +172,7 @@ class Experiences(IterableDataset):
                 episode = np.load(episode_file)
                 episode = {key: episode[key] for key in episode.keys()}
         except:
+            print("ya")
             return False
 
         episode_len = next(iter(episode.values())).shape[0] - 1
@@ -255,8 +256,6 @@ class Experiences(IterableDataset):
                     reward = np.zeros(1)
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
-
-        print(label)
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
