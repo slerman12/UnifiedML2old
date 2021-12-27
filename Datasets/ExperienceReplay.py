@@ -116,6 +116,7 @@ class ExperienceReplay:
         self.episode_len += len(experiences)
 
         if store:
+            print("YA")
             self.store_episode()  # Stores them in file system
 
     # Stores episode (to file in system)
@@ -135,7 +136,6 @@ class ExperienceReplay:
             buffer.seek(0)
             with save_path.open('wb') as f:
                 f.write(buffer.read())
-                print("YA")
 
         self.num_episodes += 1
         self.num_experiences_stored += self.episode_len
