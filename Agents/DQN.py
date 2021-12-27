@@ -122,7 +122,7 @@ class DQNAgent(torch.nn.Module):
 
             # Infer
             action = self.actor(self.critic(obs[instruction], creations), self.step).best
-            print(self.critic(obs[instruction], creations).actions.shape, action.shape)
+            print(self.critic(obs[instruction], creations).action.shape, action.shape)
 
             mistake = cross_entropy(action, label[instruction], reduction='none')
 
