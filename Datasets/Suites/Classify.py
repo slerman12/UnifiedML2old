@@ -23,6 +23,7 @@ class ClassificationEnvironment:
             random.seed(seed)
 
         self.num_classes = len(experiences.classes)
+        self.action_repeat = 1
 
         self.batches = iter(torch.utils.data.DataLoader(dataset=experiences,
                                                         batch_size=batch_size,
