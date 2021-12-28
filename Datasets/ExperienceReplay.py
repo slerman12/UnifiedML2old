@@ -117,8 +117,8 @@ class ExperienceReplay:
 
             for spec in self.specs:
                 # Handle different batch sizes
-                print(max_length, exp[spec['name']].shape)
-                ratio = max_length / len(exp[spec['name']])
+                print(max_length, exp[spec['name']].shape, len(exp[spec['name']]))
+                ratio = max_length / exp[spec['name']].shape[0]
                 exp[spec['name']] = np.repeat(exp[spec['name']], ratio, axis=0)
 
                 # Make sure everything is formatted and consistent
