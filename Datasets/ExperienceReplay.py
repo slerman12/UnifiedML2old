@@ -110,7 +110,6 @@ class ExperienceReplay:
                 if exp[spec['name']] is None:
                     exp[spec['name']] = np.full(spec['shape'], np.NaN, spec['dtype'])
                 self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
-                print(spec['name'], spec['shape'], exp[spec['name']].shape[-len(spec['shape']):])
                 assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):]
                 assert spec['dtype'] == exp[spec['name']].dtype.name
 
@@ -242,7 +241,7 @@ class Experiences(IterableDataset):
         next_obs = episode['observation'][idx - 1 + self.nstep]
         reward = np.full_like(episode['reward'][idx], np.NaN)
         discount = np.ones_like(episode['discount'][idx])
-        label = episode['label'][idx - 1].squeeze()
+        label = episode['label'][idx - 1]
         step = episode['step'][idx - 1]
 
         # Trajectory
