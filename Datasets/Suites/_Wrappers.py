@@ -266,6 +266,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
             if hasattr(time_step, spec):
                 specs[spec] = getattr(time_step, spec)
+            if np.isscalar(specs[spec]):
+                specs[spec] = np.full([1, 1], specs[spec], 'float32')
 
         if self.refactor_batch_dims:
             specs['observation'] = np.expand_dims(specs['observation'], axis=0)
