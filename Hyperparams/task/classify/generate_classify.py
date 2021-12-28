@@ -25,11 +25,11 @@ suite: classify
 frame_stack: null
 action_repeat: null
 nstep: 1
-evaluate_per_steps: 20000
-evaluate_episodes: 1000
+evaluate_per_steps: 1000
+evaluate_episodes: 1
 update_per_steps: 1
-seed_steps: 20000
-explore_steps: 20000
+seed_steps: 1000
+explore_steps: 1000
 task_name: {}""".format(task))
     f.close()
     out += ' "' + task.lower() + '"'

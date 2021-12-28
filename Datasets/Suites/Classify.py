@@ -26,21 +26,28 @@ class ClassificationEnvironment:
 
         self.num_classes = len(experiences.classes)
         self.action_repeat = 1
+        self.count = 0
 
-        self.batches = iter(torch.utils.data.DataLoader(dataset=experiences,
-                                                        batch_size=batch_size,
-                                                        shuffle=False,
-                                                        num_workers=num_workers,
-                                                        pin_memory=True,
-                                                        worker_init_fn=worker_init_fn))
+        self.batches = torch.utils.data.DataLoader(dataset=experiences,
+                                                   batch_size=batch_size,
+                                                   shuffle=False,
+                                                   num_workers=num_workers,
+                                                   pin_memory=True,
+                                                   worker_init_fn=worker_init_fn)
+        self.length = len(self.batches)
+        self.batches = iter(self.batches)
 
     @property
     def batch(self):
+        self.count += 1
         try:
-            batch = next(self.batches)
+            return next(self.batches)
         except StopIteration:
-            batch = next(iter(self.batches))
-        return batch
+            return next(iter(self.batches))
+
+    @property
+    def depleted(self):
+        return self.count >= self.length
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
@@ -49,14 +56,15 @@ class ClassificationEnvironment:
         return self.time_step
 
     def step(self, action):
+        # TODO redundantly calls Agent
         # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
-        self.next = getattr(self, 'next', False)
-        if self.next:
+        self.copies = getattr(self, 'copies', False)
+        if self.copies:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
         else:
             self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
-            self.reward = int(y == np.argmax(action, -1))
-        self.next = not self.next
+            self.reward = int(self.time_step.label == np.argmax(action, -1))
+        self.copies = not self.copies
         return self.time_step
 
     def observation_spec(self):
@@ -97,7 +105,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           download=True,
                           transform=transform)
 
-    env = ClassificationEnvironment(experiences, 1, num_workers)
+    env = ClassificationEnvironment(experiences, batch_size if train else len(experiences), num_workers)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env)

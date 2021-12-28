@@ -240,6 +240,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
         self.time_step = None
 
+        if not hasattr(self, 'depleted'):
+            self.depleted = False
+
     def step(self, action):
         time_step = self.env.step(action)
         # Augment time_step with extra functionality
