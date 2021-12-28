@@ -45,7 +45,7 @@ class ClassifyEnv:
         if self.train:
             if self.count == 0:
                 print(f'Seeding replay... training of classifier has not begun yet. '
-                      f'\n{self.length} batches need to be loaded into the experience replay.')
+                      f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
             if self.depleted:
                 print('All data loaded; env depleted; replay seeded; training of classifier underway')
         self.count += 1
@@ -74,7 +74,7 @@ class ClassifyEnv:
         if self.last:
             self.time_step = self.time_step._replace(step_type=StepType.LAST)
         else:
-            reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).sum() / len(action)
+            reward = self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)
             self.time_step = self.time_step._replace(step_type=StepType.MID, reward=reward,
                                                      action=action)
         self.last = not self.last
