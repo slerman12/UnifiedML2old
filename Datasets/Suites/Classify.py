@@ -26,7 +26,7 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
 
-        self.dummy_action = np.full([batch_size, self.num_classes], np.NaN)
+        self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
