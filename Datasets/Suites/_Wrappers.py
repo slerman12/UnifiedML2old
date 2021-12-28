@@ -235,12 +235,12 @@ class AttrDict(dict):
 
 
 class AugmentAttributesWrapper(dm_env.Environment):
-    def __init__(self, env, refactor_batch_dims=True):
+    def __init__(self, env, add_batch_dim=True):
         self.env = env
 
         self.time_step = None
 
-        self.refactor_batch_dims = refactor_batch_dims
+        self.add_batch_dim = add_batch_dim
 
         if not hasattr(self, 'depleted'):
             self.depleted = False
@@ -252,12 +252,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
-        # Note: reset exp doesn't get stored: must be dummy
+        # Note: reset exp doesn't get stored: assumes env produces dummy
         time_step = self.env.reset()
-        # Augment time_step (experience) with extra functionality
-        self.time_step = self.augment_time_step(time_step)
-
-        return self.to_attr_dict(self.time_step)
+        return time_step
 
     def close(self):
         self.gym_env.close()
@@ -270,7 +267,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
                 if np.isscalar(specs[spec]) or specs[spec] is None:
                     specs[spec] = np.full([1, 1], specs[spec], 'float32')
 
-        if self.refactor_batch_dims:
+        if self.add_batch_dim:
+            # Some environments like DMC/Atari return observations without batch dims
             specs['observation'] = np.expand_dims(specs['observation'], axis=0)
         return ExtendedTimeStep(step_type=time_step.step_type, **specs)
 
