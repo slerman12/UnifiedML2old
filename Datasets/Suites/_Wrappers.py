@@ -245,46 +245,36 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if not hasattr(self, 'depleted'):
             self.depleted = False
 
+        self.dummy_action = np.full([self.action_shape[-1]], np.NaN, 'float32')
+        self.dummy_reward = self.dummy_label = self.dummy_step = np.full([1], np.NaN, 'float32')
+        self.dummy_discount = np.full([1], 1, 'float32')
+
     def step(self, action):
         if self.action_obs_batch_dim:
             action = action.squeeze(0)
         time_step = self.env.step(action)
         # Augment time_step with extra functionality
-        self.time_step = self.augment_time_step(time_step, action)
+        self.time_step = self.augment_time_step(time_step)
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
         time_step = self.env.reset()
-        action = None
-        if hasattr(time_step, 'action'):
-            action = time_step.action
+
         # Augment time_step (experience) with extra functionality
-        self.time_step = self.augment_time_step(time_step, action)
-
-        dummy_action = np.full([self.action_shape[-1]], np.NaN, 'float32')
-        dummy_reward = dummy_step = np.full([1], np.NaN, 'float32')
-        dummy_discount = np.full([1], 1, 'float32')
-
-        self.time_step = self.time_step._replace(reward=dummy_reward, action=dummy_action,
-                                                 discount=dummy_discount, step=dummy_step)
+        self.time_step = self.augment_time_step(time_step)
 
         return self.to_attr_dict(self.time_step)
 
     def close(self):
         self.gym_env.close()
 
-    def augment_time_step(self, time_step, action=None):
-        if action is None:
-            action = np.zeros(self.action_spec['shape'], dtype=self.action_spec['dtype'])
+    def augment_time_step(self, time_step):
         obs = np.expand_dims(time_step.observation, axis=0) if self.action_obs_batch_dim \
             else time_step.observation
-        return ExtendedTimeStep(observation=obs,
-                                step_type=time_step.step_type,
-                                action=action,
-                                reward=time_step.reward,
-                                discount=time_step.discount if hasattr(time_step, 'discount') else 1.0,
-                                step=time_step.step if hasattr(time_step, 'step') else None,
-                                label=time_step.label if hasattr(time_step, 'label') else None)
+        specs = {}
+        for spec in ['action', 'discount', 'step', 'reward', 'label']:
+            specs[spec] = getattr(time_step, spec, getattr(self, 'dummy_' + spec))
+        return ExtendedTimeStep(observation=obs, step_type=time_step.step_type, **specs)
 
     @property
     def exp(self):
