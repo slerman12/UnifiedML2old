@@ -44,8 +44,7 @@ def main(args):
     vlogger = instantiate(args.vlogger)
 
     # Start
-    converged = False
-    training = False
+    converged = training = False
     while True:
         # Evaluate
         if agent.step % args.evaluate_per_steps == 0:

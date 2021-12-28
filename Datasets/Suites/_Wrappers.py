@@ -262,8 +262,10 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def augment_time_step(self, time_step, **specs):
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
+            # Preserve current time step data
             if hasattr(time_step, spec):
                 specs[spec] = getattr(time_step, spec)
+            # Convert to numpy with batch dim
             if spec in specs:
                 if np.isscalar(specs[spec]) or specs[spec] is None:
                     specs[spec] = np.full([1, 1], specs[spec], 'float32')
@@ -271,6 +273,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if self.add_batch_dim:
             # Some environments like DMC/Atari return observations without batch dims
             specs['observation'] = np.expand_dims(specs['observation'], axis=0)
+        # Extend time step
         return ExtendedTimeStep(step_type=time_step.step_type, **specs)
 
     @property

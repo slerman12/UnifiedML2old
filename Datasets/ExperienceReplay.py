@@ -112,7 +112,11 @@ class ExperienceReplay:
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
-                # Make sure everything is consistent
+                # Expands 'step' since it has no batch length
+                if exp['step'].shape[0] < exp[spec['name']].shape[0]:
+                    exp['step'] = np.repeat(exp['step'], exp[spec['name']].shape[0], axis=0)
+
+                # Validate consistency
                 assert spec['shape'] == exp[spec['name']].shape[1:], 'Unexpected shape for ' + spec['name']
                 assert spec['dtype'] == exp[spec['name']].dtype.name, 'Unexpected dtype for ' + spec['name']
 
@@ -129,14 +133,6 @@ class ExperienceReplay:
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
-
-        max_length = max([self.episode[spec['name']].shape[0] for spec in self.specs])
-
-        for spec in self.specs:
-            # Handle single batch items
-            if self.episode[spec['name']].shape[0] < max_length:
-                ratio = max_length / self.episode[spec['name']].shape[0]
-                self.episode[spec['name']] = np.repeat(self.episode[spec['name']], ratio, axis=0)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
