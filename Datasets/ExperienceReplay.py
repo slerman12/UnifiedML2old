@@ -235,16 +235,20 @@ class Experiences(IterableDataset):
     # N-step cumulative discounted rewards
     def process(self, episode):
         episode_len = next(iter(episode.values())).shape[0] - 1
-        idx = np.random.randint(0, episode_len - self.nstep + 1) + 1
+        idx = np.random.randint(0, episode_len - self.nstep)
 
         # Transition
-        obs = episode['observation'][idx - 1]
-        action = episode['action'][idx]
-        next_obs = episode['observation'][idx - 1 + self.nstep]
-        reward = np.full_like(episode['reward'][idx], np.NaN)
-        discount = np.ones_like(episode['discount'][idx])
-        label = episode['label'][idx - 1].squeeze()
-        step = episode['step'][idx - 1]
+        obs = episode['observation'][idx]
+        action = episode['action'][idx + 1]
+        next_obs = episode['observation'][idx + self.nstep]
+        reward = np.full_like(episode['reward'][idx + 1], np.NaN)
+        discount = np.ones_like(episode['discount'][idx + 1])
+        label = episode['label'][idx].squeeze()
+
+        # Handle batches
+        ratio = len(episode['observation']) / len(episode['step'])
+        episode['step'] = np.repeat(episode['step'], ratio, axis=0)
+        step = episode['step'][idx]
 
         # Trajectory
         traj_o = episode['observation'][idx - 1:idx + self.nstep]

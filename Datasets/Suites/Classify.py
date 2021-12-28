@@ -16,7 +16,7 @@ from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrappe
 
 
 class ClassifyEnv:
-    def __init__(self, experiences, batch_size, num_workers, train, enable_depletion=True):
+    def __init__(self, experiences, batch_size, num_workers, train, enable_depletion=True, verbose=True):
 
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
@@ -27,11 +27,7 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
         self.enable_depletion = enable_depletion
-        self.verbose = True
-
-        self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
-        self.dummy_reward = self.dummy_step = np.full([batch_size, 1], np.NaN, 'float32')
-        self.dummy_discount = np.full([batch_size, 1], 1, 'float32')
+        self.verbose = verbose and train
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
@@ -44,11 +40,15 @@ class ClassifyEnv:
         self.length = len(self.batches)
         self._batches = iter(self.batches)
 
+        dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
+        dummy_reward = dummy_step = np.full([batch_size, 1], np.NaN, 'float32')
+        dummy_discount = np.full([batch_size, 1], 1, 'float32')
+
+        self.time_step = ExtendedTimeStep(reward=dummy_reward, action=dummy_action,
+                                          discount=dummy_discount, step=dummy_step)
+
     @property
     def batch(self):
-        if self.verbose and self.train and self.count == 0:
-            print(f'Seeding replay... training of classifier has not begun yet. '
-                  f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
         self.count += 1
         try:
             batch = next(self._batches)
@@ -59,18 +59,22 @@ class ClassifyEnv:
 
     @property
     def depleted(self):
-        depleted = self.count >= self.length and self.enable_depletion
-        if self.verbose and depleted and self.train:
-            print('All data loaded; env depleted; replay seeded; training of classifier underway.')
-            self.verbose = False
-        return depleted
+        is_depleted = self.count >= self.length and self.enable_depletion
+
+        if self.verbose:
+            if is_depleted:
+                print('All data loaded; env depleted; replay seeded; training of classifier underway.')
+                self.verbose = False
+            elif self.count == 0:
+                print(f'Seeding replay... training of classifier has not begun yet. '
+                      f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
+
+        return is_depleted
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
-                                          step_type=StepType.FIRST, reward=self.dummy_reward,
-                                          action=self.dummy_action, discount=self.dummy_discount,
-                                          step=self.dummy_step)
+        y = np.expand_dims(y, 1)
+        self.time_step = self.time_step._replace(step_type=StepType.FIRST, observation=x, label=y)
         return self.time_step
 
     # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
@@ -94,10 +98,6 @@ class ClassifyEnv:
 
 def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
          train=True, seed=1, batch_size=1, num_workers=1):
-
-    # Whether to allow the environment to mark itself "depleted" after an epoch completed
-    enable_depletion = train
-
     """
     'task' options:
 
@@ -117,6 +117,8 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
 
     dataset = getattr(torchvision.datasets, task)
 
+    path = f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}'
+
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5,), (0.5,))])
@@ -124,12 +126,16 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore', '.*The given NumPy array.*')
 
-        experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
+        experiences = dataset(root=path,
                               train=train,
                               download=True,
                               transform=transform)
 
-    env = ClassifyEnv(experiences, batch_size if train else len(experiences), num_workers, train, enable_depletion)
+    # Whether to allow the environment to mark itself "depleted" after an epoch completed
+    enable_depletion = train
+
+    env = ClassifyEnv(experiences, batch_size if train else len(experiences),
+                      num_workers, train, enable_depletion)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env,
