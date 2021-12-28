@@ -261,7 +261,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def augment_time_step(self, time_step, action=None):
         if action is None:
             action = np.zeros(self.action_spec['shape'], dtype=self.action_spec['dtype'])
-        return ExtendedTimeStep(observation=time_step.observation,
+        return ExtendedTimeStep(observation=time_step.observation.unsqueeze(0),
                                 step_type=time_step.step_type,
                                 action=action,
                                 reward=time_step.reward,

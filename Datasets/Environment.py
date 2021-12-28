@@ -35,7 +35,7 @@ class Environment:
 
     def rollout(self, agent, steps=inf, vlog=False):
         if self.depleted:
-            return [], {}, []
+            return None, None, None
 
         if self.daybreak is None:
             self.daybreak = time.time()  # "Daybreak" for whole episode
