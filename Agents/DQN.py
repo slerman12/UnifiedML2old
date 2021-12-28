@@ -61,6 +61,7 @@ class DQNAgent(torch.nn.Module):
     def act(self, obs):
         with torch.no_grad(), Utils.act_mode(self.encoder, self.actor):
             obs = torch.as_tensor(obs, device=self.device)
+            print(obs.shape)
 
             # "See"
             obs = self.encoder(obs)
