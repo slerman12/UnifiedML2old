@@ -69,7 +69,7 @@ class ClassificationEnvironment:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
         else:
             self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
-            print(action.shape, len(action), np.sum(self.time_step.label == np.argmax(action, -1)))
+            print(self.time_step.observation.shape, action.shape, len(action), np.sum(self.time_step.label == np.argmax(action, -1)))
             self.reward = np.sum(self.time_step.label == np.argmax(action, -1)) / len(action)
         self.copied = not self.copied
         return self.time_step
