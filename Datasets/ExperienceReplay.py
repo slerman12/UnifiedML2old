@@ -130,9 +130,8 @@ class ExperienceReplay:
         for spec in self.specs:
             # for a in self.episode[spec['name']]:
             #     print(spec['name'], a.shape)
+            # Concatenate episode batches into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
-            if len(self.episode[spec['name']].shape) == 1:
-                self.episode[spec['name']] = np.expand_dims(self.episode[spec['name']], 1)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
@@ -239,7 +238,7 @@ class Experiences(IterableDataset):
     # N-step cumulative discounted rewards
     def process(self, episode):
         episode_len = next(iter(episode.values())).shape[0]
-        idx = np.random.randint(0, episode_len - self.nstep)
+        idx = np.random.randint(1, episode_len - self.nstep)
 
         # Transition
         obs = episode['observation'][idx]
@@ -248,11 +247,6 @@ class Experiences(IterableDataset):
         reward = np.full_like(episode['reward'][idx + 1], np.NaN)
         discount = np.ones_like(episode['discount'][idx + 1])
         label = episode['label'][idx].squeeze()
-
-        # Handle batches
-        ratio = len(episode['observation']) / len(episode['step'])
-        episode['step'] = np.repeat(episode['step'], ratio, axis=0)
-        step = episode['step'][idx]
 
         # Trajectory
         traj_o = episode['observation'][idx - 1:idx + self.nstep]
