@@ -255,9 +255,11 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def reset(self):
         time_step = self.env.reset()
+        action = None
+        if hasattr(time_step, 'action'):
+            action = time_step.action
         # Augment time_step (experience) with extra functionality
-        self.time_step = self.augment_time_step(time_step)
-        print(self.time_step.action.shape)
+        self.time_step = self.augment_time_step(time_step, action)
         return self.to_attr_dict(self.time_step)
 
     def close(self):
