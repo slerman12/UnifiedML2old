@@ -235,10 +235,12 @@ class AttrDict(dict):
 
 
 class AugmentAttributesWrapper(dm_env.Environment):
-    def __init__(self, env):
+    def __init__(self, env, unsqueeze_obs=False):
         self.env = env
 
         self.time_step = None
+
+        self.unsqueeze_obs = unsqueeze_obs
 
         if not hasattr(self, 'depleted'):
             self.depleted = False
@@ -261,7 +263,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def augment_time_step(self, time_step, action=None):
         if action is None:
             action = np.zeros(self.action_spec['shape'], dtype=self.action_spec['dtype'])
-        return ExtendedTimeStep(observation=np.expand_dims(time_step.observation, axis=0),
+        obs = np.expand_dims(time_step.observation, axis=0) if self.unsqueeze_obs \
+            else time_step.observation
+        return ExtendedTimeStep(observation=obs,
                                 step_type=time_step.step_type,
                                 action=action,
                                 reward=time_step.reward,
