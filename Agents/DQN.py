@@ -132,8 +132,9 @@ class DQNAgent(torch.nn.Module):
                            self.encoder,
                            self.creator)
 
+            # Auxiliary reinforcement
             if self.RL:
-                # Auxiliary reinforcement
+                action[instruction] = y_predicted.detach()
                 reward[instruction] = -mistake[:, None].detach()
 
         if self.RL:
