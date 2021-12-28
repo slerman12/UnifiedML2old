@@ -253,14 +253,14 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if self.action_obs_batch_dim:
             action = action.squeeze(0)
         time_step = self.env.step(action)
+        for spec in ['action', 'discount', 'step', 'reward', 'label']:
+            print(spec, hasattr(time_step, spec))
         # Augment time_step with extra functionality
         self.time_step = self.augment_time_step(time_step)
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
         time_step = self.env.reset()
-        for spec in ['action', 'discount', 'step', 'reward', 'label']:
-            print(spec, hasattr(time_step, spec))
         # Augment time_step (experience) with extra functionality
         self.time_step = self.augment_time_step(time_step)
 
