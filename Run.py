@@ -23,7 +23,7 @@ def main(args):
 
     # Train, test environments
     env = instantiate(args.environment)
-    generalize = instantiate(args.environment, train=False, seed=args.seed + 1234)
+    generalize = instantiate(args.environment, train=False, seed=args.seed + 1234, stop_on_depletion=False)
 
     if Path(args.save_path).exists():
         # Load
