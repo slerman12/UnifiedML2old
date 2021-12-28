@@ -139,6 +139,6 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env,
-                                   action_obs_batch_dim=False)  # Disables the modification of batch dims
+                                   refactor_batch_dims=False)  # Disables the modification of batch dims
 
     return env
