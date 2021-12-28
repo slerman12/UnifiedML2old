@@ -112,10 +112,6 @@ class ExperienceReplay:
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
-                # Expands 'step' since it has no batch length
-                if exp['step'].shape[0] < exp[spec['name']].shape[0]:
-                    exp['step'] = np.repeat(exp['step'], exp[spec['name']].shape[0], axis=0)
-
                 # Validate consistency
                 assert spec['shape'] == exp[spec['name']].shape[1:], 'Unexpected shape for ' + spec['name']
                 assert spec['dtype'] == exp[spec['name']].dtype.name, 'Unexpected dtype for ' + spec['name']
@@ -133,6 +129,11 @@ class ExperienceReplay:
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
+
+        # Expands 'step' since it has no batch length in classification
+        episode_len = self.episode['observation'].shape[0]
+        if self.episode['step'].shape[0] == 1:
+            self.episode['step'] = np.repeat(self.episode['step'], episode_len, axis=0)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
