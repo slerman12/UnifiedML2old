@@ -255,8 +255,13 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def reset(self):
         time_step = self.env.reset()
-        print(time_step.observation.shape)
-        action = None
+
+        dummy_action = np.full([1, self.num_classes], np.NaN, 'float32')
+        dummy_reward = dummy_step = np.full([1, 1], np.NaN, 'float32')
+        dummy_discount = np.full([1, 1], 1, 'float32')
+
+        self.time_step = time_step._replace(reward=dummy_reward, action=dummy_action,
+                                            discount=dummy_discount, step=dummy_step)
         if hasattr(time_step, 'action'):
             action = time_step.action
         # Augment time_step (experience) with extra functionality
