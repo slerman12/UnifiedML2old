@@ -41,9 +41,11 @@ class ClassificationEnvironment:
     @property
     def batch(self):
         self.count += 1
-        if self._batches is None:
+        try:
+            return next(self._batches)
+        except StopIteration:
             self._batches = iter(self.batches)
-        return next(self._batches)
+            return next(self._batches)
 
     @property
     def depleted(self):
