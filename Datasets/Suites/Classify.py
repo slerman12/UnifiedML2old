@@ -17,7 +17,7 @@ print("Seeding replay... training has not begun yet.")
 
 
 class ClassificationEnvironment:
-    def __init__(self, experiences, batch_size, num_workers):
+    def __init__(self, experiences, batch_size, num_workers, train):
 
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
@@ -26,6 +26,7 @@ class ClassificationEnvironment:
 
         self.num_classes = len(experiences.classes)
         self.action_repeat = 1
+        self.train = train
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
@@ -46,8 +47,8 @@ class ClassificationEnvironment:
         except StopIteration:
             self._batches = iter(self.batches)
             batch = next(self._batches)
-        if self.depleted:
-            print('All data loaded; classification train environment successfully "depleted."')
+        if self.depleted and self.train:
+            print('All data loaded; classification training env successfully "depleted."')
         return batch
 
     @property
@@ -110,7 +111,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           download=True,
                           transform=transform)
 
-    env = ClassificationEnvironment(experiences, batch_size if train else len(experiences), num_workers)
+    env = ClassificationEnvironment(experiences, batch_size if train else len(experiences), num_workers, train)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env, unsqueeze_batch_dim=False)
