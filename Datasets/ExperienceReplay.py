@@ -105,13 +105,20 @@ class ExperienceReplay:
 
         for exp in experiences:
             for spec in self.specs:
+                # Make sure everything is a numpy batch
                 if np.isscalar(exp[spec['name']]):
-                    exp[spec['name']] = np.full(spec['shape'], exp[spec['name']], spec['dtype'])
+                    exp[spec['name']] = np.full((1,) + spec['shape'], exp[spec['name']], spec['dtype'])
                 if exp[spec['name']] is None:
-                    exp[spec['name']] = np.full(spec['shape'], np.NaN, spec['dtype'])
-                self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
+                    exp[spec['name']] = np.full((1,) + spec['shape'], np.NaN, spec['dtype'])
+                if len(exp[spec['name']].shape) == len(spec['shape']):
+                    exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
+
+                # Make sure everything is formatted and consistent
                 assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):]
                 assert spec['dtype'] == exp[spec['name']].dtype.name
+
+                # Adds the experiences
+                self.episode[spec['name']].append(exp[spec['name']])
 
         self.episode_len += len(experiences)
 
@@ -123,12 +130,9 @@ class ExperienceReplay:
         for spec in self.specs:
             for a in self.episode[spec['name']]:
                 print(spec['name'], a.shape)
-            self.episode[spec['name']] = np.stack(self.episode[spec['name']], axis=0)
+            self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
             if len(self.episode[spec['name']].shape) == 1:
                 self.episode[spec['name']] = np.expand_dims(self.episode[spec['name']], 1)
-
-            # Handle batches
-            self.episode[spec['name']] = self.episode[spec['name']].reshape(-1, *spec['shape'])
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
