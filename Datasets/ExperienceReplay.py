@@ -129,7 +129,6 @@ class ExperienceReplay:
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
-            print( len(self.episode[spec['name']]))
 
         max_length = max([self.episode[spec['name']].shape[0] for spec in self.specs])
 
@@ -269,6 +268,9 @@ class Experiences(IterableDataset):
                     reward = np.zeros(1)
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
+
+        for i, bla in enumerate([obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step]):
+            print(i, bla.shape)
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
