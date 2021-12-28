@@ -62,13 +62,14 @@ def main(args):
             if args.log_video:
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
-        # Rollout
-        experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
+        # Rollout if environment allows
+        if not (args.stop_on_depletion and env.depleted):
+            experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
-        replay.add(experiences)
+            replay.add(experiences)
 
         if env.episode_done:
-            if agent.step > args.seed_steps:
+            if agent.step > args.seed_steps and len(logs) > 0:
                 logger.log(logs, 'Train', dump=True)
 
             if env.last_episode_len >= args.nstep:
