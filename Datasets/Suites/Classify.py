@@ -26,7 +26,6 @@ class ClassificationEnvironment:
 
         self.num_classes = len(experiences.classes)
         self.action_repeat = 1
-        self.count = 0
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
@@ -34,6 +33,8 @@ class ClassificationEnvironment:
                                                    num_workers=num_workers,
                                                    pin_memory=True,
                                                    worker_init_fn=worker_init_fn)
+
+        self.count = 0
         self.length = len(self.batches)
         self.batches = iter(self.batches)
 
@@ -51,7 +52,7 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        self.time_step = ExtendedTimeStep(observation=x.squeeze(0), label=y,  # Squeezes if batch size 1
+        self.time_step = ExtendedTimeStep(observation=x, label=y,  # Squeezes if batch size 1
                                           step_type=StepType.FIRST, reward=0)
         return self.time_step
 
