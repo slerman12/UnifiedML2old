@@ -10,13 +10,15 @@ from Datasets.Suites import DMC, Atari, Classify
 
 class Environment:
     def __init__(self, task_name, frame_stack, action_repeat, max_episode_frames, truncate_episode_frames,
-                 seed=0, train=True, suite="DMC", batch_size=1, num_workers=1):
+                 stop_on_depletion=True, seed=0, train=True, suite="DMC", batch_size=1, num_workers=1):
         self.suite = suite
 
         self.env = self.raw_env.make(task_name, frame_stack, action_repeat, max_episode_frames,
                                      truncate_episode_frames, train, seed, batch_size, num_workers)
 
         self.env.reset()
+
+        self.stop_on_depletion = stop_on_depletion
 
         self.episode_step = self.last_episode_len = self.episode_reward = self.last_episode_reward = 0
         self.daybreak = None
@@ -34,6 +36,9 @@ class Environment:
         return getattr(self.env, item)
 
     def rollout(self, agent, steps=inf, vlog=False):
+        if self.stop_on_depletion and self.depleted:
+            return None, None, None
+
         if self.daybreak is None:
             self.daybreak = time.time()  # "Daybreak" for whole episode
 

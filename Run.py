@@ -62,7 +62,7 @@ def main(args):
             if args.log_video:
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
-        # Rollout if environment allows
+        # Rollout (if environment still has data to give, which might not be the case in classification)
         if not (args.stop_on_depletion and env.depleted):
             experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 

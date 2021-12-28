@@ -13,11 +13,11 @@ from dm_env import specs, StepType
 
 from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
 
+print("Seeding replay... training has not begun yet.")
+
 
 class ClassificationEnvironment:
     def __init__(self, experiences, batch_size, num_workers):
-
-        print("Seeding replay... training has not begin yet.")
 
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
@@ -52,6 +52,7 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
+        print(x.shape)
         self.time_step = ExtendedTimeStep(observation=x, label=y,  # Squeezes if batch size 1
                                           step_type=StepType.FIRST, reward=0)
         return self.time_step
