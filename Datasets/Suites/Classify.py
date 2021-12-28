@@ -48,6 +48,7 @@ class ClassificationEnvironment:
 
     @property
     def depleted(self):
+        print(self.count, self.length)
         return self.count >= self.length
 
     def reset(self):
