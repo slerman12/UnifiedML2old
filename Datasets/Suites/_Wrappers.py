@@ -255,6 +255,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def reset(self):
         time_step = self.env.reset()
+        print(time_step.observation.shape)
         action = None
         if hasattr(time_step, 'action'):
             action = time_step.action
