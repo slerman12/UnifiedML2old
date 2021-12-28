@@ -274,7 +274,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
                                 step_type=time_step.step_type,
                                 action=action,
                                 reward=time_step.reward,
-                                discount=time_step.discount or 1.0,
+                                discount=time_step.discount if hasattr(time_step, 'discount') else 1.0,
                                 step=time_step.step if hasattr(time_step, 'step') else None,
                                 label=time_step.label if hasattr(time_step, 'label') else None)
 
