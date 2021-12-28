@@ -255,7 +255,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         # Note: reset exp doesn't get stored: must be dummy
         time_step = self.env.reset()
         # Augment time_step (experience) with extra functionality
-        self.time_step = self.augment_time_step(time_step, action=None)
+        self.time_step = self.augment_time_step(time_step)
 
         return self.to_attr_dict(self.time_step)
 
@@ -266,8 +266,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
             if hasattr(time_step, spec):
                 specs[spec] = getattr(time_step, spec)
-            if np.isscalar(specs[spec]) or specs[spec] is None:
-                specs[spec] = np.full([1, 1], specs[spec], 'float32')
+            if spec in specs:
+                if np.isscalar(specs[spec]) or specs[spec] is None:
+                    specs[spec] = np.full([1, 1], specs[spec], 'float32')
 
         if self.refactor_batch_dims:
             specs['observation'] = np.expand_dims(specs['observation'], axis=0)
