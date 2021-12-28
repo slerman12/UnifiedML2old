@@ -14,7 +14,7 @@ from dm_env import specs, StepType
 from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
 
 
-class ClassificationEnvironment:
+class ClassifyEnv:
     def __init__(self, experiences, batch_size, num_workers, train):
 
         def worker_init_fn(worker_id):
@@ -62,11 +62,9 @@ class ClassificationEnvironment:
                                           step_type=StepType.FIRST, reward=0)
         return self.time_step
 
+    # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
     def step(self, action):
-        # TODO redundantly calls Agent
-        # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
         assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
-        print(action.shape)
         self.copied = getattr(self, 'copied', False)
         if self.copied:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
@@ -88,20 +86,22 @@ class ClassificationEnvironment:
 def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
          train=True, seed=1, batch_size=1, num_workers=1):
 
-    assert task in torchvision.datasets.__all__
+    """
+    'task' options:
 
-    # Options:
-    # torchvision.datasets.__all__ =
-    # ('LSUN', 'LSUNClass',
-    #  'ImageFolder', 'DatasetFolder', 'FakeData',
-    #  'CocoCaptions', 'CocoDetection',
-    #  'CIFAR10', 'CIFAR100', 'EMNIST', 'FashionMNIST', 'QMNIST',
-    #  'MNIST', 'KMNIST', 'STL10', 'SVHN', 'PhotoTour', 'SEMEION',
-    #  'Omniglot', 'SBU', 'Flickr8k', 'Flickr30k',
-    #  'VOCSegmentation', 'VOCDetection', 'Cityscapes', 'ImageNet',
-    #  'Caltech101', 'Caltech256', 'CelebA', 'WIDERFace', 'SBDataset',
-    #  'VisionDataset', 'USPS', 'Kinetics400', 'HMDB51', 'UCF101',
-    #  'Places365')
+    ('LSUN', 'LSUNClass',
+     'ImageFolder', 'DatasetFolder', 'FakeData',
+     'CocoCaptions', 'CocoDetection',
+     'CIFAR10', 'CIFAR100', 'EMNIST', 'FashionMNIST', 'QMNIST',
+     'MNIST', 'KMNIST', 'STL10', 'SVHN', 'PhotoTour', 'SEMEION',
+     'Omniglot', 'SBU', 'Flickr8k', 'Flickr30k',
+     'VOCSegmentation', 'VOCDetection', 'Cityscapes', 'ImageNet',
+     'Caltech101', 'Caltech256', 'CelebA', 'WIDERFace', 'SBDataset',
+     'VisionDataset', 'USPS', 'Kinetics400', 'HMDB51', 'UCF101',
+     'Places365')
+    """
+
+    assert task in torchvision.datasets.__all__
 
     dataset = getattr(torchvision.datasets, task)
 
@@ -114,7 +114,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           download=True,
                           transform=transform)
 
-    env = ClassificationEnvironment(experiences, batch_size if train else len(experiences), num_workers, train)
+    env = ClassifyEnv(experiences, batch_size if train else len(experiences), num_workers, train)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env,
