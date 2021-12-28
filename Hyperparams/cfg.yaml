@@ -30,6 +30,7 @@ save_path: ./Checkpoints/${Agent}_${experiment}/${environment.suite}/${task_name
 # Logging
 log_video: false
 log_tensorboard: false
+log_training_per_episodes: 1
 # Plotting
 plot: true
 # Misc

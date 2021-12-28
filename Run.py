@@ -54,6 +54,7 @@ def main(args):
                                                     vlog=args.log_video)
 
                 logger.log(logs, 'Eval')
+
             logger.dump_logs('Eval')
 
             if args.plot:
@@ -70,7 +71,9 @@ def main(args):
             replay.add(experiences)
 
         if env.episode_done:
-            logger.log(logs, 'Train', dump=True)
+            if agent.episode % args.log_training_per_episodes == 0:
+                name = 'Train' if agent.step > args.seed_steps else 'Seeding'
+                logger.log(logs, name, dump=True)
 
             if env.last_episode_len >= args.nstep:
                 replay.add(store=True)  # Only store full episodes

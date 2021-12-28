@@ -10,5 +10,6 @@ evaluate_per_steps: 100
 evaluate_episodes: 1
 update_per_steps: 1
 seed_steps: 10000
+log_training_per_episodes: 10
 explore_steps: 0
 task_name: Omniglot
