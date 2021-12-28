@@ -63,7 +63,7 @@ class Environment:
                 vlogs.append(frame)
 
             # Tally reward, done, step
-            self.episode_reward += exp.reward
+            self.episode_reward += exp.reward.mean()
             self.episode_done = exp.last()
             step += 1
 
