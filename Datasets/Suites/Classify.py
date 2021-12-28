@@ -43,7 +43,8 @@ class ClassifyEnv:
     def batch(self):
         if self.train:
             if self.count == 0:
-                print("Seeding replay... training of classifier has not begun yet.")
+                print('Seeding replay... training of classifier has not begun yet.')
+                print(f'Will complete at Episode {self.length}')
             if self.depleted:
                 print('All data loaded; env depleted; replay seeded; training of classifier underway')
         self.count += 1
