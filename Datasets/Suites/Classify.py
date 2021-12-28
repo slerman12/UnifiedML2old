@@ -88,6 +88,7 @@ class ClassifyEnv:
         reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).astype('float32')
 
         self.time_step.reward[1:] = reward
+        self.time_step.reward[0] = reward.mean()
         self.time_step.action[1:] = action
         self.time_step = self.time_step._replace(step_type=StepType.LAST, observation=x, label=y)
 
