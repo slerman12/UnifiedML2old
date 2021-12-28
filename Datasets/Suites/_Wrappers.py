@@ -270,8 +270,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
             if hasattr(time_step, spec):
                 specs[spec] = getattr(time_step, spec)
                 if self.refactor_batch_dims:
-                    if spec == 'reward':
-                        print(specs[spec])
+                    if spec == 'reward' and specs[spec] is not None:
+                        print(specs[spec].shape, specs[spec].dtype)
                     specs[spec] = np.expand_dims(specs[spec], axis=0)
             else:
                 specs[spec] = getattr(self, 'dummy_' + spec)
