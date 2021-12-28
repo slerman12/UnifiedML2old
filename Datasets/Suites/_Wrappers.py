@@ -261,9 +261,9 @@ class AugmentAttributesWrapper(dm_env.Environment):
         # Augment time_step (experience) with extra functionality
         self.time_step = self.augment_time_step(time_step, action)
 
-        dummy_action = np.full([1, self.action_shape[-1]], np.NaN, 'float32')
-        dummy_reward = dummy_step = np.full([1, 1], np.NaN, 'float32')
-        dummy_discount = np.full([1, 1], 1, 'float32')
+        dummy_action = np.full([self.action_shape[-1]], np.NaN, 'float32')
+        dummy_reward = dummy_step = np.full([1], np.NaN, 'float32')
+        dummy_discount = np.full([1], 1, 'float32')
 
         self.time_step = self.time_step._replace(reward=dummy_reward, action=dummy_action,
                                                  discount=dummy_discount, step=dummy_step)
