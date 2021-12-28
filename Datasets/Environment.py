@@ -38,10 +38,10 @@ class Environment:
             self.daybreak = time.time()  # "Daybreak" for whole episode
 
         exp = self.exp
-        experiences = [exp]
 
         self.episode_done = False
 
+        experiences = []
         vlogs = []
 
         if self.depleted:

@@ -40,9 +40,9 @@ class ClassifyEnv:
         self.length = len(self.batches)
         self._batches = iter(self.batches)
 
-        dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
-        dummy_reward = dummy_step = np.full([batch_size, 1], np.NaN, 'float32')
-        dummy_discount = np.full([batch_size, 1], 1, 'float32')
+        dummy_action = np.full([batch_size + 1, self.num_classes], np.NaN, 'float32')
+        dummy_reward = dummy_step = np.full([batch_size + 1, 1], np.NaN, 'float32')
+        dummy_discount = np.full([batch_size + 1, 1], 1, 'float32')
 
         self.time_step = ExtendedTimeStep(reward=dummy_reward, action=dummy_action,
                                           discount=dummy_discount, step=dummy_step)
@@ -72,7 +72,7 @@ class ClassifyEnv:
         return is_depleted
 
     def reset(self):
-        x, y = [np.array(batch, dtype='float32') for batch in self.batch]
+        x, y = [np.array(b, dtype='float32') for b in self.batch]
         y = np.expand_dims(y, 1)
         self.time_step = self.time_step._replace(step_type=StepType.FIRST, observation=x, label=y)
         return self.time_step
@@ -81,9 +81,15 @@ class ClassifyEnv:
     def step(self, action):
         assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
 
+        # Concat a dummy batch item
+        x, y = [np.concatenate([b, np.expand_dims(b[-1], 0)], 0) for b in (self.time_step.observation,
+                                                                           self.time_step.label)]
+
         reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).astype('float32')
 
-        self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=reward, action=action)
+        self.time_step.reward[1:] = reward
+        self.time_step.action[1:] = action
+        self.time_step = self.time_step._replace(step_type=StepType.LAST, observation=x, label=y)
 
         return self.time_step
 

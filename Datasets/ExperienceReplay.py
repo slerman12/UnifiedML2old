@@ -7,6 +7,7 @@ import datetime
 import io
 import traceback
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 
@@ -106,23 +107,13 @@ class ExperienceReplay:
         for exp in experiences:
             for spec in self.specs:
                 # Make sure everything is a numpy batch
-                if np.isscalar(exp[spec['name']]):
+                if np.isscalar(exp[spec['name']]) or exp[spec['name']] is None:
                     exp[spec['name']] = np.full((1,) + spec['shape'], exp[spec['name']], spec['dtype'])
-                if exp[spec['name']] is None:
-                    exp[spec['name']] = np.full((1,) + spec['shape'], np.NaN, spec['dtype'])
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
-            max_length = max([exp[spec['name']].shape[0] for spec in self.specs])
-
-            for spec in self.specs:
-                # Handle different batch sizes
-                ratio = max_length / exp[spec['name']].shape[0]
-                exp[spec['name']] = np.repeat(exp[spec['name']], ratio, axis=0)
-
-                # Make sure everything is formatted and consistent
-                assert exp[spec['name']].shape[0] == max_length, 'Batch sizes could not be broadcast for ' + spec['name']
-                assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):], 'Unexpected shape for ' + spec['name']
+                # Make sure everything is consistent
+                assert spec['shape'] == exp[spec['name']].shape[1:], 'Unexpected shape for ' + spec['name']
                 assert spec['dtype'] == exp[spec['name']].dtype.name, 'Unexpected dtype for ' + spec['name']
 
                 # Adds the experiences
@@ -136,10 +127,16 @@ class ExperienceReplay:
     # Stores episode (to file in system)
     def store_episode(self):
         for spec in self.specs:
-            # for a in self.episode[spec['name']]:
-            #     print(spec['name'], a.shape)
-            # Concatenate episode batches into one big episode batch
+            # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
+
+        max_length = max([self.episode[spec['name']].shape[0] for spec in self.specs])
+
+        for spec in self.specs:
+            # Handle single batch items
+            if self.episode[spec['name']].shape[0] < max_length:
+                ratio = max_length / self.episode[spec['name']].shape[0]
+                self.episode[spec['name']] = np.repeat(self.episode[spec['name']], ratio, axis=0)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
@@ -245,8 +242,8 @@ class Experiences(IterableDataset):
 
     # N-step cumulative discounted rewards
     def process(self, episode):
-        episode_len = next(iter(episode.values())).shape[0]
-        idx = np.random.randint(1, episode_len - self.nstep)
+        episode_len = len(episode['observation'])
+        idx = np.random.randint(episode_len - self.nstep)
 
         # Transition
         obs = episode['observation'][idx]
