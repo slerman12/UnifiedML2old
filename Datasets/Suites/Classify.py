@@ -45,18 +45,18 @@ class ClassifyEnv:
 
     @property
     def batch(self):
-        if self.train:
-            if self.count == 0:
-                print(f'Seeding replay... training of classifier has not begun yet. '
-                      f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
-            if self.depleted:
-                print('All data loaded; env depleted; replay seeded; training of classifier underway')
         self.count += 1
         try:
             batch = next(self._batches)
         except StopIteration:
             self._batches = iter(self.batches)
             batch = next(self._batches)
+        if self.train:
+            if self.count == 1:
+                print(f'Seeding replay... training of classifier has not begun yet. '
+                      f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
+            if self.depleted:
+                print('All data loaded; env depleted; replay seeded; training of classifier underway')
         return batch
 
     @property
