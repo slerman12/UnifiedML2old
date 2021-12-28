@@ -27,6 +27,7 @@ class ClassifyEnv:
         self.train = train
 
         self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
+        self.dummy_reward = np.full([batch_size, 1], np.NaN, 'float32')
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
@@ -44,7 +45,7 @@ class ClassifyEnv:
         if self.train:
             if self.count == 0:
                 print(f'Seeding replay... training of classifier has not begun yet. '
-                      f'\nReplay seeding Episodes: {self.length}')
+                      f'\n{self.length} batches need to be loaded into the experience replay.')
             if self.depleted:
                 print('All data loaded; env depleted; replay seeded; training of classifier underway')
         self.count += 1
@@ -62,7 +63,7 @@ class ClassifyEnv:
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
         self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
-                                          step_type=StepType.FIRST, reward=0,
+                                          step_type=StepType.FIRST, reward=self.dummy_reward,
                                           action=self.dummy_action)
         return self.time_step
 
