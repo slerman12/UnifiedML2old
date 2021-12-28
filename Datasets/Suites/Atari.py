@@ -239,5 +239,5 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           train=train)
 
     # Augment attributes to env and time step, prepare specs for loading by Hydra
-    env = AugmentAttributesWrapper(env, True)
+    env = AugmentAttributesWrapper(env)
     return env
