@@ -110,7 +110,7 @@ class ExperienceReplay:
                 if exp[spec['name']] is None:
                     exp[spec['name']] = np.full(spec['shape'], np.NaN, spec['dtype'])
                 self.episode[spec['name']].append(exp[spec['name']])  # Adds the experiences
-                assert spec['shape'] == exp[spec['name']].shape[:-len(spec['shape'])]
+                assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):]
                 assert spec['dtype'] == exp[spec['name']].dtype.name
 
         self.episode_len += len(experiences)
