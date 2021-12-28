@@ -113,7 +113,15 @@ class ExperienceReplay:
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
+            max_length = max([len(exp[spec['name']]) for spec in self.specs])
+
+            for spec in self.specs:
+                # Handle different batch sizes
+                ratio = max_length / len(exp[spec['name']])
+                exp[spec['name']] = np.repeat(exp[spec['name']], ratio, axis=0)
+
                 # Make sure everything is formatted and consistent
+                assert spec['shape'][0] == max_length
                 assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):]
                 assert spec['dtype'] == exp[spec['name']].dtype.name
 
@@ -247,6 +255,7 @@ class Experiences(IterableDataset):
         reward = np.full_like(episode['reward'][idx + 1], np.NaN)
         discount = np.ones_like(episode['discount'][idx + 1])
         label = episode['label'][idx].squeeze()
+        step = episode['step'][idx]
 
         # Trajectory
         traj_o = episode['observation'][idx - 1:idx + self.nstep]
