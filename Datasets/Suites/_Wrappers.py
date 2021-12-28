@@ -252,9 +252,10 @@ class AugmentAttributesWrapper(dm_env.Environment):
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
-        # Note: reset exp doesn't get stored: assumes env produces dummy
+        # Note: reset exp doesn't get stored to replay; assumed dummy
         time_step = self.env.reset()
-        return time_step
+        self.time_step = self.augment_time_step(time_step)
+        return self.to_attr_dict(self.time_step)
 
     def close(self):
         self.gym_env.close()
