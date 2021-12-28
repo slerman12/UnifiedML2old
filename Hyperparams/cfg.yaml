@@ -10,6 +10,8 @@ feature_dim: 50
 explore_steps: 2000
 lr: 1e-4
 discrete: ??? # To be specified later
+# Environment
+stop_on_depletion: true
 # Replay
 obs_spec: ??? # To be specified later
 action_spec: ??? # To be specified later
@@ -51,6 +53,7 @@ environment:
   suite: ${suite}
   batch_size: ${batch_size}
   num_workers: ${replay.num_workers}
+  stop_on_depletion: ${stop_on_depletion}
 
 agent:
   _target_: ${Agent}
