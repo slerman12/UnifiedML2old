@@ -113,17 +113,18 @@ class ExperienceReplay:
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
-            max_length = max([len(exp[spec['name']]) for spec in self.specs])
+            max_length = max([exp[spec['name']].shape[0] for spec in self.specs])
 
             for spec in self.specs:
                 # Handle different batch sizes
+                print(max_length, exp[spec['name']].shape)
                 ratio = max_length / len(exp[spec['name']])
                 exp[spec['name']] = np.repeat(exp[spec['name']], ratio, axis=0)
 
                 # Make sure everything is formatted and consistent
-                assert spec['shape'][0] == max_length
-                assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):]
-                assert spec['dtype'] == exp[spec['name']].dtype.name
+                assert spec['shape'][0] == max_length, 'Batch sizes could not be broadcast for ' + spec['name']
+                assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):], 'Unexpected shape for ' + spec['name']
+                assert spec['dtype'] == exp[spec['name']].dtype.name, 'Unexpected dtype for ' + spec['name']
 
                 # Adds the experiences
                 self.episode[spec['name']].append(exp[spec['name']])
