@@ -13,8 +13,6 @@ from dm_env import specs, StepType
 
 from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
 
-print("Seeding replay... training has not begun yet.")
-
 
 class ClassificationEnvironment:
     def __init__(self, experiences, batch_size, num_workers, train):
@@ -38,6 +36,9 @@ class ClassificationEnvironment:
         self.count = 0
         self.length = len(self.batches)
         self._batches = iter(self.batches)
+
+        if train:
+            print("Seeding replay... training has not begun yet.")
 
     @property
     def batch(self):
