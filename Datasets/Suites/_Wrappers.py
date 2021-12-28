@@ -253,10 +253,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if self.action_obs_batch_dim:
             action = action.squeeze(0)
         time_step = self.env.step(action)
-        for spec in ['action', 'discount', 'step', 'reward', 'label']:
-            print(spec, hasattr(time_step, spec))
         # Augment time_step with extra functionality
-        self.time_step = self.augment_time_step(time_step)
+        self.time_step = self.augment_time_step(time_step, action)
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
@@ -269,12 +267,14 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def close(self):
         self.gym_env.close()
 
-    def augment_time_step(self, time_step):
+    def augment_time_step(self, time_step, action=None):
         obs = np.expand_dims(time_step.observation, axis=0) if self.action_obs_batch_dim \
             else time_step.observation
         specs = {}
         for spec in ['action', 'discount', 'step', 'reward', 'label']:
             specs[spec] = getattr(time_step, spec, getattr(self, 'dummy_' + spec))
+        if action is not None:
+            specs['action'] = action
         return ExtendedTimeStep(observation=obs, step_type=time_step.step_type, **specs)
 
     @property
