@@ -49,7 +49,7 @@ class ClassificationEnvironment:
             self._batches = iter(self.batches)
             batch = next(self._batches)
         if self.depleted and self.train:
-            print('All data loaded; classification training env successfully "depleted."')
+            print('All data loaded; env depleted; replay seeded; training underway')
         return batch
 
     @property
