@@ -129,7 +129,7 @@ class ExperienceReplay:
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
-            assert len(self.episode[spec['name']]) > 0
+            print( len(self.episode[spec['name']]))
 
         max_length = max([self.episode[spec['name']].shape[0] for spec in self.specs])
 
