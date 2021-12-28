@@ -234,8 +234,8 @@ class Experiences(IterableDataset):
 
     # N-step cumulative discounted rewards
     def process(self, episode):
-        episode_len = next(iter(episode.values())).shape[0] - 1
-        idx = np.random.randint(0, episode_len - self.nstep)
+        episode_len = next(iter(episode.values())).shape[0]
+        idx = np.random.randint(1, episode_len - self.nstep)
 
         # Transition
         obs = episode['observation'][idx]
