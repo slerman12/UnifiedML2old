@@ -245,7 +245,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if not hasattr(self, 'depleted'):
             self.depleted = False
 
-        self.dummy_action = np.full([1, self.action_shape[-1]], np.NaN, 'float32')
+        self.dummy_action = np.zeros([1, self.action_shape[-1]], self.action_spec['dtype'])
         self.dummy_reward = self.dummy_label = self.dummy_step = np.full([1, 1], np.NaN, 'float32')
         self.dummy_discount = np.full([1, 1], 1, 'float32')
 
