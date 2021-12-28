@@ -258,7 +258,7 @@ class Experiences(IterableDataset):
         traj_o = episode['observation'][idx:idx + self.nstep + 1]
         traj_a = episode['action'][idx + 1:idx + self.nstep + 1]
         traj_r = episode['reward'][idx + 1:idx + self.nstep + 1]
-        traj_l = episode['label'][idx + 1:idx + self.nstep + 1]
+        traj_l = episode['label'][idx:idx + self.nstep + 1]
 
         # Compute cumulative discounted reward
         for i in range(1, self.nstep + 1):
