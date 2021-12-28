@@ -15,7 +15,7 @@ from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrappe
 
 
 class ClassifyEnv:
-    def __init__(self, experiences, batch_size, num_workers, train):
+    def __init__(self, experiences, batch_size, num_workers, train, enable_depletion=True):
 
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
@@ -25,6 +25,7 @@ class ClassifyEnv:
         self.num_classes = len(experiences.classes)
         self.action_repeat = 1
         self.train = train
+        self.enable_depletion = enable_depletion
 
         self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
         self.dummy_reward = np.full([batch_size, 1], np.NaN, 'float32')
@@ -59,7 +60,7 @@ class ClassifyEnv:
 
     @property
     def depleted(self):
-        return self.count >= self.length
+        return self.count >= self.length and self.enable_depletion
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
@@ -93,6 +94,9 @@ class ClassifyEnv:
 def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate_episode_frames=None,
          train=True, seed=1, batch_size=1, num_workers=1):
 
+    # Whether to allow the environment to mark itself "depleted" after an epoch completed
+    enable_depletion = train
+
     """
     'task' options:
 
@@ -121,7 +125,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
                           download=True,
                           transform=transform)
 
-    env = ClassifyEnv(experiences, batch_size if train else len(experiences), num_workers, train)
+    env = ClassifyEnv(experiences, batch_size if train else len(experiences), num_workers, train, enable_depletion)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env,

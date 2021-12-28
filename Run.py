@@ -63,17 +63,14 @@ def main(args):
             if args.log_video:
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
-        # Rollout (if environment still has data to give, which might not be the case in classification)
-        logs = None
-        if not (args.stop_on_depletion and env.depleted):
-            experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
+        # Rollout
+        experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
-            replay.add(experiences)
+        replay.add(experiences)
 
         if env.episode_done:
-            if agent.episode % args.log_training_per_episodes == 0:
-                name = 'Train' if agent.step > args.seed_steps else 'Seed'
-                logger.log(logs, name, dump=True)
+            name = 'Train' if agent.step > args.seed_steps else 'Seed'
+            logger.log(logs, name, dump=True)
 
             if env.last_episode_len >= args.nstep:
                 replay.add(store=True)  # Only store full episodes

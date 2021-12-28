@@ -44,6 +44,9 @@ class Environment:
 
         vlogs = []
 
+        if self.depleted:
+            return None, None, None
+
         step = 0
         while not self.episode_done and step < steps:
             # Act
@@ -60,7 +63,7 @@ class Environment:
                 vlogs.append(frame)
 
             # Tally reward, done, step
-            self.episode_reward += np.mean(exp.reward)
+            self.episode_reward += exp.reward.mean()
             self.episode_done = exp.last()
             step += 1
 
