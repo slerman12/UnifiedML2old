@@ -27,6 +27,7 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
         self.enable_depletion = enable_depletion
+        self.verbose = True
 
         self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
         self.dummy_reward = np.full([batch_size, 1], np.NaN, 'float32')
@@ -45,23 +46,24 @@ class ClassifyEnv:
 
     @property
     def batch(self):
+        if self.verbose and self.train and self.count == 0:
+            print(f'Seeding replay... training of classifier has not begun yet. '
+                  f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
         self.count += 1
         try:
             batch = next(self._batches)
         except StopIteration:
             self._batches = iter(self.batches)
             batch = next(self._batches)
-        if self.train:
-            if self.count == 1:
-                print(f'Seeding replay... training of classifier has not begun yet. '
-                      f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
-            if self.depleted:
-                print('All data loaded; env depleted; replay seeded; training of classifier underway.')
         return batch
 
     @property
     def depleted(self):
-        return self.count >= self.length and self.enable_depletion
+        depleted = self.count >= self.length and self.enable_depletion
+        if self.verbose and depleted and self.train:
+            print('All data loaded; env depleted; replay seeded; training of classifier underway.')
+            self.verbose = False
+        return depleted
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
@@ -73,14 +75,11 @@ class ClassifyEnv:
     # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
     def step(self, action):
         assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
-        self.last = getattr(self, 'last', False)
-        if self.last:
-            self.time_step = self.time_step._replace(step_type=StepType.LAST)
-        else:
-            reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).astype('float32')
-            self.time_step = self.time_step._replace(step_type=StepType.MID, reward=reward,
-                                                     action=action, discount=self.dummy_discount)
-        self.last = not self.last
+
+        reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).astype('float32')
+
+        self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=reward, action=action)
+
         return self.time_step
 
     def observation_spec(self):
