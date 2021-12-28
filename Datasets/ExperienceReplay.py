@@ -121,8 +121,8 @@ class ExperienceReplay:
     # Stores episode (to file in system)
     def store_episode(self):
         for spec in self.specs:
-            for a in self.episode[spec['name']]:
-                print(spec['name'], a.shape)
+            # for a in self.episode[spec['name']]:
+            #     print(spec['name'], a.shape)
             self.episode[spec['name']] = np.stack(self.episode[spec['name']], axis=0)
             if len(self.episode[spec['name']].shape) == 1:
                 self.episode[spec['name']] = np.expand_dims(self.episode[spec['name']], 1)
