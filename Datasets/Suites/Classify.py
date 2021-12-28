@@ -37,19 +37,19 @@ class ClassificationEnvironment:
         self.length = len(self.batches)
         self._batches = iter(self.batches)
 
-        if train:
-            print("Seeding replay... training has not begun yet.")
-
     @property
     def batch(self):
+        if self.train:
+            if self.count == 0:
+                print("Seeding replay... training of classifier has not begun yet.")
+            if self.depleted:
+                print('All data loaded; env depleted; replay seeded; training of classifier underway')
         self.count += 1
         try:
             batch = next(self._batches)
         except StopIteration:
             self._batches = iter(self.batches)
             batch = next(self._batches)
-        if self.depleted and self.train:
-            print('All data loaded; env depleted; replay seeded; training underway')
         return batch
 
     @property
@@ -66,6 +66,7 @@ class ClassificationEnvironment:
         # TODO redundantly calls Agent
         # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
         assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
+        print(action.shape)
         self.copied = getattr(self, 'copied', False)
         if self.copied:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
@@ -116,6 +117,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     env = ClassificationEnvironment(experiences, batch_size if train else len(experiences), num_workers, train)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
-    env = AugmentAttributesWrapper(env, action_obs_batch_dim=False)
+    env = AugmentAttributesWrapper(env,
+                                   action_obs_batch_dim=False)  # Disables the modification of batch dims
 
     return env
