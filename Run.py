@@ -63,14 +63,14 @@ def main(args):
                 vlogger.dump_vlogs(vlogs, f'{agent.step}.mp4')
 
         # Rollout (if environment still has data to give, which might not be the case in classification)
+        logs = None
         if not (args.stop_on_depletion and env.depleted):
             experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
             replay.add(experiences)
 
         if env.episode_done:
-            if agent.step > args.seed_steps and len(logs) > 0:
-                logger.log(logs, 'Train', dump=True)
+            logger.log(logs, 'Train', dump=True)
 
             if env.last_episode_len >= args.nstep:
                 replay.add(store=True)  # Only store full episodes
@@ -84,7 +84,7 @@ def main(args):
         converged = agent.step >= args.train_steps
 
         # Update agent
-        if agent.step > args.seed_steps and agent.step % args.update_per_steps == 0 or converged:
+        if (agent.step > args.seed_steps or env.depleted) and agent.step % args.update_per_steps == 0 or converged:
 
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent

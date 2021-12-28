@@ -42,14 +42,16 @@ class ClassificationEnvironment:
     def batch(self):
         self.count += 1
         try:
-            return next(self._batches)
+            batch = next(self._batches)
         except StopIteration:
             self._batches = iter(self.batches)
-            return next(self._batches)
+            batch = next(self._batches)
+        if self.depleted:
+            print('All data loaded; classification train environment successfully "depleted."')
+        return batch
 
     @property
     def depleted(self):
-        print(self.count, self.length)
         return self.count >= self.length
 
     def reset(self):
