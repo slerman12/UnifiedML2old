@@ -53,7 +53,7 @@ class Environment:
             action = agent.act(exp.observation)
             exp = self.env.step(action.cpu().numpy())
 
-            exp.step = agent.step
+            exp.step[:] = agent.step
 
             experiences.append(exp)
 

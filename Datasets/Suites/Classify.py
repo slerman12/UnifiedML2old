@@ -30,7 +30,7 @@ class ClassifyEnv:
         self.verbose = True
 
         self.dummy_action = np.full([batch_size, self.num_classes], np.NaN, 'float32')
-        self.dummy_reward = np.full([batch_size, 1], np.NaN, 'float32')
+        self.dummy_reward = self.dummy_step = np.full([batch_size, 1], np.NaN, 'float32')
         self.dummy_discount = np.full([batch_size, 1], 1, 'float32')
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
@@ -69,7 +69,8 @@ class ClassifyEnv:
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
         self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
                                           step_type=StepType.FIRST, reward=self.dummy_reward,
-                                          action=self.dummy_action, discount=self.dummy_discount)
+                                          action=self.dummy_action, discount=self.dummy_discount,
+                                          step=self.dummy_step)
         return self.time_step
 
     # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
