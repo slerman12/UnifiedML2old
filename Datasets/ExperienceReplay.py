@@ -117,13 +117,11 @@ class ExperienceReplay:
 
             for spec in self.specs:
                 # Handle different batch sizes
-                print(max_length, exp[spec['name']].shape, len(exp[spec['name']]))
                 ratio = max_length / exp[spec['name']].shape[0]
                 exp[spec['name']] = np.repeat(exp[spec['name']], ratio, axis=0)
-                print(max_length, exp[spec['name']].shape, len(exp[spec['name']]))
 
                 # Make sure everything is formatted and consistent
-                assert spec['shape'][0] == max_length, 'Batch sizes could not be broadcast for ' + spec['name']
+                assert exp[spec['name']].shape[0] == max_length, 'Batch sizes could not be broadcast for ' + spec['name']
                 assert spec['shape'] == exp[spec['name']].shape[-len(spec['shape']):], 'Unexpected shape for ' + spec['name']
                 assert spec['dtype'] == exp[spec['name']].dtype.name, 'Unexpected dtype for ' + spec['name']
 
