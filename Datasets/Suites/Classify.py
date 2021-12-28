@@ -56,7 +56,7 @@ class ClassifyEnv:
                 print(f'Seeding replay... training of classifier has not begun yet. '
                       f'\n{self.length} batches (one per episode) need to be loaded into the experience replay.')
             if self.depleted:
-                print('All data loaded; env depleted; replay seeded; training of classifier underway')
+                print('All data loaded; env depleted; replay seeded; training of classifier underway.')
         return batch
 
     @property

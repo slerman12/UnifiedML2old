@@ -43,8 +43,9 @@ def main(args):
 
     vlogger = instantiate(args.vlogger)
 
-    # Start training
+    # Start
     converged = False
+    training = False
     while True:
         # Evaluate
         if agent.step % args.evaluate_per_steps == 0:
@@ -69,7 +70,7 @@ def main(args):
         replay.add(experiences)
 
         if env.episode_done:
-            name = 'Train' if agent.step > args.seed_steps else 'Seed'
+            name = 'Train' if training else 'Seed'
             logger.log(logs, name, dump=True)
 
             if env.last_episode_len >= args.nstep:
@@ -82,9 +83,10 @@ def main(args):
             break
 
         converged = agent.step >= args.train_steps
+        training = agent.step > args.seed_steps or env.depleted
 
         # Update agent
-        if (agent.step > args.seed_steps or env.depleted) and agent.step % args.update_per_steps == 0 or converged:
+        if training and agent.step % args.update_per_steps == 0 or converged:
 
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent
