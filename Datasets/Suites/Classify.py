@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import random
+import warnings
 
 import numpy as np
 
@@ -120,10 +121,13 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
         [transforms.ToTensor(),
          transforms.Normalize((0.5,), (0.5,))])
 
-    experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
-                          train=train,
-                          download=True,
-                          transform=transform)
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', '*The given NumPy array*')
+
+        experiences = dataset(root=f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}',
+                              train=train,
+                              download=True,
+                              transform=transform)
 
     env = ClassifyEnv(experiences, batch_size if train else len(experiences), num_workers, train, enable_depletion)
 
