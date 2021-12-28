@@ -52,8 +52,7 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        print(y.shape)
-        self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 0),
+        self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
                                           step_type=StepType.FIRST, reward=0)
         return self.time_step
 
