@@ -26,6 +26,8 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
 
+        self.dummy_action = np.full([batch_size, self.num_classes], np.NaN)
+
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
                                                    shuffle=False,
@@ -59,8 +61,8 @@ class ClassifyEnv:
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
         self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
-                                          step_type=StepType.FIRST, reward=0)
-        print(self.time_step.action.shape)
+                                          step_type=StepType.FIRST, reward=0,
+                                          action=self.dummy_action)
         return self.time_step
 
     # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
@@ -68,12 +70,12 @@ class ClassifyEnv:
         assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
         self.last = getattr(self, 'last', False)
         if self.last:
-            self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
+            self.time_step = self.time_step._replace(step_type=StepType.LAST)
         else:
-            self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
+            self.time_step = self.time_step._replace(step_type=StepType.MID, reward=self.reward,
+                                                     action=action)
             self.reward = np.sum(self.time_step.label == np.argmax(action, -1)) / len(action)
         self.last = not self.last
-        print(self.time_step.action.shape)
         return self.time_step
 
     def observation_spec(self):
