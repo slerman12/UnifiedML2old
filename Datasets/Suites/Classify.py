@@ -64,12 +64,12 @@ class ClassificationEnvironment:
     def step(self, action):
         # TODO redundantly calls Agent
         # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
+        assert self.time_step.observation.shape[0] == action.shape[0], 'Agent must produce actions for each obs'
         self.copied = getattr(self, 'copied', False)
         if self.copied:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
         else:
             self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
-            print(self.time_step.observation.shape, self.time_step.label.shape, action.shape, len(action), np.sum(self.time_step.label == np.argmax(action, -1)))
             self.reward = np.sum(self.time_step.label == np.argmax(action, -1)) / len(action)
         self.copied = not self.copied
         return self.time_step
