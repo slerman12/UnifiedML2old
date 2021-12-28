@@ -235,10 +235,12 @@ class AttrDict(dict):
 
 
 class AugmentAttributesWrapper(dm_env.Environment):
-    def __init__(self, env):
+    def __init__(self, env, refactor_batch_dims=True):
         self.env = env
 
         self.time_step = None
+
+        self.refactor_batch_dims = refactor_batch_dims
 
         if not hasattr(self, 'depleted'):
             self.depleted = False
@@ -249,7 +251,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def step(self, action):
         time_step = self.env.step(action)
-        # Augment time_step with extra attributes
+        # Augment time_step with extra functionality
         self.time_step = self.augment_time_step(time_step, action=action)
         return self.to_attr_dict(self.time_step)
 
@@ -268,6 +270,10 @@ class AugmentAttributesWrapper(dm_env.Environment):
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
             if hasattr(time_step, spec):
                 specs[spec] = getattr(time_step, spec)
+                if self.refactor_batch_dims:
+                    if np.isscalar(specs[spec]) or specs[spec] is None:
+                        specs[spec] = np.full([1], specs[spec], 'float32')
+                    specs[spec] = np.expand_dims(specs[spec], axis=0)
             else:
                 specs[spec] = getattr(self, 'dummy_' + spec)
         return ExtendedTimeStep(step_type=time_step.step_type, **specs)
