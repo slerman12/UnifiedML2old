@@ -72,8 +72,7 @@ class ClassifyEnv:
         if self.last:
             self.time_step = self.time_step._replace(step_type=StepType.LAST)
         else:
-            reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).astype(int)
-            print(action.shape, self.time_step.label.shape, reward.shape)
+            reward = (self.time_step.label == np.expand_dims(np.argmax(action, -1), 1)).sum() / len(action)
             self.time_step = self.time_step._replace(step_type=StepType.MID, reward=reward,
                                                      action=action)
         self.last = not self.last
