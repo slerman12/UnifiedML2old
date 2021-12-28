@@ -245,7 +245,6 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if not hasattr(self, 'depleted'):
             self.depleted = False
 
-        self.dummy_observation = 'pooo'
         self.dummy_action = np.full([self.action_shape[-1]], np.NaN, 'float32')
         self.dummy_reward = self.dummy_label = self.dummy_step = np.full([1], np.NaN, 'float32')
         self.dummy_discount = np.full([1], 1, 'float32')
@@ -254,10 +253,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
         if self.refactor_batch_dims:
             action = action.squeeze(0)
         time_step = self.env.step(action)
-        setattr(time_step, 'action',
-                getattr(time_step, 'action', action))
         # Augment time_step with extra functionality
-        self.time_step = self.augment_time_step(time_step)
+        self.time_step = self.augment_time_step(time_step, action=action)
         return self.to_attr_dict(self.time_step)
 
     def reset(self):
@@ -270,14 +267,15 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def close(self):
         self.gym_env.close()
 
-    def augment_time_step(self, time_step):
+    def augment_time_step(self, time_step, **kwargs):
         specs = {}
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
-            print(hasattr(time_step, spec))
-            value = getattr(time_step, spec, getattr(self, 'dummy_' + spec))
+            value = getattr(time_step, spec) if hasattr(time_step, spec) \
+                else getattr(self, 'dummy_' + spec)
             if self.refactor_batch_dims:
                 value = np.expand_dims(value, axis=0)
             specs[spec] = value
+        specs.update(kwargs)
         return ExtendedTimeStep(step_type=time_step.step_type, **specs)
 
     @property
