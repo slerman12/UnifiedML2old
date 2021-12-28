@@ -76,10 +76,10 @@ class DQNAgent(torch.nn.Module):
                 else Pi.best
 
             if self.training:
-                self.step += obs.shape[0]
+                self.step += 1
 
                 # Explore phase
-                if self.step < self.explore_steps and self.training:
+                if self.step < self.explore_steps:
                     action = torch.randint(self.action_dim, size=action.shape) if self.discrete \
                         else action.uniform_(-1, 1)
 

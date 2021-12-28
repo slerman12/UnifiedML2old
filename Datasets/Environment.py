@@ -45,6 +45,7 @@ class Environment:
         vlogs = []
 
         if self.depleted:
+            agent.step += 1
             return None, None, None
 
         step = 0
