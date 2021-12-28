@@ -256,7 +256,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
     def reset(self):
         time_step = self.env.reset()
 
-        dummy_action = np.full([1, self.num_classes], np.NaN, 'float32')
+        dummy_action = np.full([1, self.action_shape[-1]], np.NaN, 'float32')
         dummy_reward = dummy_step = np.full([1, 1], np.NaN, 'float32')
         dummy_discount = np.full([1, 1], 1, 'float32')
 
