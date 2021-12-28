@@ -271,7 +271,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
                                 reward=time_step.reward,
                                 discount=time_step.discount or 1.0,
                                 step=time_step.step if hasattr(time_step, 'step') else None,
-                                label=np.expand_dims(time_step.label, 0) if hasattr(time_step, 'label') else None)
+                                label=time_step.label if hasattr(time_step, 'label') else None)
 
     @property
     def exp(self):

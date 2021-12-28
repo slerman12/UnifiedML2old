@@ -52,20 +52,21 @@ class ClassificationEnvironment:
 
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
-        self.time_step = ExtendedTimeStep(observation=x, label=y,  # Squeezes if batch size 1
+        print(y.shape)
+        self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 0),
                                           step_type=StepType.FIRST, reward=0)
         return self.time_step
 
     def step(self, action):
         # TODO redundantly calls Agent
         # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
-        self.copies = getattr(self, 'copies', False)
-        if self.copies:
+        self.copied = getattr(self, 'copied', False)
+        if self.copied:
             self.time_step = self.time_step._replace(step_type=StepType.LAST, reward=self.reward)
         else:
             self.time_step = self.time_step._replace(step_type=StepType.MID, action=action, reward=0)
             self.reward = np.sum(self.time_step.label == np.argmax(action, -1)) / len(action)
-        self.copies = not self.copies
+        self.copied = not self.copied
         return self.time_step
 
     def observation_spec(self):
