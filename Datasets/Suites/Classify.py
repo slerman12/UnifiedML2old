@@ -26,8 +26,6 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
 
-        self.dummy_action = np.full([batch_size, self.num_classes], 1)
-
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
                                                    shuffle=False,
@@ -61,8 +59,7 @@ class ClassifyEnv:
     def reset(self):
         x, y = [np.array(batch, dtype='float32') for batch in self.batch]
         self.time_step = ExtendedTimeStep(observation=x, label=np.expand_dims(y, 1),
-                                          step_type=StepType.FIRST, reward=0,
-                                          action=self.dummy_action)
+                                          step_type=StepType.FIRST, reward=0)
         return self.time_step
 
     # ExperienceReplay expects at least a reset state and 'next obs', with 'reward' with 'next obs'
