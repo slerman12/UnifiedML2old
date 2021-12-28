@@ -271,8 +271,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
     def augment_time_step(self, time_step):
         specs = {}
-        print(hasattr(time_step, 'observation'))
         for spec in ['observation', 'action', 'discount', 'step', 'reward', 'label']:
+            print(hasattr(time_step, 'observation'))
             value = getattr(time_step, spec, getattr(self, 'dummy_' + spec))
             if self.refactor_batch_dims:
                 value = np.expand_dims(value, axis=0)
