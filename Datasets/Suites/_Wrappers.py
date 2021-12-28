@@ -246,6 +246,8 @@ class AugmentAttributesWrapper(dm_env.Environment):
             self.depleted = False
 
     def step(self, action):
+        if self.unsqueeze_batch_dim:
+            action = action.squeeze(0)
         time_step = self.env.step(action)
         # Augment time_step with extra functionality
         self.time_step = self.augment_time_step(time_step, action)
