@@ -246,9 +246,9 @@ class Experiences(IterableDataset):
         label = episode['label'][idx - 1].squeeze()
 
         # Handle batches
-        ratio = len(episode['observation']) / len(episode['step'])
-        episode['step'] = np.repeat(episode['step'], ratio, axis=0)
-        step = episode['step'][idx - 1]
+        # ratio = len(episode['observation']) / len(episode['step'])
+        # episode['step'] = np.repeat(episode['step'], ratio, axis=0)
+        # step = episode['step'][idx - 1]
 
         # Trajectory
         traj_o = episode['observation'][idx - 1:idx + self.nstep]
