@@ -269,8 +269,8 @@ class Experiences(IterableDataset):
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
 
-        for i, bla in enumerate([obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step]):
-            print(i, bla.shape)
+        if traj_o.shape[0] < 4:
+            print("HUHHHHHH")
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 
