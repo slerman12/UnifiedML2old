@@ -242,7 +242,7 @@ class Experiences(IterableDataset):
         action = episode['action'][idx]
         next_obs = episode['observation'][idx - 1 + self.nstep]
         reward = np.full_like(episode['reward'][idx], np.NaN)
-        discount = np.ones_like(episode['reward'][idx])
+        discount = np.ones_like(episode['discount'][idx])
         label = episode['label'][idx - 1].squeeze()
 
         # Handle batches
