@@ -131,8 +131,8 @@ class ExperienceReplay:
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
 
         # Expands 'step' since it has no batch length in classification
-        episode_len = self.episode['observation'].shape[0]
         if self.episode['step'].shape[0] == 1:
+            episode_len = self.episode['observation'].shape[0]
             self.episode['step'] = np.repeat(self.episode['step'], episode_len, axis=0)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
