@@ -95,7 +95,7 @@ class DQNAgent(torch.nn.Module):
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
 
-        # "Imagine" / "Envision"
+        # "Imagine"
 
         # Augment
         obs = self.aug(obs)
@@ -145,7 +145,7 @@ class DQNAgent(torch.nn.Module):
                 next_obs[instruction, :] = float('nan')
 
         if self.RL:
-            # "Visualize"
+            # "Envision"
 
             # Encode
             obs = self.encoder(obs)
