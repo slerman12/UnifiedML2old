@@ -217,6 +217,7 @@ class Experiences(IterableDataset):
             worker = torch.utils.data.get_worker_info().id
         except:
             worker = 0
+        print(worker)
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
