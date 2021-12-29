@@ -195,9 +195,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data.loc[data['Task'] == task, 'Reward'] = (data.loc[data['Task'] == task, 'Reward']
-                                                                    - random[game]) \
-                                                                   / (human[game] - random[game])
+                        data[data['Task'] == task, 'Reward'] -= random[game]
+                        data[data['Task'] == task, 'Reward'] /= (human[game] - random[game])
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
