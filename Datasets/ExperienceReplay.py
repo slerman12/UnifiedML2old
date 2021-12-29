@@ -120,19 +120,23 @@ class ExperienceReplay:
 
         self.episode_len += len(experiences)
 
-        if store and self.episode_len > 0:
+        if store:
             self.store_episode()  # Stores them in file system
 
     # Stores episode (to file in system)
     def store_episode(self):
+        if self.episode_len == 0:
+            return
+
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
 
+        self.episode_len = self.episode['observation'].shape[0]
+
         # Expands 'step' since it has no batch length in classification
         if self.episode['step'].shape[0] == 1:
-            episode_len = self.episode['observation'].shape[0]
-            self.episode['step'] = np.repeat(self.episode['step'], episode_len, axis=0)
+            self.episode['step'] = np.repeat(self.episode['step'], self.episode_len, axis=0)
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
@@ -145,7 +149,7 @@ class ExperienceReplay:
             with save_path.open('wb') as f:
                 f.write(buffer.read())
 
-        self.num_episodes += 1
+        self.num_episodes += self.episode_len
         self.num_experiences_stored += self.episode_len
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
