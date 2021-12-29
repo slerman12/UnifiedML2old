@@ -132,7 +132,8 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
 
         experiences = dataset(root=path,
                               train=train,
-                              download=True)
+                              download=True,
+                              transform=transforms.ToTensor())
 
     # Whether to allow the environment to mark itself "depleted" after an epoch completed
     enable_depletion = train
