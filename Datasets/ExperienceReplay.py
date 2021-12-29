@@ -285,7 +285,6 @@ class Experiences(IterableDataset):
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into a compact experience
-        print("K")
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
