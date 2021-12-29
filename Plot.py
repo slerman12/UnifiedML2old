@@ -189,15 +189,15 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
     # Sort suites
-    suites_ = [ss for s in ['atari', 'dmc', 'classify'] for ss in suites_ if s in ss]
+    suites_ = [s for s in ['Atari', 'DMC', 'Classify'] for ss in suites_ if s in ss]
 
     # Plot suites
     for col, suite in enumerate(suites_):
-        data = df[df['Task'].str.lower().str.contains(suite)]
+        data = df[df['Task'].str.lower().str.contains(suite.lower())]
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
         # Human-normalize Atari
-        if suite == 'atari':
+        if suite.lower() == 'atari':
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
