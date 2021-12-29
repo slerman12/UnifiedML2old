@@ -70,7 +70,7 @@ class DQNAgent(torch.nn.Module):
 
             # "Candidate actions"
             creations = None if self.discrete \
-                else self.creator(obs, self.step).sample(self.num_actions)
+                else self.creator(obs, self.step)
 
             # DQN actor is based on critic
             Pi = self.actor(self.critic(obs, creations), self.step)
