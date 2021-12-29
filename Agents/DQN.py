@@ -44,8 +44,10 @@ class DQNAgent(torch.nn.Module):
 
         # Continuous actions creator
         self.creator = None if self.discrete \
-            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim, num_actors,
-                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip, optim_lr=lr)
+            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim,
+                                       self.action_dim, ensemble_size=num_actors,
+                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                       optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau)
