@@ -203,8 +203,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
                         with warnings.catch_warnings():
                             warnings.filterwarnings('ignore', 'SettingWithCopyWarning')
 
-                            data.loc[data['Task'] == task]['Reward'] -= random[game]
-                            data.loc[data['Task'] == task]['Reward'] /= human[game] - random[game]
+                            data.loc[data['Task'] == task, 'Reward'] -= random[game]
+                            data.loc[data['Task'] == task, 'Reward'] /= human[game] - random[game]
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
