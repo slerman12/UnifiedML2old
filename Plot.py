@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
@@ -105,14 +106,13 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
 
-        if 'classify' in task.lower():
-            y_axis = 'Eval Accuracy (%)'
-            data.loc[:, y_axis] = (data['Reward'] * 100.0).copy()
-        else:
-            y_axis = 'Reward'
-
-        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
+
+        if 'classify' in task.lower():
+            ax.yaxis.set_major_formatter(FuncFormatter('{0:.0%}'.format))
+            ax.set_yaxis('Eval Accuracy (%)')
+
 
     plt.tight_layout()
     plt.savefig(path)
