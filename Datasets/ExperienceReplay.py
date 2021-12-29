@@ -280,8 +280,8 @@ class Experiences(IterableDataset):
         self.samples_since_last_fetch += 1
 
         if len(self.episode_names) > 0:
-            print("K")
             episode_name = self.sample(self.episode_names)  # Sample an episode
+            print("K")
 
             episode = self.episodes[episode_name]
 
