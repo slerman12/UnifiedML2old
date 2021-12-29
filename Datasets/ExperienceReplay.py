@@ -196,7 +196,6 @@ class Experiences(IterableDataset):
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
-        print('K')
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
@@ -234,6 +233,7 @@ class Experiences(IterableDataset):
             if num_fetched + episode_len > self.capacity:  # Don't overfill
                 break
             num_fetched += episode_len
+            print(worker)
             if not self.load_episode(episode_name):
                 break  # Resolve conflicts
 
