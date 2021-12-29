@@ -127,19 +127,12 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
 
     path = f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}'
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Resize(84),
-         transforms.Normalize((0.5,), (0.5,))
-         ])
-
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore', '.*The given NumPy array.*')
 
         experiences = dataset(root=path,
                               train=train,
-                              download=True,
-                              transform=transform)
+                              download=True)
 
     # Whether to allow the environment to mark itself "depleted" after an epoch completed
     enable_depletion = train
