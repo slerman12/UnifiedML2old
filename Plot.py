@@ -47,6 +47,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     df_list = []
     suite_tasks = set()
+    suites_ = set()
 
     for file in files:
         agent_experiment, suite, task_seed_eval = file.split('/')[2:]
@@ -77,6 +78,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
         df_list.append(csv)
         suite_tasks.update({suite_task})
+        suites_.update({suite})
 
     if len(df_list) == 0:
         return
@@ -175,10 +177,12 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         'UpNDown': 11693.2
     }
 
-    fig, axs = plt.subplots(1, 3, figsize=(12, 3))
+    num_cols = len(suites_)
+
+    fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
     # Plot suites
-    for col, suite in enumerate(['atari', 'dmc', 'classify']):
+    for col, suite in enumerate(suites_):
         data = df[df['Task'].str.lower().str.contains(suite)]
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
