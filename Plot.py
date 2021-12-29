@@ -108,7 +108,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
 
         if 'classify' in task.lower():
             y_axis = 'Eval Accuracy (%)'
-            data[y_axis] = data['Reward'].copy()
+            data.loc[:, y_axis] = data['Reward']
             ax.yaxis.set_major_formatter(FuncFormatter('{0:.0%}'.format))
         else:
             y_axis = 'Reward'
