@@ -25,7 +25,7 @@ suite: classify
 frame_stack: null
 action_repeat: null
 nstep: 1
-evaluate_per_steps: 5000
+evaluate_per_steps: 1000
 evaluate_episodes: 1
 update_per_steps: 1
 seed_steps: 10000
