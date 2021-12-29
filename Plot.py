@@ -109,7 +109,9 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
 
-        sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        y_axis = 'Accuracy' if 'classify' in task.lower() else 'Reward'
+
+        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
 
         if 'classify' in task.lower():
@@ -203,7 +205,9 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
 
-        sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        y_axis = 'Accuracy' if 'classify' in task.lower() else 'Reward'
+
+        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{suite}')
 
         if suite.lower() == 'classify':
