@@ -55,6 +55,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     for file in files:
         agent_experiment, suite, task_seed_eval = file.split('/')[2:]
 
+        suite = {k.lower(): k for k in ['Atari', 'DMC', 'Classify']}[suite.lower()]
+
         # Parse files
         task_seed = task_seed_eval.split('_')
         task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1].replace('.csv', '')
@@ -65,7 +67,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             continue
         if experiments is not None and experiment not in experiments:
             continue
-        if suites is not None and suite not in suites:
+        if suites is not None and suite.lower() not in suites:
             continue
         if tasks is not None and task not in tasks:
             continue
