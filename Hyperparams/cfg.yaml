@@ -28,8 +28,8 @@ save_session: false
 save_path: ./Checkpoints/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Saved.pt
 # Logging
 log_video: false
-log_tensorboard: false
 log_train_per_episodes: 1
+agent_log: false
 # Plotting
 plot: true
 # Misc
@@ -67,7 +67,7 @@ agent:
   discrete: ${discrete}
   RL: ${RL}
   device: ${device}
-  log: ${log_tensorboard}
+  log: ${agent_log}
 
 replay:
   _target_: Datasets.ExperienceReplay.ExperienceReplay
