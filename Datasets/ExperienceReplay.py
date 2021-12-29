@@ -190,13 +190,13 @@ class Experiences(IterableDataset):
         episode_len = next(iter(episode.values())).shape[0] - 1
 
         while episode_len + self.num_experiences_loaded > self.capacity:
-            print(episode_len, self.num_experiences_loaded, self.capacity)
             early_episode_name = self.episode_names.pop(0)
             early_episode = self.episodes.pop(early_episode_name)
             early_episode_len = next(iter(early_episode.values())).shape[0] - 1
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
+        print('K')
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
