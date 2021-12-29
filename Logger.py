@@ -117,14 +117,17 @@ class Logger:
 
         file_name = Path(self.path) / f'{self.task}_{self.seed}_{name}.csv'
 
+        write_header = True
         if file_name.exists():
+            write_header = False
             self.remove_old_entries(logs, file_name)
 
         file = file_name.open('a')
         writer = csv.DictWriter(file,
                                 fieldnames=logs.keys(),
                                 restval=0.0)
-        writer.writeheader()
+        if write_header:
+            writer.writeheader()
 
         writer.writerow(logs)
         file.flush()
