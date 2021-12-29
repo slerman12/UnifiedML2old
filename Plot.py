@@ -10,13 +10,11 @@ import glob
 from pathlib import Path
 
 import os
-
-from pandas.core.common import SettingWithCopyWarning
-
 os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 import numpy as np
 import pandas as pd
+from pandas.core.common import SettingWithCopyWarning
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
