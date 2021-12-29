@@ -180,7 +180,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     # Plot suites
     for col, suite in enumerate(['atari', 'dmc', 'classify']):
-        data = df[suite in df['Task'].lower()]
+        data = df[suite in df['Task'].str.lower()]
         if data.empty:
             continue
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
