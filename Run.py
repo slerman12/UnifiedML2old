@@ -91,7 +91,8 @@ def main(args):
                 logs = agent.update(replay)  # Trains the agent
 
                 if args.agent.log:
-                    logger.log(logs, 'Train')
+                    if env.episode_done:
+                        logger.log(logs, 'Train')
 
 
 if __name__ == "__main__":
