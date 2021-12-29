@@ -69,7 +69,7 @@ def main(args):
         replay.add(experiences)
 
         if env.episode_done:
-            if agent.episode % args.log_train_per_episodes == 0:
+            if agent.episode % args.log_per_episodes == 0:
                 name = 'Train' if training else 'Seed'
                 logger.log(logs, name, dump=True)
 
@@ -90,7 +90,7 @@ def main(args):
 
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent
-                if agent.episode % args.log_train_per_episodes == 0:
+                if agent.episode % args.log_per_episodes == 0:
                     logger.log(logs, 'Train')
 
 
