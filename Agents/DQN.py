@@ -126,7 +126,7 @@ class DQNAgent(torch.nn.Module):
 
             if self.log:
                 logs.update({'supervised_loss': supervised_loss.item()})
-                logs.update({'accuracy': (torch.argmax(y_predicted, -1) == label[instruction]).mean()})
+                logs.update({'accuracy': (torch.argmax(y_predicted, -1) == label[instruction]).float().mean()})
 
             # Update actor
             Utils.optimize(supervised_loss,
