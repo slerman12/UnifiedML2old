@@ -43,7 +43,7 @@ class DQNAgent(torch.nn.Module):
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
 
         from Blocks.Architectures.MLP import MLPBlock
-        self.creator = MLPBlock(self.encoder.repr_shape, self.action_dim, depth=1, target_tau=target_tau, optim_lr=lr)
+        self.creator = MLPBlock(self.encoder.repr_dim, self.action_dim, depth=1, target_tau=target_tau, optim_lr=lr)
 
         # Continuous actions creator
         # self.creator = None if self.discrete \
