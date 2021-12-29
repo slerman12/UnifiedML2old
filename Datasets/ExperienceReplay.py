@@ -132,7 +132,6 @@ class ExperienceReplay:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
 
-        assert self.episode_len == self.episode['observation'].shape[0]
         self.episode_len = self.episode['observation'].shape[0]
 
         # Expands 'step' since it has no batch length in classification
@@ -191,6 +190,7 @@ class Experiences(IterableDataset):
         episode_len = next(iter(episode.values())).shape[0] - 1
 
         while episode_len + self.num_experiences_loaded > self.capacity:
+            print(episode_len, self.num_experiences_loaded, self.capacity)
             early_episode_name = self.episode_names.pop(0)
             early_episode = self.episodes.pop(early_episode_name)
             early_episode_len = next(iter(early_episode.values())).shape[0] - 1
