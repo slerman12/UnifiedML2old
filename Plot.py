@@ -77,6 +77,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         csv = pd.read_csv(file)
 
         suite_task = task + ' (' + suite + ')'
+        print(suite_task)
 
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = suite_task
