@@ -132,6 +132,7 @@ class ExperienceReplay:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
 
+        assert self.episode_len == self.episode['observation'].shape[0]
         self.episode_len = self.episode['observation'].shape[0]
 
         # Expands 'step' since it has no batch length in classification
@@ -278,7 +279,6 @@ class Experiences(IterableDataset):
             traceback.print_exc()
 
         self.samples_since_last_fetch += 1
-        print(len(self.episode_names) == 0)
 
         if len(self.episode_names) > 0:
             episode_name = self.sample(self.episode_names)  # Sample an episode
