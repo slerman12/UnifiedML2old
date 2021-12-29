@@ -195,7 +195,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data = data.loc[data['Task'] == task, 'Reward'].sub(random[game]).div(human[game]
+                        data.loc[data['Task'] == task, 'Reward'] = data.loc[data['Task'] == task, 'Reward'].sub(random[game]).div(human[game]
                                                                                               - random[game])
 
         ax = axs[col]
