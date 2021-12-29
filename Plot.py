@@ -189,7 +189,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
     # Sort suites
-    suites_ = [s for s in ['Atari', 'DMC', 'Classify'] for ss in suites_ if s in ss]
+    suites_ = [s for s in ['Atari', 'DMC', 'Classify'] for ss in suites_ if s.lower() in ss.lower()]
 
     # Plot suites
     for col, suite in enumerate(suites_):
