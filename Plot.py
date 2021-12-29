@@ -195,12 +195,12 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
         # Human-normalize Atari
-        if suite == 'atari':
-            for task in data.Task.unique():
-                for game in random:
-                    if game.lower() in task.lower():
-                        data[data['Task'] == task]['Reward'] -= random[game]
-                        data[data['Task'] == task]['Reward'] /= human[game] - random[game]
+        # if suite == 'atari':
+        #     for task in data.Task.unique():
+        #         for game in random:
+        #             if game.lower() in task.lower():
+        #                 data[data['Task'] == task]['Reward'] -= random[game]
+        #                 data[data['Task'] == task]['Reward'] /= human[game] - random[game]
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
