@@ -90,7 +90,7 @@ def main(args):
 
             for _ in range(args.post_updates if converged else 1):  # Additional updates after all rollouts
                 logs = agent.update(replay)  # Trains the agent
-                print(args.log, agent.episode % args.log_train_per_episodes == 0)
+                print(args.agent.log, agent.episode % args.log_train_per_episodes == 0)
                 if agent.episode % args.log_train_per_episodes == 0:
                     logger.log(logs, 'Train')
 
