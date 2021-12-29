@@ -205,7 +205,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
 
-        y_axis = 'Accuracy' if 'classify' in task.lower() else 'Reward'
+        y_axis = 'Accuracy' if 'classify' in suite.lower() else 'Reward'
 
         sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{suite}')
