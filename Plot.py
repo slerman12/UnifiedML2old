@@ -103,9 +103,9 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     # Plot tasks
     for i, task in enumerate(suite_tasks):
-        print(task)
         data = df[df['Task'] == task]
         task = ' '.join([task_name.capitalize() for task_name in task.split('_')])
+        print(task)
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
         row = i // num_cols
