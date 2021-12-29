@@ -131,7 +131,6 @@ class ExperienceReplay:
         for spec in self.specs:
             # Concatenate into one big episode batch
             self.episode[spec['name']] = np.concatenate(self.episode[spec['name']], axis=0)
-            print(self.episode[spec['name']], spec['name'])
 
         self.episode_len = self.episode['observation'].shape[0]
 
@@ -281,6 +280,7 @@ class Experiences(IterableDataset):
         self.samples_since_last_fetch += 1
 
         if len(self.episode_names) > 0:
+            print("K")
             episode_name = self.sample(self.episode_names)  # Sample an episode
 
             episode = self.episodes[episode_name]
