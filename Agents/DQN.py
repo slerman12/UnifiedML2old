@@ -96,8 +96,8 @@ class DQNAgent(torch.nn.Module):
         # "Imagine" / "Envision"
 
         # Augment
-        obs = self.aug(obs)
-        next_obs = self.aug(next_obs)
+        # obs = self.aug(obs)
+        # next_obs = self.aug(next_obs)
 
         # "Journal teachings"
 
