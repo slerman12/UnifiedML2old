@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mtick
+from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
@@ -109,7 +109,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
         if 'Classify' in task:
             y_axis = 'Eval Accuracy (%)'
             data[y_axis] = data['Reward']
-            ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+            ax.yaxis.set_major_formatter(FuncFormatter('{0:.0%}'.format))
         else:
             y_axis = 'Reward'
 
