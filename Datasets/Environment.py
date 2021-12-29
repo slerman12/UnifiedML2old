@@ -42,13 +42,13 @@ class Environment:
 
         exp = self.exp
 
-        self.episode_done = False
-
         if self.depleted:
             if agent.training:
                 agent.step += 1
                 agent.episode += 1
             return None, None, None
+
+        self.episode_done = False
 
         step = 0
         while not self.episode_done and step < steps:
