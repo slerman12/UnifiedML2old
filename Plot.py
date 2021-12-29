@@ -77,7 +77,6 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         csv = pd.read_csv(file)
 
         suite_task = task + ' (' + suite + ')'
-        print(suite_task)
 
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = suite_task
@@ -104,6 +103,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     # Plot tasks
     for i, task in enumerate(suite_tasks):
+        print(task)
         data = df[df['Task'] == task]
         task = ' '.join([task_name.capitalize() for task_name in task.split('_')])
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
