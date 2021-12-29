@@ -128,8 +128,8 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     path = f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}'
 
     transform = transforms.Compose(
-        [transforms.Resize(84),
-         transforms.ToTensor(),
+        [transforms.ToTensor(),
+         transforms.Resize(84),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
     with warnings.catch_warnings():
