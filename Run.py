@@ -67,7 +67,7 @@ def main(args):
         experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
         replay.add(experiences)
-
+        print(env.count, agent.step)
         if env.episode_done:
             if agent.episode % args.log_per_episodes == 0:
                 name = 'Train' if training else 'Seed'
