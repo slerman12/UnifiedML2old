@@ -70,7 +70,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
         csv = pd.read_csv(file)
 
-        suite_task = task + ' (' + suite.upper() + ')'
+        suite_task = task + ' (' + suite.lower() + ')'
 
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = suite_task
@@ -113,7 +113,6 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.set_ybound(0, 1)
             ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
             ax.set_ylabel('Eval Accuracy')
-
 
     plt.tight_layout()
     plt.savefig(path)
@@ -180,7 +179,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     # Plot suites
     for col, suite in enumerate(['atari', 'dmc', 'classify']):
-        data = df['classify' in df['Task'].str.lower()]
+        data = df[df['Task'].str.contains(suite)]
         if data.empty:
             continue
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
