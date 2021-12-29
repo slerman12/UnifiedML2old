@@ -180,8 +180,6 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     # Plot suites
     for col, suite in enumerate(['atari', 'dmc', 'classify']):
         data = df[df['Task'].str.lower().str.contains(suite)]
-        if data.empty:
-            continue
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
 
         # Human-normalize Atari
@@ -189,7 +187,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data.loc[data['Task'] == task, 'Reward'] = (data[data['Task'] == task] - random[game]) \
+                        data.loc[data['Task'] == task, 'Reward'] = (data.loc[data['Task'] == task, 'Reward']
+                                                                    - random[game]) \
                                                                    / (human[game] - random[game])
 
         ax = axs[col]
