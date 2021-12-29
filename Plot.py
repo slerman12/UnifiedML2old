@@ -4,6 +4,7 @@
 # MIT_LICENSE file in the root directory of this source tree.
 import re
 import sys
+import warnings
 from typing import MutableSequence
 import glob
 from pathlib import Path
@@ -199,8 +200,11 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data.loc[data['Task'] == task]['Reward'] -= random[game]
-                        data.loc[data['Task'] == task]['Reward'] /= human[game] - random[game]
+                        with warnings.catch_warnings():
+                            warnings.filterwarnings('ignore', 'SettingWithCopyWarning')
+
+                            data.loc[data['Task'] == task]['Reward'] -= random[game]
+                            data.loc[data['Task'] == task]['Reward'] /= human[game] - random[game]
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
