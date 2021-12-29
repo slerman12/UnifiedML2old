@@ -107,7 +107,7 @@ class ExperienceReplay:
             for spec in self.specs:
                 # Make sure everything is a numpy batch
                 if np.isscalar(exp[spec['name']]) or exp[spec['name']] is None:
-                    exp[spec['name']] = np.full((1,) + spec['shape'], exp[spec['name']], spec['dtype'])
+                    exp[spec['name']] = np.full((1,) + tuple(spec['shape']), exp[spec['name']], spec['dtype'])
                 if len(exp[spec['name']].shape) == len(spec['shape']):
                     exp[spec['name']] = np.expand_dims(exp[spec['name']], 0)
 
