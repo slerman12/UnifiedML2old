@@ -116,7 +116,7 @@ class DQNAgent(torch.nn.Module):
             x = self.encoder(obs)
 
             # "Candidate classifications"
-            creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
+            creations = self.creator(x[instruction], self.step).mean
 
             # Infer
             y_predicted = self.actor(self.critic(x[instruction], creations), self.step).best
