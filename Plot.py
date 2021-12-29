@@ -110,8 +110,8 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
         ax.set_title(f'{task}')
 
         if 'classify' in task.lower():
-            ax.yaxis.set_major_formatter(FuncFormatter('{:.0}'.format))
-            ax.set_ylabel('Eval Accuracy (%)')
+            ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
+            ax.set_ylabel('Eval Accuracy')
 
 
     plt.tight_layout()
