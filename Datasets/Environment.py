@@ -40,11 +40,11 @@ class Environment:
         experiences = []
         vlogs = []
 
+        exp = self.exp
+
         if self.depleted:
             agent.step += 1
             return None, None, None
-
-        exp = self.exp
 
         self.episode_done = False
 
