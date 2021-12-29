@@ -140,6 +140,7 @@ class DQNAgent(torch.nn.Module):
             if self.RL:
                 action[instruction] = y_predicted.detach()
                 reward[instruction] = -mistake[:, None].detach()
+                next_obs[instruction, :] = float('nan')
 
         if self.RL:
             # "Visualize"
