@@ -201,14 +201,14 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{suite}')
 
-        if suite == 'classify':
+        if suite.lower() == 'classify':
             ax.set_ybound(0, 1)
             ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
             ax.set_ylabel('Eval Accuracy')
-        elif suite == 'atari':
+        elif suite.lower() == 'atari':
             ax.set_ybound(0, 1)
             ax.set_ylabel('Normalized Reward')
-        elif suite == 'dmc':
+        elif suite.lower() == 'dmc':
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
