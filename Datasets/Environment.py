@@ -45,7 +45,7 @@ class Environment:
         self.episode_done = False
 
         if self.depleted:
-            if self.training:
+            if agent.training:
                 agent.step += 1
                 agent.episode += 1
             return None, None, None
