@@ -86,7 +86,7 @@ class Logger:
         self.dump_to_csv(logs, name=name)
 
     def dump_to_console(self, logs, name):
-        name = colored(name, 'yellow' if name.lower() == 'train' else 'green' if name.lower() == 'eval' else 'grey',
+        name = colored(name, 'yellow' if name.lower() == 'train' else 'green' if name.lower() == 'eval' else None,
                        attrs=['dark'] if name.lower() == 'seed' else None)
         pieces = [f'| {name: <14}']
         for log_name, log in logs.items():
