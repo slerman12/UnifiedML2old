@@ -101,7 +101,9 @@ class DQNAgent(torch.nn.Module):
 
         # "Journal teachings"
 
-        logs = {'episode': self.episode, 'step': self.step} if self.log else None
+        logs = {'time': time.time() - self.birthday,
+                'episode': self.episode, 'step': self.step} if self.log \
+            else None
 
         instruction = ~torch.isnan(label)
 
