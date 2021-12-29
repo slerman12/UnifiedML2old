@@ -12,5 +12,5 @@ update_per_steps: 1
 seed_steps: 10000
 explore_steps: 0
 log_train_per_episodes: 10
-agent.log: true
+agent_log: true
 task_name: QMNIST
