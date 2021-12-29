@@ -2,6 +2,7 @@
 #
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
+import re
 import sys
 from typing import MutableSequence
 import glob
@@ -181,6 +182,9 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
+    # Sort suites
+    suites_ = [ss for s in ['dmc', 'atari', 'classify'] for ss in suites_ if s in ss]
+
     # Plot suites
     for col, suite in enumerate(suites_):
         data = df[df['Task'].str.lower().str.contains(suite)]
@@ -206,8 +210,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
             ax.set_ylabel('Eval Accuracy')
         elif suite.lower() == 'atari':
-            ax.set_ybound(0, 1)
-            ax.set_ylabel('Normalized Reward')
+            ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
+            ax.set_ylabel('Human-Normalized Reward')
         elif suite.lower() == 'dmc':
             ax.set_ybound(0, 1000)
 
