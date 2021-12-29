@@ -226,7 +226,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
-    plt.savefig(path_dir / 'Suites.png')
+    plt.savefig(path_dir / 'Suites_Plot.png')
 
     plt.close()
 

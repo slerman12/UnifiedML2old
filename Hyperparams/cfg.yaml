@@ -94,7 +94,7 @@ vlogger:
 
 plotting:
   _target_: Plot.plot
-  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Plot.png
+  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Tasks_Plot.png
   experiments: ${experiment}
   suites: null
   tasks: null
