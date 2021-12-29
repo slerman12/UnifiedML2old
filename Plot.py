@@ -120,6 +120,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     plt.tight_layout()
     plt.savefig(path)
 
+    plt.close()
+
     # Atari
     random = {
         'Alien': 227.8,
@@ -210,7 +212,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.set_ylabel('Eval Accuracy')
         elif suite.lower() == 'atari':
             ax.yaxis.set_major_formatter(FuncFormatter('{:.0%}'.format))
-            ax.set_ylabel('Human-Normalized Reward')
+            ax.set_ylabel('Human-Normalized Score')
         elif suite.lower() == 'dmc':
             ax.set_ybound(0, 1000)
 
