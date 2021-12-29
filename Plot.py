@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import seaborn as sns
 
 
@@ -105,7 +106,14 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
 
-        sns.lineplot(x='Step', y='Reward', data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        if 'Classify' in task:
+            y_axis = 'Eval Accuracy (%)'
+            data[y_axis] = data['Reward']
+            ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+        else:
+            y_axis = 'Reward'
+
+        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
 
     plt.tight_layout()

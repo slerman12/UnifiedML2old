@@ -16,7 +16,7 @@ from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrappe
 
 
 class ClassifyEnv:
-    def __init__(self, experiences, batch_size, num_workers, train, enable_depletion=True, verbose=True):
+    def __init__(self, experiences, batch_size, num_workers, train, enable_depletion=True, verbose=False):
 
         def worker_init_fn(worker_id):
             seed = np.random.get_state()[1][0] + worker_id
@@ -27,7 +27,7 @@ class ClassifyEnv:
         self.action_repeat = 1
         self.train = train
         self.enable_depletion = enable_depletion
-        self.verbose = verbose and train
+        self.verbose = verbose
 
         self.batches = torch.utils.data.DataLoader(dataset=experiences,
                                                    batch_size=batch_size,
@@ -142,7 +142,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     enable_depletion = train
 
     env = ClassifyEnv(experiences, batch_size if train else len(experiences),
-                      num_workers, train, enable_depletion)
+                      num_workers, train, enable_depletion, verbose=train)
 
     env = ActionSpecWrapper(env, env.action_spec().dtype, discrete=False)
     env = AugmentAttributesWrapper(env,
