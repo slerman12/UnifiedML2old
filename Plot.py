@@ -14,7 +14,6 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
@@ -108,7 +107,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
 
         if 'classify' in task.lower():
             y_axis = 'Eval Accuracy (%)'
-            data[y_axis] = data['Reward'] * 100.0
+            data.loc[:, y_axis] = (data['Reward'] * 100.0).copy()
         else:
             y_axis = 'Reward'
 
