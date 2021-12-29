@@ -41,7 +41,6 @@ class Environment:
         vlogs = []
 
         exp = self.exp
-        experiences = [exp]
 
         if self.depleted:
             if agent.training:

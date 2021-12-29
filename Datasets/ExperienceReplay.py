@@ -196,6 +196,7 @@ class Experiences(IterableDataset):
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
+        print("k")
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
