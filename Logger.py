@@ -122,7 +122,7 @@ class Logger:
                 self.remove_old_entries(logs, file_name)
                 write_header = False
             except Exception:
-                print(f'Header mismatch: overwriting old entries of {file_name}')
+                pass
 
         file = file_name.open('a')
         writer = csv.DictWriter(file,
