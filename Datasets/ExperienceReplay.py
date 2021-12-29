@@ -268,6 +268,9 @@ class Experiences(IterableDataset):
                     reward = np.zeros(1)
                 reward += discount * step_reward
                 discount *= episode['discount'][idx + i] * self.discount
+        for i, j in enumerate([obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step]):
+            if ji is None:
+                print(i)
 
         return obs, action, reward, discount, next_obs, label, traj_o, traj_a, traj_r, traj_l, step
 

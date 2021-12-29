@@ -130,7 +130,6 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Resize(84),
-         # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
          ])
 
     with warnings.catch_warnings():
