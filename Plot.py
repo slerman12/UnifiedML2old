@@ -106,7 +106,7 @@ def plot(path='./', experiments=None, suites=None, tasks=None, agents=None):
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(data.Agent.unique())
 
-        if 'Classify' in task:
+        if 'classify' in task.lower():
             y_axis = 'Eval Accuracy (%)'
             data[y_axis] = data['Reward']
             ax.yaxis.set_major_formatter(FuncFormatter('{0:.0%}'.format))
