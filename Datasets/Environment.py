@@ -42,11 +42,13 @@ class Environment:
 
         exp = self.exp
 
-        if self.depleted:
-            agent.step += 1
-            return None, None, None
-
         self.episode_done = False
+
+        if self.depleted:
+            if self.training:
+                agent.step += 1
+                agent.episode += 1
+            return None, None, None
 
         step = 0
         while not self.episode_done and step < steps:
@@ -86,7 +88,7 @@ class Environment:
                 'step': agent.step,
                 'frame': agent.step * self.action_repeat,
                 'episode': agent.episode,
-                'reward': self.episode_reward,  # Accuracy for classification
+                'reward': self.episode_reward,
                 'fps': frames / (sundown - self.daybreak)}
 
         if self.episode_done:
