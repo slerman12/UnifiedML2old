@@ -4,6 +4,7 @@
 # MIT_LICENSE file in the root directory of this source tree.
 import csv
 import datetime
+import re
 from pathlib import Path
 from termcolor import colored
 
@@ -12,7 +13,7 @@ from termcolor import colored
 
 
 def shorthand(log_name):
-    return ''.join([s[0].upper() for s in log_name.split(' ')] if len(log_name) > 3 else log_name.upper())
+    return ''.join([s[0].upper() for s in re.split('_|( )', log_name)] if len(log_name) > 3 else log_name.upper())
 
 
 def format(log, log_name):

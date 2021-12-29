@@ -106,6 +106,6 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
         logs['q_stddev'] = Q.stddev.mean().item()
         logs.update({f'q{i}': q.mean().item() for i, q in enumerate(Q.Qs)})
         logs['target_q'] = target_q.mean().item()
-        logs['td_error'] = td_error.item()
+        logs['temporal_difference_error'] = td_error.item()
 
     return td_error

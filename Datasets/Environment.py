@@ -88,7 +88,7 @@ class Environment:
                 'step': agent.step,
                 'frame': agent.step * self.action_repeat,
                 'episode': agent.episode,
-                'reward': self.episode_reward,
+                'acc' if self.suite.lower() == 'classify' else 'reward': self.episode_reward,
                 'fps': frames / (sundown - self.daybreak)}
 
         if self.episode_done:
