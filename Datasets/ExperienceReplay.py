@@ -7,7 +7,6 @@ import datetime
 import io
 import traceback
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 
@@ -121,7 +120,7 @@ class ExperienceReplay:
 
         self.episode_len += len(experiences)
 
-        if store:
+        if store and self.episode_len > 0:
             self.store_episode()  # Stores them in file system
 
     # Stores episode (to file in system)

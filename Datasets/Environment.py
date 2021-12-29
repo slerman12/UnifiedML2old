@@ -46,7 +46,6 @@ class Environment:
 
         if self.depleted:
             agent.step += 1
-            self.episode_done = True
             return None, None, None
 
         step = 0
