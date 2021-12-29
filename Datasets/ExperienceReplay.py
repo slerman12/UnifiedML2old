@@ -140,7 +140,6 @@ class ExperienceReplay:
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
-        print(self.num_episodes)
 
         # Save episode
         save_path = self.store_path / episode_name
@@ -150,7 +149,7 @@ class ExperienceReplay:
             with save_path.open('wb') as f:
                 f.write(buffer.read())
 
-        self.num_episodes += self.episode_len
+        self.num_episodes += 1
         self.num_experiences_stored += self.episode_len
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
