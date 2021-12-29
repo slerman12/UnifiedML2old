@@ -70,7 +70,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
         csv = pd.read_csv(file)
 
-        suite_task = task + ' (' + suite.lower() + ')'
+        suite_task = task + ' (' + suite + ')'
 
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = suite_task
@@ -179,7 +179,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
 
     # Plot suites
     for col, suite in enumerate(['atari', 'dmc', 'classify']):
-        data = df[df['Task'].str.contains(suite)]
+        data = df[df['Task'].str.lower().contains(suite)]
         if data.empty:
             continue
         data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
@@ -189,8 +189,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data[data['Task'] == task] = (data[data['Task'] == task] - random[game]) \
-                                                     / (human[game] - random[game])
+                        data.loc[data['Task'] == task, 'Reward'] = (data[data['Task'] == task] - random[game]) \
+                                                                   / (human[game] - random[game])
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
