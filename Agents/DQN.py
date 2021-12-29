@@ -42,10 +42,13 @@ class DQNAgent(torch.nn.Module):
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
 
+        from Blocks.Architectures.MLP import MLPBlock
+        self.creator = MLPBlock(self.encoder.repr_shape, self.action_dim, depth=1, target_tau=target_tau, optim_lr=lr)
+
         # Continuous actions creator
-        self.creator = None if self.discrete \
-            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim, num_actors,
-                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip, optim_lr=lr)
+        # self.creator = None if self.discrete \
+        #     else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim, num_actors,
+        #                                stddev_schedule=stddev_schedule, stddev_clip=stddev_clip, optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau)
