@@ -281,11 +281,11 @@ class Experiences(IterableDataset):
 
         if len(self.episode_names) > 0:
             episode_name = self.sample(self.episode_names)  # Sample an episode
-            print("K")
 
             episode = self.episodes[episode_name]
 
             return self.process(episode)  # Process episode into a compact experience
+        print("K")
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
