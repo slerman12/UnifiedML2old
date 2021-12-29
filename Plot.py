@@ -201,7 +201,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
                 for game in random:
                     if game.lower() in task.lower():
                         with warnings.catch_warnings():
-                            warnings.filterwarnings('ignore', 'SettingWithCopyWarning')
+                            warnings.simplefilter("ignore")
 
                             data.loc[data['Task'] == task, 'Reward'] -= random[game]
                             data.loc[data['Task'] == task, 'Reward'] /= human[game] - random[game]
