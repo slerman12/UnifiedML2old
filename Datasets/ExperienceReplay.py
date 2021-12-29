@@ -140,6 +140,7 @@ class ExperienceReplay:
 
         timestamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
         episode_name = f'{timestamp}_{self.num_episodes}_{self.episode_len}.npz'
+        print(self.num_episodes)
 
         # Save episode
         save_path = self.store_path / episode_name
@@ -217,7 +218,6 @@ class Experiences(IterableDataset):
             worker = torch.utils.data.get_worker_info().id
         except:
             worker = 0
-        print(worker)
 
         # In case multiple Experience Replays merged
         load_path = random.choice(self.load_paths)
@@ -234,7 +234,6 @@ class Experiences(IterableDataset):
             if num_fetched + episode_len > self.capacity:  # Don't overfill
                 break
             num_fetched += episode_len
-            print(worker)
             if not self.load_episode(episode_name):
                 break  # Resolve conflicts
 
@@ -281,12 +280,11 @@ class Experiences(IterableDataset):
 
         self.samples_since_last_fetch += 1
 
-        if len(self.episode_names) > 0:
-            episode_name = self.sample(self.episode_names)  # Sample an episode
+        episode_name = self.sample(self.episode_names)  # Sample an episode
 
-            episode = self.episodes[episode_name]
+        episode = self.episodes[episode_name]
 
-            return self.process(episode)  # Process episode into a compact experience
+        return self.process(episode)  # Process episode into a compact experience
 
     def __iter__(self):
         # Keep fetching, sampling, and building batches
