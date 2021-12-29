@@ -183,7 +183,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
     # Sort suites
-    suites_ = [ss for s in ['dmc', 'atari', 'classify'] for ss in suites_ if s in ss]
+    suites_ = [ss for s in ['atari', 'dmc', 'classify'] for ss in suites_ if s in ss]
 
     # Plot suites
     for col, suite in enumerate(suites_):
@@ -195,8 +195,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             for task in data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
-                        data.iloc[data['Task'] == task, 'Reward'] -= random[game]
-                        data.iloc[data['Task'] == task, 'Reward'] /= human[game] - random[game]
+                        data = data.loc[data['Task'] == task, 'Reward'].sub(random[game]).div(human[game]
+                                                                                              - random[game])
 
         ax = axs[col]
         hue_order = np.sort(data.Agent.unique())
