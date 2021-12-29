@@ -79,7 +79,8 @@ class MLPBlock(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     def forward(self, *x):
-        h = torch.cat(x, -1)
+        # h = torch.cat(x, -1)
+        h = x[0]
 
         if self.trunk is not None:
             h = self.trunk(h)
