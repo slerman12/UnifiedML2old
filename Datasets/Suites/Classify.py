@@ -59,7 +59,7 @@ class ClassifyEnv:
 
     @property
     def depleted(self):
-        is_depleted = self.count >= self.length and self.enable_depletion
+        is_depleted = self.count > self.length and self.enable_depletion
 
         if self.verbose:
             if is_depleted:
