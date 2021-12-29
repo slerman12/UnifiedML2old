@@ -37,16 +37,16 @@ class Environment:
         if self.daybreak is None:
             self.daybreak = time.time()  # "Daybreak" for whole episode
 
-        exp = self.exp
-
-        self.episode_done = False
-
         experiences = []
         vlogs = []
 
         if self.depleted:
             agent.step += 1
             return None, None, None
+
+        exp = self.exp
+
+        self.episode_done = False
 
         step = 0
         while not self.episode_done and step < steps:
