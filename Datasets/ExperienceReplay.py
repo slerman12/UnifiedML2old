@@ -196,7 +196,6 @@ class Experiences(IterableDataset):
             self.num_experiences_loaded -= early_episode_len
             # Deletes early episode file
             early_episode_name.unlink(missing_ok=True)
-        print("k")
         self.episode_names.append(episode_name)
         self.episode_names.sort()
         self.episodes[episode_name] = episode
@@ -279,6 +278,7 @@ class Experiences(IterableDataset):
             traceback.print_exc()
 
         self.samples_since_last_fetch += 1
+        print(len(self.episode_names) == 0)
 
         if len(self.episode_names) > 0:
             episode_name = self.sample(self.episode_names)  # Sample an episode
