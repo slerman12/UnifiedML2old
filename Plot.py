@@ -10,6 +10,9 @@ import glob
 from pathlib import Path
 
 import os
+
+from pandas.core.common import SettingWithCopyWarning
+
 os.environ['NUMEXPR_MAX_THREADS'] = '8'
 
 import numpy as np
@@ -201,7 +204,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
                 for game in random:
                     if game.lower() in task.lower():
                         with warnings.catch_warnings():
-                            warnings.simplefilter("ignore")
+                            warnings.simplefilter("ignore", category=SettingWithCopyWarning)
 
                             data.loc[data['Task'] == task, 'Reward'] -= random[game]
                             data.loc[data['Task'] == task, 'Reward'] /= human[game] - random[game]
