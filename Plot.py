@@ -51,6 +51,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     df_list = []
     suite_tasks = set()
     suites_ = set()
+    min_step = np.inf
 
     for file in files:
         agent_experiment, suite, task_seed_eval = file.split('/')[2:]
@@ -81,6 +82,8 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Task'] = suite_task
 
+        min_step = min(csv['step'].max(), min_step)
+
         df_list.append(csv)
         suite_tasks.update({suite_task})
         suites_.update({suite})
@@ -89,6 +92,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
         return
 
     df = pd.concat(df_list, ignore_index=True)
+    df = df[df['step'] <= min_step]
     suite_tasks = np.sort(list(suite_tasks))
 
     # Dynamically compute num columns
