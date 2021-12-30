@@ -6,17 +6,18 @@ atari_tasks = [
     'Seaquest', 'UpNDown'
 ]
 
-out = ""
-for task in atari_tasks:
-    f = open(f"./{task.lower()}.yaml", "w")
-    f.write(r"""defaults:
-  - 100K
-  - _self_
-
-suite: atari
-action_repeat: 4
-frame_stack: 3
-task_name: {}""".format(task))
-    f.close()
-    out += ' "' + task.lower() + '"'
-print(out)
+if __name__ == '__main__':
+    out = ""
+    for task in atari_tasks:
+        f = open(f"./{task.lower()}.yaml", "w")
+        f.write(r"""defaults:
+      - 100K
+      - _self_
+    
+    suite: atari
+    action_repeat: 4
+    frame_stack: 3
+    task_name: {}""".format(task))
+        f.close()
+        out += ' "' + task.lower() + '"'
+    print(out)

@@ -20,7 +20,7 @@ common_sweeps = {'atari': [f'task=atari/{task} Agent=Agents.{agent}Agent' for ta
 
 # Arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', type=str, default="name",
+parser.add_argument('--name', type=str, default="job",
                     help='job name')
 parser.add_argument('--cpu', action='store_true', default=False,
                     help='uses CPUs only, not GPUs')

@@ -94,5 +94,5 @@ def main(args):
                     logger.log(logs, 'Train')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
