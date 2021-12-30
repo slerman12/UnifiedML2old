@@ -51,6 +51,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
 
     # All CSVs from path, recursive
     csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
+    print(len(csv_names))
 
     csv_list = []
     found_suite_tasks = set()
