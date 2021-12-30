@@ -48,7 +48,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
     plt.rcParams['legend.loc'] = 'lower right'
 
     # All CSVs from path, recursive
-    csv_names = glob.glob('./**/*.csv', recursive=True)
+    csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
 
     csv_list = []
     found_suite_tasks = set()
