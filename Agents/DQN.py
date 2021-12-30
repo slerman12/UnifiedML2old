@@ -84,7 +84,6 @@ class DQNAgent(torch.nn.Module):
                 if self.step < self.explore_steps:
                     action = torch.randint(self.action_dim, size=action.shape) if self.discrete \
                         else action.uniform_(-1, 1)
-            print(action)
 
             return action
 
