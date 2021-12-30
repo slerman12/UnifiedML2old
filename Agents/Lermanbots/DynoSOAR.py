@@ -25,7 +25,7 @@ class DynoSOARAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=1, lstep=0, mstep=1  # DynoSOAR
+                 depth=5, lstep=1, mstep=1  # DynoSOAR
                  ):
         super().__init__()
 
@@ -36,35 +36,36 @@ class DynoSOARAgent(torch.nn.Module):
         self.birthday = time.time()
         self.step = self.episode = 0
         self.explore_steps = explore_steps
+        self.action_dim = action_shape[-1]
 
         self.depth, self.lstep, self.mstep = depth, lstep, mstep
 
         # Models
-        self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau).to(device)
-
-        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
-                                      ensemble_size=2, discrete=False,  # False for now
-                                      optim_lr=lr, target_tau=target_tau).to(device)
+        self.encoder = CNNEncoder(obs_shape, optim_lr=lr, target_tau=target_tau)
 
         self.actorSAURUS = TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
                                                   discrete=discrete, stddev_schedule=stddev_schedule,
                                                   stddev_clip=stddev_clip,
-                                                  optim_lr=lr).to(device)
+                                                  optim_lr=lr)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, action_shape[-1],
                                              pixels=False, isotropic=True,
-                                             optim_lr=lr).to(device)
+                                             optim_lr=lr)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
                                   depth=2, layer_norm=True,
-                                  target_tau=target_tau, optim_lr=lr).to(device)
+                                  target_tau=target_tau, optim_lr=lr)
 
         self.obs_predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
                                       depth=2, layer_norm=True,
-                                      optim_lr=lr).to(device)
+                                      optim_lr=lr)
         self.reward_predictor = MLPBlock(hidden_dim, 1, hidden_dim, hidden_dim,
                                          depth=2, layer_norm=True,
-                                         optim_lr=lr).to(device)
+                                         optim_lr=lr)
+
+        self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, action_shape[-1],
+                                      ensemble_size=2, discrete=False,
+                                      optim_lr=lr, target_tau=target_tau)
 
         # Data augmentation
         self.aug = IntensityAug(0.05) if self.discrete else RandomShiftsAug(pad=4)
@@ -74,7 +75,7 @@ class DynoSOARAgent(torch.nn.Module):
     # "Play"
     def act(self, obs):
         with torch.no_grad(), Utils.act_mode(self.encoder, self.actorSAURUS):
-            obs = torch.as_tensor(obs, device=self.device).unsqueeze(0)
+            obs = torch.as_tensor(obs, device=self.device)
 
             # "See"
             obs = self.encoder(obs)
@@ -105,49 +106,62 @@ class DynoSOARAgent(torch.nn.Module):
             batch, self.device)
         traj_o, traj_a, traj_r, traj_l = traj
 
-        # "Imagine" / "Envision"
+        # "Envision" / "Imagine"
 
         # Augment
         obs = self.aug(obs)
         next_obs = self.aug(next_obs)
 
-        # Encode
-        obs = self.encoder(obs, flatten=False)
-        next_obs = self.encoder(next_obs, flatten=False).detach()
-
         # "Journal teachings"
 
-        logs = {'episode': self.episode, 'step': self.step} if self.log else None
+        logs = {'time': time.time() - self.birthday,
+                'step': self.step, 'episode': self.episode} if self.log \
+            else None
 
-        instruction = ~torch.isnan(label.flatten(1).sum(1))
+        instruction = ~torch.isnan(label)
 
         # "Acquire Wisdom"
 
+        # Supervised learning
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
-            # Infer
-            action = self.actorSAURUS(obs[instruction], self.step)
+            # Supervised data
+            x = self.encoder(obs)
 
-            mistake = cross_entropy(action, label[instruction], reduction='none')
+            # Infer
+            y_predicted = self.actorSAURUS(x[instruction], self.step).mean
+
+            mistake = cross_entropy(y_predicted, label[instruction], reduction='none')
 
             # Supervised loss
             supervised_loss = mistake.mean()
 
             if self.log:
                 logs.update({'supervised_loss': supervised_loss.item()})
+                logs.update({'accuracy': (torch.argmax(y_predicted, -1)
+                                          == label[instruction]).float().mean().item()})
 
-            # Update actor
+            # Update supervised
             Utils.optimize(supervised_loss,
                            self.encoder,
                            self.actorSAURUS)
 
+            # Auxiliary reinforcement
             if self.RL:
-                # Auxiliary reinforcement
-                reward[instruction] = -mistake
+                action[instruction] = y_predicted.detach()
+                reward[instruction] = -mistake[:, None].detach()
+                next_obs[instruction, :] = float('nan')
 
+        # Reinforcement learning
         if self.RL:
-            # "Predict" / "Discern" / "Plan" / "Learn" / "Grow"
+            # "Perceive"
+
+            # Encode
+            obs = self.encoder(obs, flatten=False)
+            next_obs = self.encoder(next_obs, flatten=False).detach()
+
+            # "Predict" / "Plan" / "Discern" / "Learn" / "Grow"
 
             future = ~torch.isnan(next_obs.flatten(1).sum(1))
             next_next_obs = next_obs.clone()

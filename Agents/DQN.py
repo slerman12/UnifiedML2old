@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder
-from Blocks.Actors import CategoricalCriticActor, GaussianActorEnsemble
+from Blocks.Actors import GaussianActorEnsemble, CategoricalCriticActor
 from Blocks.Critics import EnsembleQCritic
 
 from Losses import QLearning, PolicyLearning
@@ -169,11 +169,11 @@ class DQNAgent(torch.nn.Module):
             self.critic.update_target_params()
 
             if not self.discrete:
-                # Creator loss
+                # Actor loss
                 actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.detach(),
                                                                self.step, self.num_actions, logs=logs)
 
-                # Update creator
+                # Update actor
                 Utils.optimize(actor_loss,
                                self.creator)
 

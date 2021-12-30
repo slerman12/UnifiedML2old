@@ -19,7 +19,7 @@ from Losses import QLearning, PolicyLearning
 
 class DrQV2Agent(torch.nn.Module):
     """Data-Regularized Q-Network V2 (https://arxiv.org/abs/2107.09645)
-    Generalizes to DPGAgent in the Discrete case"""
+    Generalizes to DQNDPGAgent in the Discrete case"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
