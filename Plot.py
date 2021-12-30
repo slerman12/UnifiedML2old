@@ -51,7 +51,6 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
 
     # All CSVs from path, recursive
     csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
-    print(len(csv_names))
 
     csv_list = []
     found_suite_tasks = set()
@@ -73,9 +72,9 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
         if not include_train and eval.lower() != 'eval':
             include = False
 
-        datums = [experiment, suite, task, agent]
+        datums = [experiment, suite.lower(), task, agent]
         for i, spec in enumerate(specs):
-            if spec is not None and datums[i].lower() not in spec:
+            if spec is not None and datums[i]not in spec:
                 include = False
 
         if not include:
