@@ -54,7 +54,9 @@ class Environment:
         while not self.episode_done and step < steps:
             # Act
             action = agent.act(exp.observation)
-            print(action, 'llllll')
+            print("YAHSYSYSYSYSYSYSYSYSYYSYYS")
+            print(action)
+            print()
             exp = self.env.step(action.cpu().numpy())
 
             exp.step = agent.step
