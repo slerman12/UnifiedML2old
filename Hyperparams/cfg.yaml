@@ -25,7 +25,7 @@ evaluate_per_steps: 5000
 evaluate_episodes: 10
 # Saving
 save_session: false
-save_path: ./Checkpoints/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Saved.pt
+save_path: ./Checkpoints/${experiment}/${Agent}/${environment.suite}/${task_name}_${seed}_Saved.pt
 # Logging
 log_video: false
 log_per_episodes: 1
@@ -71,7 +71,7 @@ agent:
 
 replay:
   _target_: Datasets.ExperienceReplay.ExperienceReplay
-  path: ./Datasets/ReplayBuffer/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Memories
+  path: ./Datasets/ReplayBuffer/${experiment}/${Agent}/${environment.suite}/${task_name}_${seed}_Memories
   obs_spec: ${obs_spec}
   action_spec: ${action_spec}
   capacity: 1000000
@@ -83,18 +83,18 @@ replay:
 
 logger:
   _target_: Logger.Logger
-  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/
+  path: ./Benchmarking/${experiment}/${Agent}/${environment.suite}/
   task: ${task_name}
   seed: ${seed}
 
 vlogger:
   _target_: Vlogger.Vlogger
-  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Video
+  path: ./Benchmarking/${experiment}/${Agent}/${environment.suite}/${task_name}_${seed}_Video
   fps: 20
 
 plotting:
   _target_: Plot.plot
-  path: ./Benchmarking/${Agent}_${experiment}/${environment.suite}/${task_name}_${seed}_Tasks_Plot.png
+  path: ./Benchmarking/${experiment}
   experiments: ${experiment}
   suites: null
   tasks: null

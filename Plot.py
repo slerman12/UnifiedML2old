@@ -2,7 +2,6 @@
 #
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
-import re
 import sys
 import warnings
 from typing import MutableSequence
@@ -21,23 +20,22 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path, experiments=None, suites=None, tasks=None, agents=None):
+def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agents=None, include_train=False):
 
-    path_dirs = path.split('/')
-    path_dir = Path('/'.join(path_dirs[:-1]).replace('Agents.', ''))
-    path_dir.mkdir(parents=True, exist_ok=True)
-    path = path_dir / path_dirs[-1]
+    path = Path(path)
+    path.mkdir(parents=True, exist_ok=True)
 
-    if experiments is None and suites is None and tasks is None and agents is None:
+    # Make sure non empty and lists
+    empty = True
+    specs = [experiments, suites, tasks, agents]
+    for i, spec in enumerate(specs):
+        if spec is not None:
+            empty = False
+            if not isinstance(spec, MutableSequence):
+                specs[i] = [spec]
+    if empty:
         return
-    if experiments is not None and not isinstance(experiments, MutableSequence):
-        experiments = [experiments]
-    if suites is not None and not isinstance(suites, MutableSequence):
-        suites = [suites]
-    if tasks is not None and not isinstance(tasks, MutableSequence):
-        tasks = [tasks]
-    if agents is not None and not isinstance(agents, MutableSequence):
-        agents = [agents]
+    experiments, suites, tasks, agents = specs
 
     # Style
     plt.style.use('bmh')
@@ -46,76 +44,82 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
     plt.rcParams['legend.fontsize'] = 7
     plt.rcParams['legend.loc'] = 'lower right'
 
-    files = glob.glob('./**/*.csv', recursive=True)
+    # All CSVs from path, recursive
+    csv_names = glob.glob(str(path) + '/**/*.csv', recursive=True)
 
-    df_list = []
-    suite_tasks = set()
-    suites_ = set()
+    csv_list = []
+    found_suite_tasks = set()
+    found_suites = set()
 
-    for file in files:
-        agent_experiment, suite, task_seed_eval = file.split('/')[2:]
-
-        suite = {k.lower(): k for k in ['Atari', 'DMC', 'Classify']}[suite.lower()]
-
+    # Data recollection/parsing
+    for name in csv_names:
         # Parse files
+        experiment, agent, suite, task_seed_eval = name.split('/')[2:]
         task_seed = task_seed_eval.split('_')
         task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1].replace('.csv', '')
-        agent_experiment = agent_experiment.split('_')
-        agent, experiment = agent_experiment[0], '_'.join(agent_experiment[1:])
 
-        if 'Eval' not in eval:
-            continue
-        if experiments is not None and experiment not in experiments:
-            continue
-        if suites is not None and suite.lower() not in suites:
-            continue
-        if tasks is not None and task not in tasks:
-            continue
-        if agents is not None and agent not in agents:
+        # Map suite names to properly-cased names
+        suite = {k.lower(): k for k in ['Atari', 'DMC', 'Classify']}[suite.lower()]
+
+        # Whether to include this CSV
+        include = True
+
+        if not include_train and eval.lower() != 'eval':
+            include = False
+
+        datums = [experiment, suite, task, agent]
+        for i, spec in enumerate(specs):
+            if spec is not None and datums[i].lower() not in spec:
+                include = False
+
+        if not include:
             continue
 
-        csv = pd.read_csv(file)
-
-        suite_task = task + ' (' + suite + ')'
-
+        # Add CSV
+        csv = pd.read_csv(name)
+        found_suite_task = task + ' (' + suite + ')'
         csv['Agent'] = agent + ' (' + experiment + ')'
-        csv['Task'] = suite_task
+        csv['Suite'] = suite
+        csv['Task'] = found_suite_task
 
-        df_list.append(csv)
-        suite_tasks.update({suite_task})
-        suites_.update({suite})
+        csv_list.append(csv)
+        found_suite_tasks.update({found_suite_task})
+        found_suites.update({suite})
 
-    if len(df_list) == 0:
+    # Non-empty check
+    if len(csv_list) == 0:
         return
 
-    df = pd.concat(df_list, ignore_index=True)
-    suite_tasks = np.sort(list(suite_tasks))
+    df = pd.concat(csv_list, ignore_index=True)
+    found_suite_tasks = np.sort(list(found_suite_tasks))
 
-    # Dynamically compute num columns
-    num_cols = int(np.floor(np.sqrt(len(suite_tasks))))
-    while len(suite_tasks) % num_cols != 0:
+    # PLOTTING (tasks)
+
+    # Dynamically compute num columns/rows
+    num_cols = int(np.floor(np.sqrt(len(found_suite_tasks))))
+    while len(found_suite_tasks) % num_cols != 0:
         num_cols -= 1
-    assert len(suite_tasks) % num_cols == 0, f'{suite_tasks.shape[0]} tasks, {num_cols} columns invalid'
+    num_rows = len(found_suite_tasks) // num_cols
 
-    num_rows = len(suite_tasks) // num_cols
-
+    # Create subplots
     fig, axs = plt.subplots(num_rows, num_cols, figsize=(4 * num_cols, 3 * num_rows))
 
     # Plot tasks
-    for i, task in enumerate(suite_tasks):
-        data = df[df['Task'] == task]
+    for i, task in enumerate(found_suite_tasks):
+        task_data = df[df['Task'] == task]
         task = ' '.join([task_name[0].upper() + task_name[1:] for task_name in task.split('_')])
-        data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
+        task_data.columns = [' '.join([name.capitalize() for name in col_name.split('_')])
+                             for col_name in task_data.columns]
 
         row = i // num_cols
         col = i % num_cols
         ax = axs[row, col] if num_rows > 1 and num_cols > 1 else axs[col] if num_cols > 1 \
             else axs[row] if num_rows > 1 else axs
-        hue_order = np.sort(data.Agent.unique())
+        hue_order = np.sort(task_data.Agent.unique())
 
         y_axis = 'Accuracy' if 'classify' in task.lower() else 'Reward'
 
-        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        sns.lineplot(x='Step', y=y_axis, data=task_data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{task}')
 
         if 'classify' in task.lower():
@@ -124,97 +128,43 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.set_ylabel('Eval Accuracy')
 
     plt.tight_layout()
-    plt.savefig(path)
+    plt.savefig(path / 'Tasks_Plot.png')
 
     plt.close()
 
-    # Atari
-    random = {
-        'Alien': 227.8,
-        'Amidar': 5.8,
-        'Assault': 222.4,
-        'Asterix': 210.0,
-        'BankHeist': 14.2,
-        'BattleZone': 2360.0,
-        'Boxing': 0.1,
-        'Breakout': 1.7,
-        'ChopperCommand': 811.0,
-        'CrazyClimber': 10780.5,
-        'DemonAttack': 152.1,
-        'Freeway': 0.0,
-        'Frostbite': 65.2,
-        'Gopher': 257.6,
-        'Hero': 1027.0,
-        'Jamesbond': 29.0,
-        'Kangaroo': 52.0,
-        'Krull': 1598.0,
-        'KungFuMaster': 258.5,
-        'MsPacman': 307.3,
-        'Pong': -20.7,
-        'PrivateEye': 24.9,
-        'Qbert': 163.9,
-        'RoadRunner': 11.5,
-        'Seaquest': 68.4,
-        'UpNDown': 533.4
-    }
-    human = {
-        'Alien': 7127.7,
-        'Amidar': 1719.5,
-        'Assault': 742.0,
-        'Asterix': 8503.3,
-        'BankHeist': 753.1,
-        'BattleZone': 37187.5,
-        'Boxing': 12.1,
-        'Breakout': 30.5,
-        'ChopperCommand': 7387.8,
-        'CrazyClimber': 35829.4,
-        'DemonAttack': 1971.0,
-        'Freeway': 29.6,
-        'Frostbite': 4334.7,
-        'Gopher': 2412.5,
-        'Hero': 30826.4,
-        'Jamesbond': 302.8,
-        'Kangaroo': 3035.0,
-        'Krull': 2665.5,
-        'KungFuMaster': 22736.3,
-        'MsPacman': 6951.6,
-        'Pong': 14.6,
-        'PrivateEye': 69571.3,
-        'Qbert': 13455.0,
-        'RoadRunner': 7845.0,
-        'Seaquest': 42054.7,
-        'UpNDown': 11693.2
-    }
+    # PLOTTING (suites)
 
-    num_cols = len(suites_)
+    num_cols = len(found_suites)
 
+    # Create subplots
     fig, axs = plt.subplots(1, num_cols, figsize=(4 * num_cols, 3))
 
     # Sort suites
-    suites_ = [s for s in ['Atari', 'DMC', 'Classify'] for ss in suites_ if s.lower() in ss.lower()]
+    found_suites = [found for s in ['Atari', 'DMC', 'Classify'] for found in found_suites if s in found]
 
     # Plot suites
-    for col, suite in enumerate(suites_):
-        data = df[df['Task'].str.lower().str.contains(suite.lower())]
-        data.columns = [' '.join([name.capitalize() for name in col_name.split('_')]) for col_name in data.columns]
+    for col, suite in enumerate(found_suites):
+        task_data = df[df['Suite'] == suite]
+        task_data.columns = [' '.join([name.capitalize() for name in col_name.split('_')])
+                             for col_name in task_data.columns]
 
         # Human-normalize Atari
         if suite.lower() == 'atari':
-            for task in data.Task.unique():
+            for task in task_data.Task.unique():
                 for game in random:
                     if game.lower() in task.lower():
                         with warnings.catch_warnings():
                             warnings.simplefilter("ignore", category=SettingWithCopyWarning)
 
-                            data.loc[data['Task'] == task, 'Reward'] -= random[game]
-                            data.loc[data['Task'] == task, 'Reward'] /= human[game] - random[game]
+                            task_data.loc[task_data['Task'] == task, 'Reward'] -= random[game]
+                            task_data.loc[task_data['Task'] == task, 'Reward'] /= human[game] - random[game]
 
         ax = axs[col]
-        hue_order = np.sort(data.Agent.unique())
+        hue_order = np.sort(task_data.Agent.unique())
 
         y_axis = 'Accuracy' if 'classify' in suite.lower() else 'Reward'
 
-        sns.lineplot(x='Step', y=y_axis, data=data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
+        sns.lineplot(x='Step', y=y_axis, data=task_data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
         ax.set_title(f'{suite}')
 
         if suite.lower() == 'classify':
@@ -228,7 +178,7 @@ def plot(path, experiments=None, suites=None, tasks=None, agents=None):
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
-    plt.savefig(path_dir / 'Suites_Plot.png')
+    plt.savefig(path / 'Suites_Plot.png')
 
     plt.close()
 
@@ -238,6 +188,65 @@ if __name__ == "__main__":
     experiments = sys.argv[1:] if len(sys.argv) > 1 \
         else ['Exp']
 
-    path = f'{"_".join(experiments)}_Plot.png'
+    path = f'./Benchmarking/{"_".join(experiments)}'
 
     plot(path, experiments)
+
+
+# Atari data
+random = {
+    'Alien': 227.8,
+    'Amidar': 5.8,
+    'Assault': 222.4,
+    'Asterix': 210.0,
+    'BankHeist': 14.2,
+    'BattleZone': 2360.0,
+    'Boxing': 0.1,
+    'Breakout': 1.7,
+    'ChopperCommand': 811.0,
+    'CrazyClimber': 10780.5,
+    'DemonAttack': 152.1,
+    'Freeway': 0.0,
+    'Frostbite': 65.2,
+    'Gopher': 257.6,
+    'Hero': 1027.0,
+    'Jamesbond': 29.0,
+    'Kangaroo': 52.0,
+    'Krull': 1598.0,
+    'KungFuMaster': 258.5,
+    'MsPacman': 307.3,
+    'Pong': -20.7,
+    'PrivateEye': 24.9,
+    'Qbert': 163.9,
+    'RoadRunner': 11.5,
+    'Seaquest': 68.4,
+    'UpNDown': 533.4
+}
+human = {
+    'Alien': 7127.7,
+    'Amidar': 1719.5,
+    'Assault': 742.0,
+    'Asterix': 8503.3,
+    'BankHeist': 753.1,
+    'BattleZone': 37187.5,
+    'Boxing': 12.1,
+    'Breakout': 30.5,
+    'ChopperCommand': 7387.8,
+    'CrazyClimber': 35829.4,
+    'DemonAttack': 1971.0,
+    'Freeway': 29.6,
+    'Frostbite': 4334.7,
+    'Gopher': 2412.5,
+    'Hero': 30826.4,
+    'Jamesbond': 302.8,
+    'Kangaroo': 3035.0,
+    'Krull': 2665.5,
+    'KungFuMaster': 22736.3,
+    'MsPacman': 6951.6,
+    'Pong': 14.6,
+    'PrivateEye': 69571.3,
+    'Qbert': 13455.0,
+    'RoadRunner': 7845.0,
+    'Seaquest': 42054.7,
+    'UpNDown': 11693.2
+}
