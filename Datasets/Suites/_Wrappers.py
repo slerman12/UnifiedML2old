@@ -242,8 +242,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
 
         self.add_remove_batch_dim = add_remove_batch_dim
 
-        if not hasattr(self, 'depleted'):
-            self.depleted = False
+        self.depleted = False
 
     def step(self, action):
         a = action
