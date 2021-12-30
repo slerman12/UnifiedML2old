@@ -13,9 +13,9 @@ agents = ['DQN', 'DrQV2', 'SPR', 'DQNDPG',
           ]
 
 
-common_sweeps = {'atari': [f'task=atari/{task} Agent=Agents.{agent}Agent' for task in atari_tasks for agent in agents],
-                 'dmc': [f'task=dmc/{task} Agent=Agents.{agent}Agent' for task in easy for agent in agents],
-                 'classify': [f'task=classify/{task} Agent=Agents.{agent}Agent' for task in ['mnist', 'cifar10'] for agent in agents]}
+common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent' for task in atari_tasks for agent in agents],
+                 'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent' for task in easy for agent in agents],
+                 'classify': [f'task=classify/{task.lower()} Agent=Agents.{agent}Agent' for task in ['mnist', 'cifar10'] for agent in agents]}
 
 
 # Arguments
