@@ -131,7 +131,7 @@ class AtariPreprocessing(dm_env.Environment):
         for time_step in range(self.frame_skip):
             # We bypass the Gym observation altogether and directly fetch the
             # grayscale image from the ALE. This is a little faster.
-            _, r, game_over, info = self.gym_env.step(action.astype(int))
+            _, r, game_over, info = self.gym_env.step(action)
             reward += r
 
             if self.terminal_on_life_loss:
