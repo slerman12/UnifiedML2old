@@ -25,7 +25,7 @@ class DQNAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 num_actors=2, num_actions=1):  # DQN continuous
+                 num_actors=5, num_actions=2):  # DQN
         super().__init__()
 
         self.discrete = discrete  # Continuous supported
@@ -37,7 +37,7 @@ class DQNAgent(torch.nn.Module):
         self.explore_steps = explore_steps
         self.action_dim = action_shape[-1]
 
-        self.num_actions = num_actions  # Num actions per actor
+        self.num_actions = num_actions  # Num actions sampled per actor
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
@@ -111,6 +111,7 @@ class DQNAgent(torch.nn.Module):
 
         # "Acquire Wisdom"
 
+        # Supervised learning
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
@@ -118,8 +119,7 @@ class DQNAgent(torch.nn.Module):
             x = self.encoder(obs)
 
             # "Candidate classifications"
-            creations = self.creator(x[instruction], self.step).mean
-            # creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
+            creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
 
             # Infer
             y_predicted = self.actor(self.critic(x[instruction], creations), self.step).best
@@ -145,6 +145,7 @@ class DQNAgent(torch.nn.Module):
                 reward[instruction] = -mistake[:, None].detach()
                 next_obs[instruction, :] = float('nan')
 
+        # Reinforcement learning
         if self.RL:
             # "Perceive"
 

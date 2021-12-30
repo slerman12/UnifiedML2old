@@ -128,7 +128,9 @@ class GaussianActorEnsemble(TruncatedGaussianActor):
         self.init(optim_lr, target_tau)
 
 
-class SGDActor(nn.Module):
+class SGAActor(nn.Module):
+    """A Stochastic Gradient Ascent Actor who uses stochastic gradient ascent
+    on a given or random action to maximize a Critic"""
     def __init__(self, critic, low=-1, high=1, lr=0.01, steps=1):
         super().__init__()
 

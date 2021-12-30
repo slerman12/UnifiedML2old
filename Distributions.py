@@ -49,7 +49,7 @@ class TruncatedNormal(pyd.Normal):
         return x
 
 
-# Stochastic gradient ascent (SGA) on a uniform sample w.r.t. a network
+# Stochastic gradient ascent (SGA) on a uniform sample to maximize a module
 class SGAUniform(pyd.Uniform):
     def __init__(self, module, low=0, high=1, optim_lr=0.01, steps=1, descent=False):
         super().__init__(low, high)
