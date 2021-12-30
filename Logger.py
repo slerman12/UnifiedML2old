@@ -53,7 +53,7 @@ class Logger:
             logs = self.logs[name]
             counts = self.counts[name]
 
-            for k, l in log.items():  # TODO Aggregate per step
+            for k, l in log.items():  # TODO Aggregate per step, or take max
                 if k in logs:
                     logs[k] += l
                     counts[k] += 1
