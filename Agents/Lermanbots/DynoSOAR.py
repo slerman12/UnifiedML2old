@@ -19,7 +19,7 @@ from Losses import QLearning, PolicyLearning, SelfSupervisedLearning
 
 
 class DynoSOARAgent(torch.nn.Module):
-    """Pterodactyl Agent: 'Dynamics W/ Reward-Based Gradient Ascent'"""
+    """Pterodactyl Agent (Dyno): 'Dynamics W/ Reward-Based Gradient Ascent'"""
     def __init__(self,
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization

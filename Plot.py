@@ -21,8 +21,8 @@ import seaborn as sns
 
 
 def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
-         include_train=False):
-    include_train = False  # TODO
+         include_train=False):  # TODO
+    include_train = False
 
     path = Path(path)
     path.mkdir(parents=True, exist_ok=True)

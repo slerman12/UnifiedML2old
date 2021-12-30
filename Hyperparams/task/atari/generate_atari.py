@@ -1,4 +1,4 @@
-ATARI_ENVS = [
+atari_tasks = [
     'Alien', 'Amidar', 'Assault', 'Asterix', 'BankHeist', 'BattleZone',
     'Boxing', 'Breakout', 'ChopperCommand', 'CrazyClimber', 'DemonAttack',
     'Freeway', 'Frostbite', 'Gopher', 'Hero', 'Jamesbond', 'Kangaroo', 'Krull',
@@ -7,7 +7,7 @@ ATARI_ENVS = [
 ]
 
 out = ""
-for task in ATARI_ENVS:
+for task in atari_tasks:
     f = open(f"./{task.lower()}.yaml", "w")
     f.write(r"""defaults:
   - 100K
