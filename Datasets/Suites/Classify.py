@@ -131,6 +131,7 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
         def __call__(self, sample):
             sample = F.to_tensor(sample)
             sample *= 255  # Encoder expects pixels
+            # TODO
             # mean = stddev = [0.5] * sample.shape[0]  # Depending on num channels
             # sample = F.normalize(sample, mean, stddev)  # Generic normalization
             return sample
