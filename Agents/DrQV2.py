@@ -54,7 +54,7 @@ class DrQV2Agent(torch.nn.Module):
     # "Play"
     def act(self, obs):
         with torch.no_grad(), Utils.act_mode(self.encoder, self.actor):
-            obs = torch.as_tensor(obs, device=self.device).unsqueeze(0)
+            obs = torch.as_tensor(obs, device=self.device)
 
             # "See"
             obs = self.encoder(obs)
@@ -68,7 +68,7 @@ class DrQV2Agent(torch.nn.Module):
                 self.step += 1
 
                 # Explore phase
-                if self.step < self.explore_steps and self.training:
+                if self.step < self.explore_steps:
                     action = action.uniform_(-1, 1)
 
             if self.discrete:
@@ -84,49 +84,62 @@ class DrQV2Agent(torch.nn.Module):
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
 
-        # "Imagine" / "Envision"
+        # "Envision" / "Imagine"
 
         # Augment
         obs = self.aug(obs)
         next_obs = self.aug(next_obs)
 
-        # Encode
-        obs = self.encoder(obs)
-        with torch.no_grad():
-            next_obs = self.encoder(next_obs)
-
         # "Journal teachings"
 
-        logs = {'episode': self.episode, 'step': self.step} if self.log else None
+        logs = {'time': time.time() - self.birthday,
+                'step': self.step, 'episode': self.episode} if self.log \
+            else None
 
-        instruction = ~torch.isnan(label.flatten(1).sum(1))
+        instruction = ~torch.isnan(label)
 
         # "Acquire Wisdom"
 
+        # Supervised learning
         if instruction.any():
             # "Via Example" / "Parental Support" / "School"
 
-            # Infer
-            action = self.actor(obs[instruction], self.step)
+            # Supervised data
+            x = self.encoder(obs)
 
-            mistake = cross_entropy(action, label[instruction], reduction='none')
+            # Infer
+            y_predicted = self.actor(x[instruction], self.step).mean
+
+            mistake = cross_entropy(y_predicted, label[instruction].long(), reduction='none')
 
             # Supervised loss
             supervised_loss = mistake.mean()
 
             if self.log:
                 logs.update({'supervised_loss': supervised_loss.item()})
+                logs.update({'accuracy': (torch.argmax(y_predicted, -1)
+                                          == label[instruction]).float().mean().item()})
 
-            # Update actor
+            # Update supervised
             Utils.optimize(supervised_loss,
                            self.encoder,
                            self.actor)
 
+            # Auxiliary reinforcement
             if self.RL:
-                # Auxiliary reinforcement
-                reward[instruction] = -mistake
+                action[instruction] = y_predicted.detach()
+                reward[instruction] = -mistake[:, None].detach()
+                next_obs[instruction, :] = float('nan')
 
+        # Reinforcement learning
         if self.RL:
+            # "Perceive"
+
+            # Encode
+            obs = self.encoder(obs)
+            with torch.no_grad():
+                next_obs = self.encoder(next_obs)
+
             # "Predict" / "Discern" / "Learn" / "Grow"
 
             # Critic loss

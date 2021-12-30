@@ -1,6 +1,6 @@
 # Copyright (c) Sam Lerman. All Rights Reserved.
 #
-# This SOURCE is licensed under the MIT license found in the
+# This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import time
 
@@ -119,7 +119,7 @@ class DQNAgent(torch.nn.Module):
             x = self.encoder(obs)
 
             # "Candidate classifications"
-            creations = self.creator(x[instruction], self.step).rsample(self.num_actions)
+            creations = self.creator(x[instruction], self.step).mean
 
             # Infer
             y_predicted = self.actor(self.critic(x[instruction], creations), self.step).best
@@ -134,7 +134,7 @@ class DQNAgent(torch.nn.Module):
                 logs.update({'accuracy': (torch.argmax(y_predicted, -1)
                                           == label[instruction]).float().mean().item()})
 
-            # Update actor
+            # Update supervised
             Utils.optimize(supervised_loss,
                            self.encoder,
                            self.creator)
