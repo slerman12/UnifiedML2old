@@ -135,7 +135,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             ax.set_ylabel('Eval Accuracy')
 
     plt.tight_layout()
-    plt.savefig(path / 'Plots' / plot_name + '_Tasks.png')
+    plt.savefig(path / 'Plots' / (plot_name + '_Tasks.png'))
 
     plt.close()
 
@@ -187,7 +187,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
-    plt.savefig(path / 'Plots' / plot_name + '_Suites.png')
+    plt.savefig(path / 'Plots' / (plot_name + '_Suites.png'))
 
     plt.close()
 
