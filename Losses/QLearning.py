@@ -18,7 +18,6 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
 
         if critic.discrete:
             # All actions
-            action = None
             next_actions_log_probs = 0
             next_actions = None
         else:
