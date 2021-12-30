@@ -35,6 +35,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             empty = False
             if not isinstance(spec, MutableSequence):
                 specs[i] = [spec]
+            # Plot name
             plot_name += '_' + "_".join(specs[i])
     if empty:
         return
@@ -47,7 +48,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
     plt.rcParams['legend.loc'] = 'lower right'
 
     # All CSVs from path, recursive
-    csv_names = glob.glob(str(path) + '/**/*.csv', recursive=True)
+    csv_names = glob.glob('./**/*.csv', recursive=True)
 
     csv_list = []
     found_suite_tasks = set()
