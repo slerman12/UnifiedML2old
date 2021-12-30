@@ -36,6 +36,7 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
     if empty:
         return
     experiments, suites, tasks, agents = specs
+    plot_name = "_".join(experiments) + "_".join(agents) + "_".join(suites) + "_".join(tasks)
 
     # Style
     plt.style.use('bmh')
@@ -52,9 +53,9 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
     found_suites = set()
 
     # Data recollection/parsing
-    for name in csv_names:
+    for csv_name in csv_names:
         # Parse files
-        experiment, agent, suite, task_seed_eval = name.split('/')[2:]
+        experiment, agent, suite, task_seed_eval = csv_name.split('/')[2:]
         task_seed = task_seed_eval.split('_')
         task, seed, eval = '_'.join(task_seed[:-2]), task_seed[-2], task_seed[-1].replace('.csv', '')
 
@@ -76,7 +77,7 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
             continue
 
         # Add CSV
-        csv = pd.read_csv(name)
+        csv = pd.read_csv(csv_name)
         found_suite_task = task + ' (' + suite + ')'
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Suite'] = suite
@@ -107,8 +108,9 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
     # Plot tasks
     for i, task in enumerate(found_suite_tasks):
         task_data = df[df['Task'] == task]
-        task = ' '.join([task_name[0].upper() + task_name[1:] for task_name in task.split('_')])
-        task_data.columns = [' '.join([name.capitalize() for name in col_name.split('_')])
+
+        # Capitalize column names
+        task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])
                              for col_name in task_data.columns]
 
         row = i // num_cols
@@ -117,10 +119,13 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
             else axs[row] if num_rows > 1 else axs
         hue_order = np.sort(task_data.Agent.unique())
 
+        # Format title
+        title = ' '.join([task_name[0].upper() + task_name[1:] for task_name in task.split('_')])
+
         y_axis = 'Accuracy' if 'classify' in task.lower() else 'Reward'
 
         sns.lineplot(x='Step', y=y_axis, data=task_data, ci='sd', hue='Agent', hue_order=hue_order, ax=ax)
-        ax.set_title(f'{task}')
+        ax.set_title(f'{title}')
 
         if 'classify' in task.lower():
             ax.set_ybound(0, 1)
@@ -128,7 +133,7 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
             ax.set_ylabel('Eval Accuracy')
 
     plt.tight_layout()
-    plt.savefig(path / 'Tasks_Plot.png')
+    plt.savefig(path / 'Plots' / plot_name + '_Tasks.png')
 
     plt.close()
 
@@ -145,7 +150,9 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
     # Plot suites
     for col, suite in enumerate(found_suites):
         task_data = df[df['Suite'] == suite]
-        task_data.columns = [' '.join([name.capitalize() for name in col_name.split('_')])
+
+        # Capitalize column names
+        task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])
                              for col_name in task_data.columns]
 
         # Human-normalize Atari
@@ -178,19 +185,16 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
-    plt.savefig(path / 'Suites_Plot.png')
+    plt.savefig(path / 'Plots' / plot_name + '_Suites.png')
 
     plt.close()
 
 
 if __name__ == "__main__":
     # Experiments to plot
-    experiments = sys.argv[1:] if len(sys.argv) > 1 \
-        else ['Exp']
+    experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
 
-    path = f'./Benchmarking/{"_".join(experiments)}'
-
-    plot(path, experiments)
+    plot(experiments=experiments)
 
 
 # Atari data
