@@ -168,7 +168,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
                             task_data.loc[task_data['Task'] == task, 'Reward'] -= random[game]
                             task_data.loc[task_data['Task'] == task, 'Reward'] /= human[game] - random[game]
 
-        ax = axs[col]
+        ax = axs[col] if num_cols > 1 else axs
         hue_order = np.sort(task_data.Agent.unique())
 
         y_axis = 'Accuracy' if 'classify' in suite.lower() else 'Reward'
