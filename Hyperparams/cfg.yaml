@@ -95,10 +95,10 @@ vlogger:
 plotting:
   _target_: Plot.plot
   path: ./Benchmarking/${experiment}
-  experiments: ${experiment}
-  suites: null
-  tasks: null
-  agents: null
+  plot_experiments: ${experiment}
+  plot_suites: null
+  plot_tasks: null
+  plot_agents: null
 
 hydra:
   run:

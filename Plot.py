@@ -20,14 +20,15 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agents=None, include_train=False):
+def plot(path='./Benchmarking', plot_experiments=None, plot_suites=None, plot_tasks=None, plot_agents=None,
+         include_train=False):
 
     path = Path(path)
     path.mkdir(parents=True, exist_ok=True)
 
     # Make sure non empty and lists
     empty = True
-    specs = [experiments, suites, tasks, agents]
+    specs = [plot_experiments, plot_suites, plot_tasks, plot_agents]
     for i, spec in enumerate(specs):
         if spec is not None:
             empty = False
@@ -35,8 +36,8 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
                 specs[i] = [spec]
     if empty:
         return
-    experiments, suites, tasks, agents = specs
-    plot_name = "_".join(experiments) + "_".join(agents) + "_".join(suites) + "_".join(tasks)
+    plot_experiments, plot_suites, plot_tasks, plot_agents = specs
+    plot_name = "_".join(plot_experiments) + "_".join(plot_agents) + "_".join(plot_suites) + "_".join(plot_tasks)
 
     # Style
     plt.style.use('bmh')
@@ -192,9 +193,9 @@ def plot(path='./Benchmarking', experiments=None, suites=None, tasks=None, agent
 
 if __name__ == "__main__":
     # Experiments to plot
-    experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
+    plot_experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
 
-    plot(experiments=experiments)
+    plot(plot_experiments=plot_experiments)
 
 
 # Atari data
