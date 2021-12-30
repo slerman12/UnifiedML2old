@@ -8,8 +8,8 @@ import warnings
 import numpy as np
 
 import torch
-from torch.nn import functional as F
 import torchvision
+from torchvision.transforms import functional as F
 from dm_env import specs, StepType
 
 from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
