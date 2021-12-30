@@ -235,21 +235,20 @@ class AttrDict(dict):
 
 
 class AugmentAttributesWrapper(dm_env.Environment):
-    def __init__(self, env, add_batch_dim=True):
+    def __init__(self, env, add_remove_batch_dim=True):
         self.env = env
 
         self.time_step = None
 
-        self.add_batch_dim = add_batch_dim
+        self.add_remove_batch_dim = add_remove_batch_dim
 
         if not hasattr(self, 'depleted'):
             self.depleted = False
 
     def step(self, action):
-        a = action
-        if self.add_batch_dim:
-            a = action.squeeze(0)
-        time_step = self.env.step(a)
+        if self.add_remove_batch_dim:
+            action = action.squeeze(0)
+        time_step = self.env.step(action)
         # Augment time_step with extra functionality
         self.time_step = self.augment_time_step(time_step, action=action)
         return self.to_attr_dict(self.time_step)
@@ -271,9 +270,11 @@ class AugmentAttributesWrapper(dm_env.Environment):
             # Convert to numpy with batch dim
             if spec in specs:
                 if np.isscalar(specs[spec]) or specs[spec] is None:
-                    specs[spec] = np.full([1, 1], specs[spec], 'float32')
+                    dtype = getattr(self, spec + '_spec')().dtype if hasattr(self, spec + '_spec') \
+                        else 'float32'
+                    specs[spec] = np.full([1, 1], specs[spec], dtype)
 
-        if self.add_batch_dim:
+        if self.add_remove_batch_dim:
             # Some environments like DMC/Atari return observations without batch dims
             specs['observation'] = np.expand_dims(specs['observation'], axis=0)
         # Extend time step
