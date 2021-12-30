@@ -8,8 +8,8 @@ import warnings
 import numpy as np
 
 import torch
+from torch.nn import functional as F
 import torchvision
-import torchvision.transforms as transforms
 from dm_env import specs, StepType
 
 from Datasets.Suites._Wrappers import ActionSpecWrapper, AugmentAttributesWrapper, ExtendedTimeStep
@@ -127,10 +127,15 @@ def make(task, frame_stack=4, action_repeat=4, max_episode_frames=None, truncate
 
     path = f'./Datasets/ReplayBuffer/Classify/{task}_{"Train" if train else "Eval"}'
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.5,), (0.5,))
-         ])
+    class Transform:
+        def __call__(self, sample):
+            sample = F.to_tensor(sample)
+            sample *= 255  # Encoder expects pixels
+            mean = stddev = [0.5] * sample.shape[0]  # Depending on num channels
+            sample = F.normalize(sample, mean, stddev)  # Generic normalization
+            return sample
+
+    transform = Transform()
 
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore', '.*The given NumPy array.*')
