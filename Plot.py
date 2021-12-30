@@ -20,7 +20,7 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path='./Benchmarking', plot_experiments=None, plot_suites=None, plot_tasks=None, plot_agents=None,
+def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
          include_train=False):
 
     path = Path(path)
@@ -28,16 +28,16 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_suites=None, plot_ta
 
     # Make sure non empty and lists
     empty = True
-    specs = [plot_experiments, plot_suites, plot_tasks, plot_agents]
+    specs = [plot_experiments, plot_agents, plot_suites, plot_tasks]
+    plot_name = ''
     for i, spec in enumerate(specs):
         if spec is not None:
             empty = False
             if not isinstance(spec, MutableSequence):
                 specs[i] = [spec]
+            plot_name += '_' + "_".join(plot_experiments)
     if empty:
         return
-    plot_experiments, plot_suites, plot_tasks, plot_agents = specs
-    plot_name = "_".join(plot_experiments) + "_".join(plot_agents) + "_".join(plot_suites) + "_".join(plot_tasks)
 
     # Style
     plt.style.use('bmh')

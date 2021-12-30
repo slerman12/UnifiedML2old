@@ -96,9 +96,9 @@ plotting:
   _target_: Plot.plot
   path: ./Benchmarking/${experiment}
   plot_experiments: ${experiment}
+  plot_agents: null
   plot_suites: null
   plot_tasks: null
-  plot_agents: null
 
 hydra:
   run:
