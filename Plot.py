@@ -36,7 +36,9 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             if not isinstance(spec, MutableSequence):
                 specs[i] = [spec]
             # Plot name
-            plot_name += '_' + "_".join(specs[i])
+            plot_name += "_".join(specs[i])
+            if i < len(specs) - 1:
+                plot_name += '_'
     if empty:
         return
 
