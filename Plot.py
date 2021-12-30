@@ -36,9 +36,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             if not isinstance(spec, MutableSequence):
                 specs[i] = [spec]
             # Plot name
-            plot_name += "_".join(specs[i])
-            if i < len(specs) - 1:
-                plot_name += '_'
+            plot_name += "_".join(specs[i]) + '_'
     if empty:
         return
 
@@ -137,7 +135,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             ax.set_ylabel('Eval Accuracy')
 
     plt.tight_layout()
-    plt.savefig(path / (plot_name + '_Tasks.png'))
+    plt.savefig(path / (plot_name + 'Tasks.png'))
 
     plt.close()
 
@@ -189,7 +187,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
             ax.set_ybound(0, 1000)
 
     plt.tight_layout()
-    plt.savefig(path / (plot_name + '_Suites.png'))
+    plt.savefig(path / (plot_name + 'Suites.png'))
 
     plt.close()
 
