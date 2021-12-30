@@ -271,7 +271,7 @@ class AugmentAttributesWrapper(dm_env.Environment):
             # Convert to numpy with batch dim
             if spec in specs:
                 if np.isscalar(specs[spec]) or specs[spec] is None:
-                    dtype = getattr(self, spec + '_spec')().dtype if hasattr(self, spec + '_spec') \
+                    dtype = getattr(self, spec + '_spec')().dtype if spec in ['observation', 'action'] \
                         else 'float32'
                     specs[spec] = np.full([1, 1], specs[spec], dtype)
 
