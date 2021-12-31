@@ -55,15 +55,15 @@ else:
 # Sweep
 for param in args.params:
     slurm_script = f"""#!/bin/bash
-    #SBATCH {"-c {}".format(args.num_cpus) if args.cpu else "-p gpu -c {}".format(args.num_cpus)}
-    {"" if args.cpu else "#SBATCH --gres=gpu"}
-    {"#SBATCH -p csxu -A cxu22_lab" if args.cpu and args.lab else "#SBATCH -p csxu -A cxu22_lab --gres=gpu" if args.lab else ""}
-    #SBATCH -t {"15-00:00:00" if args.lab else "5-00:00:00"} -o ./{args.name}.log -J {args.name}
-    #SBATCH --mem={args.mem}gb 
-    {"#SBATCH -C K80" if args.K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else ""}
-    source /scratch/slerman/miniconda/bin/activate agi
-    python3 {args.file} {param}
-    """
+#SBATCH {"-c {}".format(args.num_cpus) if args.cpu else "-p gpu -c {}".format(args.num_cpus)}
+{"" if args.cpu else "#SBATCH --gres=gpu"}
+{"#SBATCH -p csxu -A cxu22_lab" if args.cpu and args.lab else "#SBATCH -p csxu -A cxu22_lab --gres=gpu" if args.lab else ""}
+#SBATCH -t {"15-00:00:00" if args.lab else "5-00:00:00"} -o ./{args.name}.log -J {args.name}
+#SBATCH --mem={args.mem}gb 
+{"#SBATCH -C K80" if args.K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else ""}
+source /scratch/slerman/miniconda/bin/activate agi
+python3 {args.file} {param}
+"""
 
     # Write script
     with open("sbatch_script", "w") as file:

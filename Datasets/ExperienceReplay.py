@@ -3,10 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # MIT_LICENSE file in the root directory of this source tree.
 import random
+from pathlib import Path
 import datetime
 import io
 import traceback
-from pathlib import Path
 
 import numpy as np
 
