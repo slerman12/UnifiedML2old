@@ -52,18 +52,13 @@ class ExperienceReplay:
 
         # Batch loading
 
-        self._replay = None
-
-        def worker_init_fn(worker_id):
-            seed = np.random.get_state()[1][0] + worker_id
-            np.random.seed(seed)
-            random.seed(seed)
-
         self.batches = torch.utils.data.DataLoader(dataset=self.experiences,
                                                    batch_size=batch_size,
                                                    num_workers=num_workers,
                                                    pin_memory=True,
                                                    worker_init_fn=worker_init_fn)
+
+        self._replay = None
 
     # Returns a batch of experiences
     def sample(self):
@@ -153,6 +148,13 @@ class ExperienceReplay:
         self.num_experiences_stored += self.episode_len
         self.episode = {spec['name']: [] for spec in self.specs}
         self.episode_len = 0
+
+
+# How to initialize each worker
+def worker_init_fn(worker_id):
+    seed = np.random.get_state()[1][0] + worker_id
+    np.random.seed(seed)
+    random.seed(seed)
 
 
 # Multi-cpu workers iteratively and efficiently build batches of experience in parallel (from files)

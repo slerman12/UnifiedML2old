@@ -234,6 +234,7 @@ class AttrDict(dict):
         self.update(d)
 
 
+# Unifies experience/env representations
 class AugmentAttributesWrapper(dm_env.Environment):
     def __init__(self, env, add_remove_batch_dim=True):
         self.env = env

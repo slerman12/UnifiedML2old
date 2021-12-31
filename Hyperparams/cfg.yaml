@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - task@_global_: dmc/cheetah_run
+  - task@_global_: atari/boxing
   - override hydra/launcher: submitit_local
 
 # Agent
@@ -34,10 +34,10 @@ agent_log: false
 plot: true
 # Misc
 device: cuda
-alias_device: cpu
+num_workers: 4
 RL: true
 # Experiment
-Agent: Agents.DPGAgent
+Agent: Agents.DQNAgent
 seed: 1
 experiment: Exp
 
@@ -51,7 +51,7 @@ environment:
   seed: ${seed}
   suite: ${suite}
   batch_size: 1000
-  num_workers: ${replay.num_workers}
+  num_workers: ${num_workers}
 
 agent:
   _target_: ${Agent}
@@ -76,7 +76,7 @@ replay:
   action_spec: ${action_spec}
   capacity: 1000000
   batch_size: ${batch_size}
-  num_workers: 4
+  num_workers: ${num_workers}
   nstep: ${nstep}
   discount: ${discount}
   save: false
@@ -108,7 +108,7 @@ hydra:
     subdir: ./
   launcher:
     timeout_min: 4300
-    cpus_per_task: 10
+    cpus_per_task: 5
     gpus_per_node: 1
     tasks_per_node: 1
     mem_gb: 160
