@@ -95,7 +95,9 @@ vlogger:
 plotting:
   _target_: Plot.plot
   path: ./Benchmarking/${experiment}/Plots
-  plot_experiments: [${experiment}, Original]
+  plot_experiments:
+    - ${experiment}
+    - Original
   plot_agents: null
   plot_suites: null
   plot_tasks: null
