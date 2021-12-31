@@ -27,7 +27,7 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=1, priority_temp=0,
     elif Q_reduction == 'min':
         q = torch.min(Q.Qs, 0)[0]
 
-    q = Q * discount + predicted_reward
+    q = q * discount + predicted_reward
 
     # Exploitation-exploration tradeoff
     exploit_factor = Utils.schedule(exploit_schedule, step)
