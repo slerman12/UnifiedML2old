@@ -6,6 +6,7 @@ import argparse
 import json
 import subprocess
 
+# Common sweeps
 from Hyperparams.task.atari.generate_atari import atari_tasks
 from Hyperparams.task.dmc.generate_dmc import easy, medium, hard
 agents = ['DQN', 'DrQV2', 'SPR', 'DQNDPG',
