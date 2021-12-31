@@ -20,6 +20,12 @@ class TruncatedNormal(pyd.Normal):
         self.stddev_clip = stddev_clip
         self.one_hot = one_hot
 
+    def log_prob(self, value):
+        try:
+            return super().log_prob(value)
+        except:
+            return super().log_prob(value.transpose(0, 1)).trainspose(0, 1)
+
     # No grad, defaults to no clip, batch dim first
     def sample(self, sample_shape=torch.Size(), to_clip=False, batch_first=True):
         with torch.no_grad():

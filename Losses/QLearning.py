@@ -28,37 +28,26 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
                 next_actions_log_probs = 0
             else:
                 # Sample actions
-                if next_obs.shape[0] > 0:
+                if has_future.any():
                     next_Pi = actor(next_obs, step)
-                    next_actions = next_Pi.rsample(num_actions, batch_first=False)
-                    next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).transpose(0, 1).flatten(1)
-                    next_actions = next_actions.transpose(0, 1)
+                    next_actions = next_Pi.rsample(num_actions)
+                    next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).flatten(1)
 
-        if next_obs.shape[0] > 0:
-
+        if has_future.any():
             next_Q = critic.target(next_obs, next_actions)
 
             # How to reduce Q ensembles
-            # if Q_reduction == 'min':
-            #     next_q, _ = torch.min(next_Q.Qs, 0)
-            # elif Q_reduction == 'sample_reduce':
-            #     next_q = next_Q.sample() - next_Q.stddev
-            # elif Q_reduction == 'mean_reduce':
-            #     next_q = next_Q.mean - next_Q.stddev
-            # elif Q_reduction == 'mean':
-            #     next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
-            # elif Q_reduction == 'sample':
-            #     next_q = next_Q.sample()
-            next_q, _ = torch.min(next_Q.Qs, 0)
+            if Q_reduction == 'min':
+                next_q, _ = torch.min(next_Q.Qs, 0)
+            elif Q_reduction == 'sample_reduce':
+                next_q = next_Q.sample() - next_Q.stddev
+            elif Q_reduction == 'mean_reduce':
+                next_q = next_Q.mean - next_Q.stddev
+            elif Q_reduction == 'mean':
+                next_q = next_Q.mean  # e.g., https://openreview.net/pdf?id=9xhgmsNVHu
+            elif Q_reduction == 'sample':
+                next_q = next_Q.sample()
 
-            # Value V = expected Q
-            # next_probs = torch.softmax(next_Pi_log_probs, -1)
-
-            # prob = next_Pi_log_probs.exp()
-            # Overconfident on what we know -- Q-value bias, which needs correction via, e.g., min-reducing,
-            # but fail to evaluate the potential of the unknown, e.g., when to explore confidently into the unknown, bravely
-            # In Q learning, future uncertainty is over-confidence -- confirmation bias
-            # An independent judge, such as actor entropy, is better -- can be optimistic about uncertainty
             # Uncertainty shouldn't sway uncertainty! Confidence shouldn't compound!
             # The confidence of the explorer should be curtailed by the cynicism of the objective observer/oracle
             # u = torch.softmax((1 - temp) * next_q + temp * next_Q.stddev, -1)
@@ -71,18 +60,7 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
             next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
             next_v[has_future] = torch.sum(next_q * next_probs, -1, keepdim=True)
 
-        # "Entropy maximization"
-        # Future-action uncertainty maximization in reward
-        # Entropy in future decisions means exploring the uncertain, the lesser-explored
-        # Anxiety vs. comfort
-
         target_q = reward + (discount * next_v)
-
-        # "Munchausen reward":
-        # Current-action certainty maximization in reward, thereby increasing so-called "action-gap" w.r.t. above
-        # Furthermore, off-policy sampling of outdated rewards might be mitigated to a degree by on-policy estimate
-        # Another salient heuristic: "optimism in the face of uncertainty" (Brafman & Tennenholtz, 2002) literally
-        # Equivalence / policy consistency
 
     Q = critic(obs, action)
 
@@ -95,10 +73,6 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
     td_error *= torch.sigmoid(-Q.stddev * priority_temp) + 0.5
 
     td_error = td_error.mean()
-
-    # Judgement/humility - Pi, Q, Q_Pi entropy, and log_prob (the latter might help discovery by reducing past prob)
-    # entropy = entropy_temp * Q.stddev.mean()
-    # entropy = entropy_temp * Q.entropy().mean()  # Can also use this in deepPolicyGradient and Creator
 
     if logs is not None:
         assert isinstance(logs, dict)

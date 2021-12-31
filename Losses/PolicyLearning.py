@@ -27,8 +27,7 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=1, priority_temp=0,
     elif Q_reduction == 'min':
         q = torch.min(Q.Qs, 0)[0]
 
-    q *= discount
-    q += predicted_reward
+    q = Q * discount + predicted_reward
 
     # Exploitation-exploration tradeoff
     exploit_factor = Utils.schedule(exploit_schedule, step)
@@ -39,17 +38,16 @@ def deepPolicyGradient(actor, critic, obs, step, num_actions=1, priority_temp=0,
 
     exploit_explore_loss = -u.mean()
 
-    # "Entropy maximization"
-    # Future-action uncertainty maximization in reward
-    # Entropy in future decisions means exploring the uncertain, the lesser-explored
-
-    # "Entropy maximization"
-    # Entropy - 'aleatory' - uncertainty - randomness in decision-making
-    # - keeps exploration active, gradients tractable
-
-    # "Trust region optimization"
-    # Policies that change too rapidly per batch are unstable, so we try to bound their temperament a little
-    # ...within a "trust region", ideally one that keeps large gradients from propelling params beyond local optima
+    # TODO
+    #  "Entropy maximization"
+    #  Future-action uncertainty maximization in reward
+    #  Entropy in future decisions means exploring the uncertain, the lesser-explored
+    #  "Entropy maximization"
+    #  Entropy - 'aleatory' - uncertainty - randomness in decision-making
+    #  - keeps exploration active, gradients tractable
+    #  " Trust region optimization"
+    #  Policies that change too rapidly per batch are unstable, so we try to bound their temperament a little
+    #  ...within a "trust region", ideally one that keeps large gradients from propelling params beyond local optima
 
     if logs is not None:
         assert isinstance(logs, dict)
