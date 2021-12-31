@@ -24,7 +24,7 @@ class TruncatedNormal(pyd.Normal):
         try:
             return super().log_prob(value)
         except:
-            return super().log_prob(value.transpose(0, 1)).trainspose(0, 1)
+            return super().log_prob(value.transpose(0, 1)).transpose(0, 1)
 
     # No grad, defaults to no clip, batch dim first
     def sample(self, sample_shape=torch.Size(), to_clip=False, batch_first=True):
