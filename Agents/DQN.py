@@ -25,7 +25,7 @@ class DQNAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 num_actors=5, num_actions=2):  # DQN
+                 num_actors=5, num_actions=2):  # DQN (for non-discrete support)
         super().__init__()
 
         self.discrete = discrete  # Continuous supported

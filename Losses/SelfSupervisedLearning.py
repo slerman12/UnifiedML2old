@@ -5,6 +5,8 @@
 import torch
 import torch.nn.functional as F
 
+import Utils
+
 
 def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=None):
     """
@@ -28,8 +30,16 @@ def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=No
 
 def dynamicsLearning(obs, traj_o, traj_a, traj_r,
                      encoder, dynamics, projector, obs_predictor=None, reward_predictor=None,
-                     depth=1, logs=None):
+                     depth=1, one_hot=False, logs=None):
     assert depth < traj_o.shape[1], f"depth {depth} exceeds future trajectory size of {traj_o.shape[1] - 1} steps"
+
+    if traj_a.shape[-1] == 1:
+        # Assumes actions are discrete, converts to one-hot
+        traj_a = Utils.one_hot(traj_a, num_classes=dynamics.in_channels - obs.shape[-3])
+
+    if one_hot:
+        # Converts continuous to one-hot differentiably
+        traj_a = Utils.rone_hot(traj_a)
 
     # Predict future
     forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]

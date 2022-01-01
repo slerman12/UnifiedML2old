@@ -25,15 +25,15 @@ class CNNEncoder(nn.Module):
 
         assert len(obs_shape) == 3, 'image observation shape must have 3 dimensions'
 
-        in_channels = obs_shape[0]
+        self.in_channels = obs_shape[0]
         self.out_channels = out_channels
 
         self.obs_shape = obs_shape
         self.pixels = pixels
 
         # CNN
-        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else out_channels,
-                                                  out_channels, 3, stride=2 if i == 0 else 1),
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(self.in_channels if i == 0 else self.out_channels,
+                                                  self.out_channels, 3, stride=2 if i == 0 else 1),
                                         nn.ReLU())
                                        for i in range(depth + 1)], ()))
 
@@ -96,11 +96,11 @@ class SPRCNNEncoder(CNNEncoder):
 
         super().__init__(obs_shape, 64, 0, pixels)
 
-        in_channels = obs_shape[0]
+        self.in_channels = obs_shape[0]
         channels, kernels, strides = [32, 64, 64], [8, 4, 3], [4, 2, 1]
 
         # SPR
-        self.CNN = nn.Sequential(*sum([(nn.Conv2d(in_channels if i == 0 else channels[i - 1],
+        self.CNN = nn.Sequential(*sum([(nn.Conv2d(self.in_channels if i == 0 else channels[i - 1],
                                                   channels[i], kernels[i], stride=strides[i]),
                                         nn.ReLU())
                                        for i in range(3)], ()))
@@ -122,11 +122,11 @@ class ResidualBlockEncoder(CNNEncoder):
         super().__init__(obs_shape, hidden_channels, 0, pixels)
 
         # Dimensions
-        in_channels = obs_shape[0] + context_dim
+        self.in_channels = obs_shape[0] + context_dim
         self.out_channels = obs_shape[0] if isotropic else out_channels
-        hidden_channels = in_channels if pre_residual else hidden_channels
+        hidden_channels = self.in_channels if pre_residual else hidden_channels
 
-        pre = nn.Sequential(nn.Conv2d(in_channels, hidden_channels, kernel_size=3, padding=1),
+        pre = nn.Sequential(nn.Conv2d(self.in_channels, hidden_channels, kernel_size=3, padding=1),
                             nn.BatchNorm2d(hidden_channels))
 
         # Add a concurrent stream to pre

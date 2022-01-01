@@ -174,16 +174,14 @@ class DynoSOARAgent(torch.nn.Module):
                                       * discount[future]
                     discount[future] *= replay.experiences.discount
                     next_action = self.actorSAURUS(next_next_obs[future].flatten(-3), self.step).sample()
+                    if self.one_hot:
+                        next_action = Utils.rone_hot(next_action)
                     next_next_obs[future] = self.dynamics(next_next_obs[future], next_action, flatten=False)
-
-                # Discrete action trajectories to one-hot
-                if self.discrete:
-                    traj_a = Utils.one_hot(traj_a, num_classes=self.actorSAURUS.action_dim)
 
                 # Dynamics loss
                 dynamics_loss = SelfSupervisedLearning.dynamicsLearning(
                     obs[future], traj_o[future], traj_a[future], traj_r[future], self.encoder, self.dynamics,
-                    self.projector, self.obs_predictor, self.reward_predictor, self.depth, logs
+                    self.projector, self.obs_predictor, self.reward_predictor, self.depth, self.one_hot, logs
                 )
 
             # Critic loss
@@ -211,6 +209,8 @@ class DynoSOARAgent(torch.nn.Module):
                     predicted_reward[future] += self.reward_predictor(self.projector(obs[future].flatten(-3))) \
                                                 * replay.experiences.discount ** i
                     next_action = self.actorSAURUS(obs[future].flatten(-3), self.step).sample()
+                    if self.one_hot:
+                        next_action = Utils.rone_hot(next_action)
                     obs[future] = self.dynamics(obs[future], next_action, flatten=False)
                 discount[future] = replay.experiences.discount ** self.mstep
 
