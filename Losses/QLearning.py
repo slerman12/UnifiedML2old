@@ -9,29 +9,33 @@ import Utils
 
 
 def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, step,
-                      num_actions=1, priority_temp=0, Q_reduction='min', one_hot=False, exploit_schedule=1, logs=None):
-    with torch.no_grad():
-        has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
-        next_obs = next_obs[has_future]
+                      num_actions=1, priority_temp=0, Q_reduction='min', exploit_schedule=1, logs=None):
+    # Non-NaN next_obs
+    has_future = ~torch.isnan(next_obs.flatten(1).sum(1))
+    next_obs = next_obs[has_future]
 
-        next_v = torch.zeros_like(discount)
+    # Compute Bellman target
+    with torch.no_grad():
+        # Get actions for next_obs
 
         if critic.discrete:
             # All actions
             next_actions_log_probs = 0
             next_actions = None
         else:
-            if actor.discrete and one_hot:
+            if actor.discrete:
                 # One-hots
                 action = Utils.one_hot(action, critic.action_dim)
                 next_actions = torch.eye(critic.action_dim, device=obs.device).expand(has_future.nansum(), -1, -1)
                 next_actions_log_probs = 0
             else:
-                # Sample actions
                 if has_future.any():
+                    # Sample actions
                     next_Pi = actor(next_obs, step)
                     next_actions = next_Pi.rsample(num_actions)
                     next_actions_log_probs = next_Pi.log_prob(next_actions).sum(-1).flatten(1)
+
+        target_q = reward
 
         if has_future.any():
             next_Q = critic.target(next_obs, next_actions)
@@ -48,6 +52,8 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
             elif Q_reduction == 'sample':
                 next_q = next_Q.sample()
 
+            next_v = torch.zeros_like(discount)
+
             # Uncertainty shouldn't sway uncertainty! Confidence shouldn't compound!
             # The confidence of the explorer should be curtailed by the cynicism of the objective observer/oracle
             # u = torch.softmax((1 - temp) * next_q + temp * next_Q.stddev, -1)
@@ -60,7 +66,7 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
             next_probs = torch.softmax(next_u_logits / temp + next_actions_log_probs, -1)
             next_v[has_future] = torch.sum(next_q * next_probs, -1, keepdim=True)
 
-        target_q = reward + (discount * next_v)
+            target_q += discount * next_v
 
     Q = critic(obs, action)
 
@@ -70,9 +76,9 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
     # td_error = F.mse_loss(Q.mean, target_q)  # Better since consistent with entropy? Capacity for covariance
 
     # Re-prioritize based on certainty e.g., https://arxiv.org/pdf/2007.04938.pdf
-    td_error *= torch.sigmoid(-Q.stddev * priority_temp) + 0.5
+    re_prioritized_td_error = td_error * torch.sigmoid(-Q.stddev * priority_temp) + 0.5
 
-    td_error = td_error.mean()
+    error = re_prioritized_td_error.mean()
 
     if logs is not None:
         assert isinstance(logs, dict)
@@ -80,6 +86,7 @@ def ensembleQLearning(critic, actor, obs, action, reward, discount, next_obs, st
         logs['q_stddev'] = Q.stddev.mean().item()
         logs.update({f'q{i}': q.mean().item() for i, q in enumerate(Q.Qs)})
         logs['target_q'] = target_q.mean().item()
-        logs['temporal_difference_error'] = td_error.item()
+        logs['temporal_difference_error'] = td_error.mean().item()
+        logs['error'] = error.item()
 
-    return td_error
+    return error

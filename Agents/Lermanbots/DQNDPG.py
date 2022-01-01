@@ -160,7 +160,6 @@ class DQNDPGAgent(torch.nn.Module):
                                                       obs, action, reward, discount, next_obs,
                                                       self.step, self.num_actions,
                                                       Q_reduction=self.bm_Q_reduction,
-                                                      one_hot=self.one_hot and self.discrete,
                                                       logs=logs)
 
             # Update critic
@@ -174,8 +173,7 @@ class DQNDPGAgent(torch.nn.Module):
             actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.detach(),
                                                            self.step, self.num_actions,
                                                            Q_reduction=self.dpg_Q_reduction,
-                                                           one_hot=self.one_hot and self.discrete,
-                                                           logs=logs)
+                                                           one_hot=self.one_hot, logs=logs)
 
             # Update actor
             Utils.optimize(actor_loss,

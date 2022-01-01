@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - task@_global_: atari/boxing
+  - task@_global_: atari/pong
   - override hydra/launcher: submitit_local
 
 # Agent

@@ -63,6 +63,7 @@ class EnsembleQCritic(nn.Module):
             context = torch.empty(0, device=h.device)
 
         # Ensemble
+
         if self.discrete:
             # All actions' Q-values
             Qs = self.Q_head(h, context)  # [e, b, n]

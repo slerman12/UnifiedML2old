@@ -27,7 +27,7 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
     path = Path(path)
     path.mkdir(parents=True, exist_ok=True)
 
-    # Make sure non empty and lists
+    # Make sure non empty and lists, and gather names
     empty = True
     specs = [plot_experiments, plot_agents, plot_suites, plot_tasks]
     plot_name = ''
