@@ -13,7 +13,7 @@ discrete: ??? # To be specified later
 # Replay
 obs_spec: ??? # To be specified later
 action_spec: ??? # To be specified later
-nstep: 3
+nstep: 10
 batch_size: 256
 discount: 0.99
 # Training
