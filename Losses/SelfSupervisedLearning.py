@@ -38,7 +38,7 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
         traj_a = Utils.one_hot(traj_a, num_classes=dynamics.in_channels - obs.shape[-3])
 
     if one_hot:
-        # Converts continuous to one-hot differentiably
+        # Differentiable continuous to one-hot
         traj_a = Utils.rone_hot(traj_a)
 
     # Predict future
