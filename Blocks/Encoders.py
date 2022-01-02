@@ -36,7 +36,7 @@ class CNNEncoder(nn.Module):
                                                   self.out_channels, 3, stride=2 if i == 0 else 1),
                                         nn.ReLU())
                                        for i in range(depth + 1)], ()),
-                                 Utils.ReNormalize() if renormalize else nn.Identity())
+                                 Utils.ReNormalize(-3) if renormalize else nn.Identity())
 
         # Initialize model
         self.init(optim_lr, target_tau)
@@ -143,7 +143,7 @@ class ResidualBlockEncoder(CNNEncoder):
                                    for _ in range(num_blocks)],
                                  nn.Conv2d(hidden_channels, self.out_channels, kernel_size=3, padding=1),
                                  nn.ReLU(inplace=True),
-                                 Utils.ReNormalize() if renormalize else nn.Identity())
+                                 Utils.ReNormalize(-3) if renormalize else nn.Identity())
 
         self.init(optim_lr, target_tau)
 
