@@ -231,9 +231,16 @@ class Meta(nn.Module):
         return torch.cat([getattr(self, meta) for meta in names])
 
 
+# Min-max normalizes to [0, 1]
+# "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
 class ReNormalize(nn.Module):
+    def __init__(self, start_dim=-1, end_dim=-1):
+        super().__init__()
+        self.start_dim = start_dim
+        self.end_dim = end_dim
+
     def forward(self, x):
-        # "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
-        y = x - x.min(-1, keepdim=True)[0]
-        y /= y.max(-1, keepdim=True)[0]
+        y = x.flatten(self.start_dim, self.end_dim)
+        y -= y.min(self.start_dim)[0]
+        y /= y.max(self.start_dim)[0]
         return y.view(*x.shape)
