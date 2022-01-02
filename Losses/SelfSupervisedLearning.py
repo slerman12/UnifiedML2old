@@ -15,7 +15,7 @@ def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=No
     """
     with torch.no_grad():
         positive = encoder.target(positive)
-        positive = projector.target(positive)
+        positive = projector(positive)
 
     # Assumes obs already encoded
     anchor = predictor(projector(obs))
