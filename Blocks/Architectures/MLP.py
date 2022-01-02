@@ -19,8 +19,8 @@ class MLP(nn.Module):
                 Utils.L2Norm() if l2_norm and i == depth else nn.Identity(),
                 nn.Linear(in_dim if i == 0 else hidden_dim,
                           hidden_dim if i < depth else out_dim),
-                nn.BatchNorm1d(hidden_dim if i < depth or batch_norm_last else out_dim
-                               ) if batch_norm else nn.Identity(),
+                nn.BatchNorm1d(hidden_dim if i < depth else out_dim
+                               ) if batch_norm and (i < depth or batch_norm_last) else nn.Identity(),
                 nn.ReLU(inplace=True) if i < depth else nn.Identity()
             ]
                 for i in range(depth + 1)], [])
