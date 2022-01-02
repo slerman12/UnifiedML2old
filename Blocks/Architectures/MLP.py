@@ -43,7 +43,7 @@ class MLPBlock(nn.Module):
     Can also l2-normalize penultimate layer (https://openreview.net/pdf?id=9xhgmsNVHu)"""
 
     def __init__(self, in_dim, out_dim, feature_dim=512, hidden_dim=512, depth=1,
-                 layer_norm=False, batch_norm=False, batch_norm_last=False, l2_norm=False,
+                 layer_norm=False, l2_norm=False,
                  target_tau=None, optim_lr=None):
         super().__init__()
 
@@ -53,8 +53,7 @@ class MLPBlock(nn.Module):
 
         in_features = feature_dim if layer_norm else in_dim
 
-        self.MLP = MLP(in_features, out_dim, hidden_dim, depth=depth,
-                       batch_norm=batch_norm, batch_norm_last=batch_norm_last, l2_norm=l2_norm)
+        self.MLP = MLP(in_features, out_dim, hidden_dim, depth=depth, l2_norm=l2_norm)
 
         self.init(optim_lr, target_tau)
 
