@@ -18,7 +18,7 @@ class CNNEncoder(nn.Module):
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=3, batch_norm=False, renormalize=False, pixels=True,
+    def __init__(self, obs_shape, out_channels=32, depth=3, batch_norm=False, pixels=True,
                  optim_lr=None, target_tau=None):
 
         super().__init__()
@@ -36,8 +36,7 @@ class CNNEncoder(nn.Module):
                                                   self.out_channels, 3, stride=2 if i == 0 else 1),
                                         nn.BatchNorm2d(self.out_channels) if batch_norm else nn.Identity(),
                                         nn.ReLU())
-                                       for i in range(depth + 1)], ()),
-                                 Utils.ReNormalize(-3) if renormalize else nn.Identity())
+                                       for i in range(depth + 1)], ()))
 
         # Initialize model
         self.init(optim_lr, target_tau)
@@ -67,7 +66,7 @@ class CNNEncoder(nn.Module):
         Utils.soft_update_params(self, self.target, self.target_tau)
 
     # Encodes
-    def forward(self, obs, *context, flatten=True):
+    def forward(self, obs, *context, flatten=True, renormalize=False):
         obs_shape = obs.shape  # Preserve leading dims
         assert obs_shape[-3:] == self.obs_shape, f'encoder received an invalid obs shape'
         obs = obs.flatten(0, -4)  # Encode last 3 dims
@@ -86,6 +85,14 @@ class CNNEncoder(nn.Module):
 
         h = h.view(*obs_shape[:-3], *h.shape[-3:])
         assert tuple(h.shape[-3:]) == self.repr_shape, 'pre-computed repr_shape does not match output CNN shape'
+
+        # Min-max normalizes to [0, 1]
+        # "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
+        if renormalize:
+            y = h.flatten(-3)
+            y = y - y.min(-1, keepdim=True)[0]
+            y = y / y.max(-1, keepdim=True)[0]
+            h = y.view(*h.shape)
 
         if flatten:
             return h.flatten(-3)
@@ -117,8 +124,8 @@ class ResidualBlockEncoder(CNNEncoder):
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf) or SPR (https://arxiv.org/abs/2007.05929).
     """
 
-    def __init__(self, obs_shape, context_dim=0, out_channels=32, hidden_channels=64, num_blocks=1,
-                 renormalize=False, pixels=True, pre_residual=False, isotropic=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=32, hidden_channels=64, num_blocks=1, pixels=True,
+                 pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, hidden_channels, 0, pixels)
@@ -143,8 +150,7 @@ class ResidualBlockEncoder(CNNEncoder):
                                  *[ResidualBlock(hidden_channels, hidden_channels)
                                    for _ in range(num_blocks)],
                                  nn.Conv2d(hidden_channels, self.out_channels, kernel_size=3, padding=1),
-                                 nn.ReLU(inplace=True),
-                                 Utils.ReNormalize(-3) if renormalize else nn.Identity())
+                                 nn.ReLU(inplace=True))
 
         self.init(optim_lr, target_tau)
 

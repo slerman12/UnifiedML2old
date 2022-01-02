@@ -229,17 +229,3 @@ class Meta(nn.Module):
         if len(names) == 0:
             names = self.metas
         return torch.cat([getattr(self, meta) for meta in names])
-
-
-# Min-max normalizes to [0, 1]
-# "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
-class ReNormalize(nn.Module):
-    def __init__(self, start_dim=-1):
-        super().__init__()
-        self.start_dim = start_dim
-
-    def forward(self, x):
-        y = x.flatten(self.start_dim)
-        y = y - y.min(-1, keepdim=True)[0]
-        y = y / y.max(-1, keepdim=True)[0]
-        return y.view(*x.shape)
