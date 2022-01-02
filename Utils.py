@@ -240,6 +240,6 @@ class ReNormalize(nn.Module):
 
     def forward(self, x):
         y = x.flatten(self.start_dim)
-        y -= y.min(-1)[0]
-        y /= y.max(-1)[0]
+        y -= y.min(-1, keepdim=True)[0]
+        y /= y.max(-1, keepdim=True)[0]
         return y.view(*x.shape)
