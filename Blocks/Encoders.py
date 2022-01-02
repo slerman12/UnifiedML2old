@@ -93,7 +93,7 @@ class CNNEncoder(nn.Module):
 
 
 class SPRCNNEncoder(CNNEncoder):
-    """The encoder used in SPR (https://arxiv.org/abs/2007.05929)"""
+    """The encoder used in SPR (https://arxiv.org/abs/2007.05929), doesn't seem to perform well"""
     def __init__(self, obs_shape, pixels=True, optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, 64, 0, pixels)
