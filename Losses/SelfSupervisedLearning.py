@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import Utils
 
 
-def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=None):
+def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, normalize=False, logs=None):
     """
     Bootstrap Your Own Latent (https://arxiv.org/abs/2006.07733),
     self-supervision via EMA target
@@ -44,20 +44,14 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     # Predict future
     forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]
     for k in range(1, depth):
-        forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
-        # "Re-normalization", as in SPR (https://arxiv.org/abs/2007.05929), or at least in their code
-        # shape = forecast[-1].shape
-        # forecast[-1] = forecast[-1].flatten(-3)
-        # forecast[-1] -= forecast[-1].min(-1, True)[0]
-        # forecast[-1] /= forecast[-1].max(-1, True)[0]
-        # forecast[-1] = forecast[-1].view(*shape)
+        forecast.append(dynamics(forecast[-1], traj_a[:, k]))
     forecast = torch.stack(forecast, 1).flatten(-3)
 
     # Self supervision
     dynamics_loss = 0
     future = traj_o[:, 1:depth + 1]
     if obs_predictor is not None:
-        dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
+        dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, True, logs)
 
     if reward_predictor is not None:  # TODO redundant call to projector
         reward_prediction = reward_predictor(projector(forecast))

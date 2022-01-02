@@ -18,7 +18,7 @@ class CNNEncoder(nn.Module):
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=3, pixels=True,
+    def __init__(self, obs_shape, out_channels=32, depth=3, renormalize=False, pixels=True,
                  optim_lr=None, target_tau=None):
 
         super().__init__()
@@ -35,7 +35,8 @@ class CNNEncoder(nn.Module):
         self.CNN = nn.Sequential(*sum([(nn.Conv2d(self.in_channels if i == 0 else self.out_channels,
                                                   self.out_channels, 3, stride=2 if i == 0 else 1),
                                         nn.ReLU())
-                                       for i in range(depth + 1)], ()))
+                                       for i in range(depth + 1)], ()),
+                                 Utils.ReNormalize() if renormalize else nn.Identity())
 
         # Initialize model
         self.init(optim_lr, target_tau)
@@ -115,8 +116,8 @@ class ResidualBlockEncoder(CNNEncoder):
     e.g., Efficient-Zero (https://arxiv.org/pdf/2111.00210.pdf) or SPR (https://arxiv.org/abs/2007.05929).
     """
 
-    def __init__(self, obs_shape, context_dim=0, out_channels=32, hidden_channels=64, num_blocks=1, pixels=True,
-                 pre_residual=False, isotropic=False,
+    def __init__(self, obs_shape, context_dim=0, out_channels=32, hidden_channels=64, num_blocks=1,
+                 renormalize=False, pixels=True, pre_residual=False, isotropic=False,
                  optim_lr=None, target_tau=None):
 
         super().__init__(obs_shape, hidden_channels, 0, pixels)
@@ -131,7 +132,7 @@ class ResidualBlockEncoder(CNNEncoder):
 
         # Add a concurrent stream to pre
         if pre_residual:
-            pre = Residual(pre, down_sample=nn.Sequential(nn.Conv2d(in_channels, hidden_channels,
+            pre = Residual(pre, down_sample=nn.Sequential(nn.Conv2d(self.in_channels, hidden_channels,
                                                                     kernel_size=3, padding=1),
                                                           nn.BatchNorm2d(hidden_channels)))
 
@@ -141,7 +142,8 @@ class ResidualBlockEncoder(CNNEncoder):
                                  *[ResidualBlock(hidden_channels, hidden_channels)
                                    for _ in range(num_blocks)],
                                  nn.Conv2d(hidden_channels, self.out_channels, kernel_size=3, padding=1),
-                                 nn.ReLU(inplace=True))
+                                 nn.ReLU(inplace=True),
+                                 Utils.ReNormalize() if renormalize else nn.Identity())
 
         self.init(optim_lr, target_tau)
 
