@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import Utils
 
 
-def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, normalize=False, logs=None):
+def bootstrapYourOwnLatent(obs, positive, encoder, projector, predictor, logs=None):
     """
     Bootstrap Your Own Latent (https://arxiv.org/abs/2006.07733),
     self-supervision via EMA target
@@ -51,7 +51,7 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     dynamics_loss = 0
     future = traj_o[:, 1:depth + 1]
     if obs_predictor is not None:
-        dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, True, logs)
+        dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
 
     if reward_predictor is not None:  # TODO redundant call to projector, maybe just use predictor
         # reward_prediction = reward_predictor(projector(forecast))
