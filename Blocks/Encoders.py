@@ -18,7 +18,7 @@ class CNNEncoder(nn.Module):
     Basic CNN encoder, e.g., DrQV2 (https://arxiv.org/abs/2107.09645).
     """
 
-    def __init__(self, obs_shape, out_channels=32, depth=3, renormalize=False, pixels=True,
+    def __init__(self, obs_shape, out_channels=32, depth=3, batch_norm=False, renormalize=False, pixels=True,
                  optim_lr=None, target_tau=None):
 
         super().__init__()
@@ -34,6 +34,7 @@ class CNNEncoder(nn.Module):
         # CNN
         self.CNN = nn.Sequential(*sum([(nn.Conv2d(self.in_channels if i == 0 else self.out_channels,
                                                   self.out_channels, 3, stride=2 if i == 0 else 1),
+                                        nn.BatchNorm2d(self.out_channels) if batch_norm else nn.Identity(),
                                         nn.ReLU())
                                        for i in range(depth + 1)], ()),
                                  Utils.ReNormalize(-3) if renormalize else nn.Identity())

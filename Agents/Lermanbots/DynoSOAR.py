@@ -59,7 +59,7 @@ class DynoSOARAgent(torch.nn.Module):
         self.obs_predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
                                       depth=2, layer_norm=True,
                                       optim_lr=lr)
-        self.reward_predictor = MLPBlock(hidden_dim, 1, hidden_dim, hidden_dim,
+        self.reward_predictor = MLPBlock(self.encoder.flattened_dim, 1, hidden_dim, hidden_dim,
                                          depth=2, layer_norm=True,
                                          optim_lr=lr)
 

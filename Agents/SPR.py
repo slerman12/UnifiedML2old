@@ -42,7 +42,7 @@ class SPRAgent(torch.nn.Module):
         self.depth, self.num_actions = depth, num_actions
 
         # Models
-        self.encoder = CNNEncoder(obs_shape, renormalize=True, optim_lr=lr, target_tau=target_tau)
+        self.encoder = CNNEncoder(obs_shape, batch_norm=True, renormalize=True, optim_lr=lr, target_tau=target_tau)
 
         # Continuous actions creator
         self.creator = None if self.discrete \
