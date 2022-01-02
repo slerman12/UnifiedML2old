@@ -56,11 +56,11 @@ class SPRAgent(torch.nn.Module):
                                              optim_lr=lr)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, batch_norm=True,
+                                  depth=2,
                                   target_tau=target_tau, optim_lr=lr)
 
         self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, batch_norm=False,
+                                  depth=2,
                                   optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,

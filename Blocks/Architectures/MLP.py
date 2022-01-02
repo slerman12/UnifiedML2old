@@ -7,8 +7,7 @@ import Utils
 
 
 class MLP(nn.Module):
-    def __init__(self, in_dim, out_dim, hidden_dim=512, depth=0,
-                 batch_norm=False, batch_norm_last=False, l2_norm=False):
+    def __init__(self, in_dim, out_dim, hidden_dim=512, depth=0, l2_norm=False):
         super().__init__()
 
         self.MLP = nn.Sequential(
@@ -19,8 +18,6 @@ class MLP(nn.Module):
                 Utils.L2Norm() if l2_norm and i == depth else nn.Identity(),
                 nn.Linear(in_dim if i == 0 else hidden_dim,
                           hidden_dim if i < depth else out_dim),
-                nn.BatchNorm1d(hidden_dim if i < depth else out_dim
-                               ) if batch_norm and (i < depth or batch_norm_last) else nn.Identity(),
                 nn.ReLU(inplace=True) if i < depth else nn.Identity()
             ]
                 for i in range(depth + 1)], [])
