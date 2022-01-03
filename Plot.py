@@ -256,6 +256,6 @@ if __name__ == "__main__":
     # Experiments to plot
     plot_experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
 
-    path = f"./Benchmarking{'_'.join(plot_experiments)}/Plots"
+    path = f"./Benchmarking/{'_'.join(plot_experiments)}/Plots"
 
     plot(path, plot_experiments=plot_experiments)
