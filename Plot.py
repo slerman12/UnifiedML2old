@@ -193,13 +193,6 @@ def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_su
     plt.close()
 
 
-if __name__ == "__main__":
-    # Experiments to plot
-    plot_experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
-
-    plot(plot_experiments=plot_experiments)
-
-
 # Atari data
 random = {
     'Alien': 227.8,
@@ -257,3 +250,10 @@ human = {
     'Seaquest': 42054.7,
     'UpNDown': 11693.2
 }
+
+
+if __name__ == "__main__":
+    # Experiments to plot
+    plot_experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
+
+    plot(plot_experiments=plot_experiments)
