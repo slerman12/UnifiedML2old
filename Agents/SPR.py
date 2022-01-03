@@ -11,7 +11,7 @@ import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
 from Blocks.Encoders import CNNEncoder, ResidualBlockEncoder
-from Blocks.Actors import CategoricalCriticActor, GaussianActorEnsemble
+from Blocks.Actors import CategoricalCriticActor, TruncatedGaussianActor
 from Blocks.Critics import EnsembleQCritic
 from Blocks.Architectures.MLP import MLPBlock
 
@@ -26,7 +26,7 @@ class SPRAgent(torch.nn.Module):
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
                  discrete, RL, device, log,  # On-boarding
-                 depth=5, num_actors=5, num_actions=2  # SPR
+                 depth=5  # SPR
                  ):
         super().__init__()
 
@@ -39,15 +39,14 @@ class SPRAgent(torch.nn.Module):
         self.explore_steps = explore_steps
         self.action_dim = action_shape[-1]
 
-        self.depth, self.num_actions = depth, num_actions
+        self.depth = depth
 
         # Models
         self.encoder = CNNEncoder(obs_shape, renormalize=True, optim_lr=lr, target_tau=target_tau)
 
         # Continuous actions creator
         self.creator = None if self.discrete \
-            else GaussianActorEnsemble(self.encoder.repr_shape, feature_dim, hidden_dim,
-                                       self.action_dim, ensemble_size=num_actors,
+            else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
                                        stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                        optim_lr=lr)
 
@@ -56,11 +55,11 @@ class SPRAgent(torch.nn.Module):
                                              optim_lr=lr)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=True,
+                                  depth=2,
                                   target_tau=target_tau, optim_lr=lr)
 
         self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=True,
+                                  depth=2,
                                   optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
@@ -69,7 +68,8 @@ class SPRAgent(torch.nn.Module):
         self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Data augmentation
-        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
+        # self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
+        self.aug = IntensityAug(0.05)
 
         # Birth
 
@@ -83,7 +83,7 @@ class SPRAgent(torch.nn.Module):
 
             # "Candidate actions"
             creations = None if self.discrete \
-                else self.creator(obs, self.step).sample(self.num_actions)
+                else self.creator(obs, self.step).sample()
 
             # DQN actor is based on critic
             Pi = self.actor(self.critic(obs, creations), self.step)
@@ -174,7 +174,7 @@ class SPRAgent(torch.nn.Module):
             # Critic loss
             critic_loss = QLearning.ensembleQLearning(self.critic, self.creator,
                                                       obs.flatten(-3), action, reward, discount, next_obs,
-                                                      self.step, self.num_actions, logs=logs)
+                                                      self.step, logs=logs)
 
             # Dynamics loss
             dynamics_loss = SelfSupervisedLearning.dynamicsLearning(obs, traj_o, traj_a, traj_r,
@@ -192,7 +192,7 @@ class SPRAgent(torch.nn.Module):
             if not self.discrete:
                 # Actor loss
                 actor_loss = PolicyLearning.deepPolicyGradient(self.creator, self.critic, obs.flatten(-3).detach(),
-                                                               self.step, self.num_actions, logs=logs)
+                                                               self.step, logs=logs)
 
                 # Update actor
                 Utils.optimize(actor_loss,
