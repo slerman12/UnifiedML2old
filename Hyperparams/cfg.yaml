@@ -31,7 +31,7 @@ log_video: false
 log_per_episodes: 1
 agent_log: false
 # Plotting
-plot: true
+plot_per_steps: 20000
 # Misc
 device: cuda
 num_workers: 4

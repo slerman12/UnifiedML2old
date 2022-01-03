@@ -20,7 +20,7 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path='./Benchmarking/Plots', plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
+def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
          include_train=False):  # TODO
     include_train = False
 
@@ -256,4 +256,6 @@ if __name__ == "__main__":
     # Experiments to plot
     plot_experiments = sys.argv[1:] if len(sys.argv) > 1 else 'Exp'
 
-    plot(plot_experiments=plot_experiments)
+    path = f"./Benchmarking{'_'.join(plot_experiments)}/Plots"
+
+    plot(path, plot_experiments=plot_experiments)
