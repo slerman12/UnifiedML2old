@@ -33,18 +33,18 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
                      depth=1, one_hot=False, logs=None):
     assert depth < traj_o.shape[1], f"depth {depth} exceeds future trajectory size of {traj_o.shape[1] - 1} steps"
 
+    # If single dim, assumes actions are discrete, converts to one-hot
     if traj_a.shape[-1] == 1:
-        # Assumes actions are discrete, converts to one-hot
         traj_a = Utils.one_hot(traj_a, num_classes=dynamics.in_channels - obs.shape[-3])
 
+    # Differentiably convert continuous to one-hot
     if one_hot:
-        # Differentiable continuous to one-hot
         traj_a = Utils.rone_hot(traj_a)
 
     # Predict future
-    forecast = [dynamics(obs, traj_a[:, 0], flatten=False, renormalize=True)]
+    forecast = [dynamics(obs, traj_a[:, 0], flatten=False)]
     for k in range(1, depth):
-        forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False, renormalize=True))
+        forecast.append(dynamics(forecast[-1], traj_a[:, k], flatten=False))
     forecast = torch.stack(forecast, 1).flatten(-3)
 
     # Self supervision
@@ -54,7 +54,6 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
         dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
 
     if reward_predictor is not None:  # TODO redundant call to projector, maybe just use predictor
-        # reward_prediction = reward_predictor(projector(forecast))
         reward_prediction = reward_predictor(forecast)
         dynamics_loss -= F.mse_loss(reward_prediction, traj_r[:, :depth])
 
