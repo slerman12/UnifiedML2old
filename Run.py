@@ -73,7 +73,7 @@ def main(args):
                 name = 'Train' if training else 'Seed'
                 logger.log(logs, name, dump=True)
 
-            if env.last_episode_len >= args.nstep:
+            if env.last_episode_len > args.nstep:
                 replay.add(store=True)  # Only store full episodes
 
             if args.save_session:
