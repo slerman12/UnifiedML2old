@@ -20,7 +20,7 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path='./Benchmarking', plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
+def plot(path='./Benchmarking/Plots', plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
          include_train=False):  # TODO
     include_train = False
 
