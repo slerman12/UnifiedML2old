@@ -48,7 +48,8 @@ class MLPBlock(nn.Module):
         super().__init__()
 
         self.trunk = nn.Sequential(nn.Linear(in_dim, feature_dim),
-                                   nn.LayerNorm(feature_dim), nn.Tanh()) if layer_norm \
+                                   nn.LayerNorm(feature_dim),
+                                   nn.Tanh()) if layer_norm \
             else None
 
         in_features = feature_dim if layer_norm else in_dim

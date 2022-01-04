@@ -47,19 +47,19 @@ class SPRAgent(torch.nn.Module):
         # Continuous actions creator
         self.creator = None if self.discrete \
             else TruncatedGaussianActor(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
-                                       stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
-                                       optim_lr=lr)
+                                        stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
+                                        optim_lr=lr)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim,
                                              renormalize=True, pixels=False, isotropic=True,
                                              optim_lr=lr)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2,
+                                  depth=2, layer_norm=True,
                                   target_tau=target_tau, optim_lr=lr)
 
         self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2,
+                                  depth=2, layer_norm=True,
                                   optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
@@ -68,8 +68,7 @@ class SPRAgent(torch.nn.Module):
         self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Data augmentation
-        # self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
-        self.aug = IntensityAug(0.05)
+        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
 
         # Birth
 

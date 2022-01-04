@@ -39,9 +39,9 @@ class RandomShiftsAug(nn.Module):
 
         grid = base_grid + shift
         output = F.grid_sample(x,
-                             grid,
-                             padding_mode='zeros',
-                             align_corners=False)
+                               grid,
+                               padding_mode='zeros',
+                               align_corners=False)
         return output.view(*shape[:-3], *output.shape[-3:])
 
 
