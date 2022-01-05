@@ -91,7 +91,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         # Rolling max per run
         max_csv = csv.copy()
         num_step = int(max_csv['step'].max())
-        max_csv['reward'] = max_csv[['reward', 'step']].rolling(num_step, min_periods=1, on='step').max()
+        max_csv['reward'] = max_csv['reward', 'step'].rolling(num_step, min_periods=1, on='step').max()
 
         csv_list.append(csv)
         max_csv_list.append(max_csv)
