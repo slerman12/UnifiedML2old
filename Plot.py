@@ -171,6 +171,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
                                 # Rolling max per run
                                 num_step = task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
                                                          'Step'].max()
+                                print(num_step)
                                 task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
                                               'Reward'] = task_data.loc[(task_data['Task'] == task)
                                                                         & (task_data['Seed'] == seed),
