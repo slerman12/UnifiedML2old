@@ -52,6 +52,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
     csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
 
     csv_list = []
+    max_csv_list = []
     found_suite_tasks = set()
     found_suites = set()
 
@@ -87,7 +88,13 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         csv['Task'] = found_suite_task
         csv['Seed'] = seed
 
+        # Rolling max per run
+        max_csv = csv.copy()
+        num_step = int(max_csv['step'].max())
+        max_csv['reward'] = max_csv[['reward', 'step']].rolling(num_step, min_periods=1, on='step').max()
+
         csv_list.append(csv)
+        max_csv_list.append(max_csv)
         found_suite_tasks.update({found_suite_task})
         found_suites.update({suite})
 
@@ -96,6 +103,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         return
 
     df = pd.concat(csv_list, ignore_index=True)
+    max_df = pd.concat(max_csv_list, ignore_index=True)
     found_suite_tasks = np.sort(list(found_suite_tasks))
 
     # PLOTTING (tasks)
@@ -152,6 +160,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
     found_suites = [found for s in ['Atari', 'DMC', 'Classify'] for found in found_suites if s in found]
 
     # Plot suites
+    df = max_df
     for col, suite in enumerate(found_suites):
         task_data = df[df['Suite'] == suite]
 
@@ -166,17 +175,6 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
                     if game.lower() in task.lower():
                         with warnings.catch_warnings():
                             warnings.simplefilter("ignore", category=SettingWithCopyWarning)
-
-                            for seed in task_data.Seed.unique():
-                                # Rolling max per run
-                                num_step = int(task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
-                                                             'Step'].max())
-                                task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
-                                              'Reward'] = task_data.loc[(task_data['Task'] == task)
-                                                                        & (task_data['Seed'] == seed),
-                                                                        ['Reward', 'Step']].rolling(num_step,
-                                                                                                    min_periods=1,
-                                                                                                    on='Step').max()
 
                             task_data.loc[task_data['Task'] == task, 'Reward'] -= random[game]
                             task_data.loc[task_data['Task'] == task, 'Reward'] /= human[game] - random[game]
