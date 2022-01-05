@@ -160,9 +160,8 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
     found_suites = [found for s in ['Atari', 'DMC', 'Classify'] for found in found_suites if s in found]
 
     # Plot suites
-    df = max_df
     for col, suite in enumerate(found_suites):
-        task_data = df[df['Suite'] == suite]
+        task_data = max_df[max_df['Suite'] == suite]
 
         # Capitalize column names
         task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])
