@@ -166,6 +166,15 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
                         with warnings.catch_warnings():
                             warnings.simplefilter("ignore", category=SettingWithCopyWarning)
 
+                            for seed in task_data.Seed.unique():
+                                # Rolling max per run
+                                num_step = task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
+                                                         'Step'].max()
+                                task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
+                                              'Reward'] = task_data.loc[(task_data['Task'] == task)
+                                                                        & (task_data['Seed'] == seed),
+                                                                        'Reward'].rolling(num_step, on='Step').max()
+
                             task_data.loc[task_data['Task'] == task, 'Reward'] -= random[game]
                             task_data.loc[task_data['Task'] == task, 'Reward'] /= human[game] - random[game]
 

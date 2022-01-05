@@ -50,7 +50,7 @@ class SPRAgent(torch.nn.Module):
                                         stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                         optim_lr=lr)
 
-        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim, num_blocks=0,
+        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim,
                                              renormalize=True, pixels=False, isotropic=True,
                                              optim_lr=lr)
 
