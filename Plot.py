@@ -169,9 +169,8 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
 
                             for seed in task_data.Seed.unique():
                                 # Rolling max per run
-                                num_step = task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
-                                                         'Step'].max()
-                                print(num_step)
+                                num_step = int(task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
+                                                             'Step'].max())
                                 task_data.loc[(task_data['Task'] == task) & (task_data['Seed'] == seed),
                                               'Reward'] = task_data.loc[(task_data['Task'] == task)
                                                                         & (task_data['Seed'] == seed),
