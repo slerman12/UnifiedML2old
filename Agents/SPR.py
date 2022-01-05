@@ -50,7 +50,7 @@ class SPRAgent(torch.nn.Module):
                                         stddev_schedule=stddev_schedule, stddev_clip=stddev_clip,
                                         optim_lr=lr)
 
-        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim,
+        self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim, num_blocks=0,
                                              renormalize=True, pixels=False, isotropic=True,
                                              optim_lr=lr)
 
@@ -68,8 +68,7 @@ class SPRAgent(torch.nn.Module):
         self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Data augmentation
-        # self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
-        self.aug = IntensityAug(0.05)
+        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
 
         # Birth
 
