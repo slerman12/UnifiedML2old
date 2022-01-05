@@ -85,6 +85,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Suite'] = suite
         csv['Task'] = found_suite_task
+        csv['Seed'] = seed
 
         csv_list.append(csv)
         found_suite_tasks.update({found_suite_task})
