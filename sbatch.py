@@ -53,8 +53,6 @@ args = parser.parse_args()
 
 if len(args.sweep_name) > 0 and args.sweep_name in common_sweeps:
     args.params = common_sweeps[args.sweep_name]
-    if args.sweep_name.lower() == 'dmc':
-        args.K80 = True
 elif args.params[0] == '[':
     args.params = json.loads(args.params)
 else:
@@ -62,13 +60,17 @@ else:
 
 # Sweep
 for param in args.params:
+    K80 = args.K80
+    if len(args.sweep_name) > 0 and args.sweep_name in common_sweeps:
+        K80 = True if 'task=dmc/' in param.lower() else args.K80
+
     slurm_script = f"""#!/bin/bash
 #SBATCH {"-c {}".format(args.num_cpus) if args.cpu else "-p gpu -c {}".format(args.num_cpus)}
 {"" if args.cpu else "#SBATCH --gres=gpu"}
 {"#SBATCH -p csxu -A cxu22_lab" if args.cpu and args.lab else "#SBATCH -p csxu -A cxu22_lab --gres=gpu" if args.lab else ""}
 #SBATCH -t {"15-00:00:00" if args.lab else "5-00:00:00"} -o ./{args.name}.log -J {args.name}
 #SBATCH --mem={args.mem}gb 
-{"#SBATCH -C K80" if args.K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else ""}
+{"#SBATCH -C K80" if K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else ""}
 source /scratch/slerman/miniconda/bin/activate agi
 python3 {args.file} {param}
 """
