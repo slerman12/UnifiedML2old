@@ -1,4 +1,5 @@
-# Unified ML, unified in one place, ml, it's so unified 
+[comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
+# Unified ML: Unified Library For Intelligence Training
 
 ![alt text](evolve.gif)
 
