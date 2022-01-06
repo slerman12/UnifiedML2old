@@ -1,5 +1,5 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
-# Unified ML: Unified Intelligence Training
+# Unified ML
 
 ![alt text](evolve.gif)
 
