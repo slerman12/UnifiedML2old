@@ -24,7 +24,7 @@ Let's get to business:
 
 [comment]: <> (Pretty simple:)
 
-###1 . Clone Repo
+### 1. Clone Repo
 
 ```
 git clone github.com/agi-init/UnifiedML
