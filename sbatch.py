@@ -18,7 +18,7 @@ agents = [
     # 'Ascend', 'AC2'
           ]
 seeds = [1, 2]
-experiment = 'Experiment 1'
+experiment = 'Experiment1'
 
 common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed} experiment={experiment}' for task in atari_tasks for agent in agents for seed in seeds],
                  'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed} experiment={experiment}' for task in easy + medium for agent in agents for seed in seeds],

@@ -53,7 +53,7 @@ def dynamicsLearning(obs, traj_o, traj_a, traj_r,
     if obs_predictor is not None:
         dynamics_loss -= bootstrapYourOwnLatent(forecast, future, encoder, projector, obs_predictor, logs)
 
-    if reward_predictor is not None:  # TODO redundant call to projector, maybe just use predictor
+    if reward_predictor is not None:  # TODO projector?
         reward_prediction = reward_predictor(forecast)
         dynamics_loss -= F.mse_loss(reward_prediction, traj_r[:, :depth])
 
