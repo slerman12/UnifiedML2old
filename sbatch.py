@@ -10,19 +10,19 @@ import subprocess
 from Hyperparams.task.atari.generate_atari import atari_tasks
 from Hyperparams.task.dmc.generate_dmc import easy, medium, hard
 agents = [
-    # 'DQN',
-    # 'DrQV2',
     'SPR',
-    # 'DQNDPG',
+    'DQN',
+    'DrQV2',
+    'DQNDPG',
     # 'DynoSOAR',
     # 'Ascend', 'AC2'
           ]
+seeds = [1, 2]
 
-
-common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent train_steps=100000' for task in atari_tasks for agent in agents],
-                 'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent train_steps=100000' for task in easy + medium for agent in agents],
-                 'classify': [f'task=classify/{task.lower()} Agent=Agents.{agent}Agent train_steps=100000 RL=false' for task in ['mnist', 'cifar10'] for agent in agents]}
-
+common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed}' for task in atari_tasks for agent in agents for seed in seeds],
+                 'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed}' for task in easy + medium for agent in agents for seed in seeds],
+                 'classify': [f'task=classify/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 RL=false seed={seed}' for task in ['mnist', 'cifar10'] for agent in agents for seed in seeds]}
+common_sweeps.update({'all': sum(common_sweeps.values(), [])})
 
 # Arguments
 parser = argparse.ArgumentParser()
@@ -52,6 +52,8 @@ args = parser.parse_args()
 
 if len(args.sweep_name) > 0 and args.sweep_name in common_sweeps:
     args.params = common_sweeps[args.sweep_name]
+    if args.sweep_name.lower() == 'dmc':
+        args.K80 = True
 elif args.params[0] == '[':
     args.params = json.loads(args.params)
 else:
