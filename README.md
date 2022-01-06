@@ -1,171 +1,141 @@
+# Unified ML, unified in one place, ml, it's so unified (draft)
 
+![alt text](evolve.gif)
 
-# UnifiedML
+##Welcome ye, weary Traveller.
 
-[comment]: <> (This is an original PyTorch implementation of DrQ-v2 from)
+>Stop here and rest at our local tavern,
+>
+> Where all your reinforcements and supervisions be served, a la carte!
+>
+>**Drink up!** :beers:
 
-[comment]: <> ([[Mastering Visual Continuous Control: Improved Data-Augmented Reinforcement Learning]]&#40;https://arxiv.org/abs/2107.09645&#41; by)
+## Running The Code :runner:
 
-[comment]: <> ([Denis Yarats]&#40;https://cs.nyu.edu/~dy1042/&#41;, [Rob Fergus]&#40;https://cs.nyu.edu/~fergus/pmwiki/pmwiki.php&#41;, [Alessandro Lazaric]&#40;http://chercheurs.lille.inria.fr/~lazaric/Webpage/Home/Home.html&#41;, and [Lerrel Pinto]&#40;https://www.lerrelpinto.com&#41;.)
+To run, once you've got everything set up and installed (:grimacing:):
 
-[comment]: <> (<p align="center">)
+```
+python Run.py
+```
 
-[comment]: <> (  <img width="19.5%" src="https://i.imgur.com/NzY7Pyv.gif">)
+Let's get to business:
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/O5Va3NY.gif">)
+## Setting Up The Environment :wrench:
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/PCOR9Mm.gif">)
+[comment]: <> (Pretty simple:)
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/H0ab6tz.gif">)
+###1 . Clone Repo
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/sDGgRos.gif">)
+```
+git clone github.com/agi-init/UnifiedML
+cd UnifiedML
+```
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/gj3qo1X.gif">)
+### 2. Gemme Some Dependencies
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/FFzRwFt.gif">)
+```
+confa env -f create Conda.yml
+```
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/W5BKyRL.gif">)
+[comment]: <> (# Installing Suites)
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/qwOGfRQ.gif">)
+### 3. Make sure your conda env is activated.
 
-[comment]: <> (  <img width="19.5%" src="https://imgur.com/Uubf00R.gif">)
+```
+conda activate ML
+```
 
-[comment]: <> ( </p>)
+### *zip zap bippidy bap! ~* (don't run that)
 
-[comment]: <> (## Method)
+[comment]: <> (### *THERE, HAPPY!??*)
 
-[comment]: <> (DrQ-v2 is a model-free off-policy algorithm for image-based continuous control. DrQ-v2 builds on [DrQ]&#40;https://github.com/denisyarats/drq&#41;, an actor-critic approach that uses data augmentation to learn directly from pixels. We introduce several improvements including:)
+## Installing The Suites :joystick:
 
-[comment]: <> (- Switch the base RL learner from SAC to DDPG.)
+### 1. Classify
+Comes preinstalled.  :smirk:
 
-[comment]: <> (- Incorporate n-step returns to estimate TD error.)
+### 2. Atari
+```
+pip install autorom
+AutoROM --accept-license
+```
+Then:
+```
+mkdir Atari_ROMS
+AutoROM --install-dir ./Atari_ROMS
+ale-import-roms ./ATARI_ROMS
+```
+### 3. MuJoCo
+Download MuJoCo from here: https://mujoco.org/download.
 
-[comment]: <> (- Introduce a decaying schedule for exploration noise.)
+Make a ```.mujoco``` folder in your home directory:
 
-[comment]: <> (- Make implementation 3.5 times faster.)
+```
+mkdir ~/.mujoco
+```
 
-[comment]: <> (- Find better hyper-parameters.)
+Unrar, unzip, and move (```unrar```, ```unzip```, and ```mv```) downloaded MuJoCo version folder into ```~/.mujoco```. 
 
-[comment]: <> (<p align="center">)
+And run:
+```
+pip install git+https://github.com/deepmind/dm_control.git
+```
 
-[comment]: <> (  <img src="https://i.imgur.com/SemY10G.png" width="100%"/>)
+### *Voila.*
 
-[comment]: <> (</p>)
+## Exampling The Examples :point_up:
 
-[comment]: <> (These changes allow us to significantly improve sample efficiency and wall-clock training time on a set of challenging tasks from the [DeepMind Control Suite]&#40;https://github.com/deepmind/dm_control&#41; compared to prior methods. Furthermore, DrQ-v2 is able to solve complex humanoid locomotion tasks directly from pixel observations, previously unattained by model-free RL.)
+### *Atari example:*
+```
+python Run.py task=atari/pong
+```
 
-[comment]: <> (<p align="center">)
+### *MuJoCo example:* 
+```
+python Run.py task=dmc/humanoid_run
+```
 
-[comment]: <> (  <img width="100%" src="https://imgur.com/mrS4fFA.png">)
+### *Classify example:* 
+```
+python Run.py task=classify/mnist
+```
 
-[comment]: <> (  <img width="100%" src="https://imgur.com/pPd1ks6.png">)
+## Citing The Hard Worker(s) Who Labored For You Day And Mostly Day
 
-[comment]: <> ( </p>)
+For detailed documentation, check out our **Papér**:
 
-[comment]: <> (## Citation)
+And if you use any part of this code — even look at it, or think about it — be sure to cite!
 
-[comment]: <> (If you use this repo in your research, please consider citing the paper as follows:)
+```
+@inproceedings{yarats2021image,
+  title={bla},
+  author={Sam Lerman and Chenliang Xu},
+  booktitle={bla},
+  year={2022},
+  url={https://openreview.net}
+}
+```
 
-[comment]: <> (```)
+Thank you to [Denis Yarats](https://cs.nyu.edu/~dy1042/), et. al., whose beautifully written [**DrQV2**](https://github.com/facebookresearch/drqv2) repo inspired much of this library!
 
-[comment]: <> (@article{yarats2021drqv2,)
+```
+@inproceedings{yarats2021image,
+  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
+  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},
+  booktitle={International Conference on Learning Representations},
+  year={2021},
+  url={https://openreview.net/forum?id=GY6-6sTvGaf}
+}
+```
 
-[comment]: <> (  title={Mastering Visual Continuous Control: Improved Data-Augmented Reinforcement Learning},)
+## Note
 
-[comment]: <> (  author={Denis Yarats and Rob Fergus and Alessandro Lazaric and Lerrel Pinto},)
+**If you are only interested in the RL portion**, check out our UnifiedRL library. It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little :man_shrugging:
 
-[comment]: <> (  journal={arXiv preprint arXiv:2107.09645},)
-
-[comment]: <> (  year={2021})
-
-[comment]: <> (})
-
-[comment]: <> (```)
-
-[comment]: <> (Please also cite our original paper:)
-
-[comment]: <> (```)
-
-[comment]: <> (@inproceedings{yarats2021image,)
-
-[comment]: <> (  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},)
-
-[comment]: <> (  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},)
-
-[comment]: <> (  booktitle={International Conference on Learning Representations},)
-
-[comment]: <> (  year={2021},)
-
-[comment]: <> (  url={https://openreview.net/forum?id=GY6-6sTvGaf})
-
-[comment]: <> (})
-
-[comment]: <> (```)
-
-[comment]: <> (## Instructions)
-
-[comment]: <> (Install [MuJoCo]&#40;http://www.mujoco.org/&#41; if it is not already the case:)
-
-[comment]: <> (* Obtain a license on the [MuJoCo website]&#40;https://www.roboti.us/license.html&#41;.)
-
-[comment]: <> (* Download MuJoCo binaries [here]&#40;https://www.roboti.us/index.html&#41;.)
-
-[comment]: <> (* Unzip the downloaded archive into `~/.mujoco/mujoco200` and place your license key file `mjkey.txt` at `~/.mujoco`.)
-
-[comment]: <> (* Use the env variables `MUJOCO_PY_MJKEY_PATH` and `MUJOCO_PY_MUJOCO_PATH` to specify the MuJoCo license key path and the MuJoCo directory path.)
-
-[comment]: <> (* Append the MuJoCo subdirectory bin path into the env variable `LD_LIBRARY_PATH`.)
-
-[comment]: <> (Install the following libraries:)
-
-[comment]: <> (```sh)
-
-[comment]: <> (sudo apt update)
-
-[comment]: <> (sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3)
-
-[comment]: <> (```)
-
-[comment]: <> (Install dependencies:)
-
-[comment]: <> (```sh)
-
-[comment]: <> (conda env create -f Conda.yml)
-
-[comment]: <> (conda activate drqv2)
-
-[comment]: <> (```)
-
-[comment]: <> (Train the agent:)
-
-[comment]: <> (```sh)
-
-[comment]: <> (python train.py task=quadruped_walk)
-
-[comment]: <> (```)
-
-[comment]: <> (Monitor results:)
-
-[comment]: <> (```sh)
-
-[comment]: <> (tensorboard --logdir exp_local)
-
-[comment]: <> (```)
-
-[comment]: <> (If you are only interested in the RL portion, check out our UnifiedRL. It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.)
-
-
-[comment]: <> (If you want to run a state-of-art RL algorithm using only code meant to spoon-feed a baby, use python RunSimpleExample.py)
-
-[comment]: <> (If you want to run classification tasks as well as RL in a unified comprehensive framework that is also joyously simple, use python Run.py)
-
-[comment]: <> (And if you want all of the above, but also faster, distributed training -- on either multiple GPUs/CPUs OR one GPU and multiple CPUs &#40;or even just multiple CPUs... or I guess even just one CPU if you're really testy; the world's your oyster with this one&#41;, then use python RunParallel.py)
-
-[comment]: <> (Each of the above commands has the same interface)
 
 [comment]: <> (## License)
 
-[comment]: <> (The majority of DrQ-v2 is licensed under the MIT license, however portions of the project are available under separate license terms: DeepMind is licensed under the Apache 2.0 license.)
+[comment]: <> (MIT license.)
 
 [comment]: <> (## Financing)
 

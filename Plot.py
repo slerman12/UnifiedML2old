@@ -52,7 +52,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
     csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
 
     csv_list = []
-    max_csv_list = []
+    max_csv_list = []  # Unused
     found_suite_tasks = set()
     found_suites = set()
 
@@ -93,12 +93,12 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         csv['Task'] = found_suite_task
         csv['Seed'] = seed
 
-        # Rolling max per run
-        max_csv = csv.copy()
-        max_csv['reward'] = max_csv[['reward', 'step']].rolling(length, min_periods=1, on='step').max()['reward']
+        # Rolling max per run (as in CURL, SUNRISE) This was critiqued heavily in https://arxiv.org/pdf/2108.13264.pdf
+        # max_csv = csv.copy()
+        # max_csv['reward'] = max_csv[['reward', 'step']].rolling(length, min_periods=1, on='step').max()['reward']
 
         csv_list.append(csv)
-        max_csv_list.append(max_csv)
+        # max_csv_list.append(max_csv)
         found_suite_tasks.update({found_suite_task})
         found_suites.update({suite})
 
@@ -107,7 +107,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         return
 
     df = pd.concat(csv_list, ignore_index=True)
-    max_df = pd.concat(max_csv_list, ignore_index=True)
+    max_df = pd.concat(max_csv_list, ignore_index=True)  # Unused
     found_suite_tasks = np.sort(list(found_suite_tasks))
 
     # PLOTTING (tasks)
@@ -165,7 +165,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
 
     # Plot suites
     for col, suite in enumerate(found_suites):
-        task_data = max_df[max_df['Suite'] == suite]
+        task_data = df[df['Suite'] == suite]
 
         # Capitalize column names
         task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])

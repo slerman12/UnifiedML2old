@@ -1,4 +1,4 @@
-name: ml
+name: ML
 channels:
   - defaults
 dependencies:
