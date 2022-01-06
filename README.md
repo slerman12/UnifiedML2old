@@ -7,8 +7,8 @@
 >Stop here and rest at our local tavern,
 >
 > Where all your reinforcements and supervisions be served, a la carte!
->
-> **Drink up!** :beers:
+
+**Drink up!** :beers:
 
 ## :runner: Running The Code 
 
