@@ -103,7 +103,7 @@ python Run.py task=classify/mnist
 
 ## Citing The Hard Worker Who Labored For You Day And Mostly Day
 
-For detailed documentation, check out our [**Papér**](https://arxiv.com)
+For detailed documentation, check out our [[**Papér**](https://arxiv.com)]
 
 ```
 @inproceedings{yarats2021image,
@@ -117,11 +117,11 @@ For detailed documentation, check out our [**Papér**](https://arxiv.com)
 
 And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**
 
-## Also
+## ALSO
 
 An acknowledgment to:
 
-[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
+[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [[**DrQV2 repo**](https://github.com/facebookresearch/drqv2)] inspired much of this library and its design.
 
 ```
 @inproceedings{yarats2021image,
