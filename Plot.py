@@ -80,13 +80,13 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         if not include:
             continue
 
-        length = int(max_csv['step'].max())
+        # Add CSV
+        csv = pd.read_csv(csv_name)
 
+        length = int(csv['step'].max())
         if length == 0:
             continue
 
-        # Add CSV
-        csv = pd.read_csv(csv_name)
         found_suite_task = task + ' (' + suite + ')'
         csv['Agent'] = agent + ' (' + experiment + ')'
         csv['Suite'] = suite
@@ -95,7 +95,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
 
         # Rolling max per run
         max_csv = csv.copy()
-        max_csv['reward'] = max_csv[['reward', 'step']].rolling(length, min_periods=1, on='step').max()['reward']
+        max_csv['Reward'] = max_csv[['reward', 'step']].rolling(length, min_periods=1, on='step').max()['reward']
 
         csv_list.append(csv)
         max_csv_list.append(max_csv)
