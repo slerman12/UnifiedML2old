@@ -117,11 +117,11 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)]
 
 And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**
 
-## ALSO
+## Also
 
 An acknowledgment to:
 
-[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [[**DrQV2 repo**](https://github.com/facebookresearch/drqv2)] inspired much of this library and its design.
+[[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose beautifully written [[**DrQV2 repo**](https://github.com/facebookresearch/drqv2)] inspired much of this library and its design.
 
 ```
 @inproceedings{yarats2021image,
