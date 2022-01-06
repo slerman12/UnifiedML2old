@@ -1,4 +1,4 @@
-# Unified ML, unified in one place, ml, it's so unified <del>*(don't forget to edit this before posting, under any circumstance or else people will think you're dumb and not take your good library serious!)</del>
+# Unified ML, unified in one place, ml, it's so unified 
 
 ![alt text](evolve.gif)
 
@@ -99,6 +99,8 @@ python Run.py task=dmc/humanoid_run
 python Run.py task=classify/mnist
 ```
 
+## :thinking: More Examples
+
 ## Citing The Hard Worker Who Labored For You Day And Mostly Day
 
 For detailed documentation, check out our [**Papér**](https://arxiv.com)
@@ -140,8 +142,6 @@ An acknowledgment to:
 Check out our [UnifiedRL](https:github.com/agi-init/UnifiedRL) library. 
 
 It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
-
-## :thinking: More Examples
 
 [comment]: <> (## License)
 
