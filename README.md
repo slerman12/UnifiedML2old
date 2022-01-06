@@ -1,4 +1,4 @@
-# Unified ML, unified in one place, ml, it's so unified (don't forget to edit this before posting, under any circumstance or else people will think you're dumb and not take your good library serious!)
+# Unified ML, unified in one place, ml, it's so unified <del>(don't forget to edit this before posting, under any circumstance or else people will think you're dumb and not take your good library serious!)</del>
 
 ![alt text](evolve.gif)
 
