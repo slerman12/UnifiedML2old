@@ -115,7 +115,7 @@ For detailed documentation, check out our [**Papér**](https://arxiv.com).
 
 And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**
 
-Also:
+## Also
 
 An acknowledgment to:
 
