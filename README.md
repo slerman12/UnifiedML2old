@@ -131,7 +131,7 @@ An acknowledgment to:
 }
 ```
 
-**Feel free to cite also the above!**
+**~Feel free to cite also the above!**
 
 ## Note
 
