@@ -2,15 +2,15 @@
 
 ![alt text](evolve.gif)
 
-##Welcome ye, weary Traveller.
+## Welcome ye, weary Traveller.
 
 >Stop here and rest at our local tavern,
 >
 > Where all your reinforcements and supervisions be served, a la carte!
 >
->**Drink up!** :beers:
+> **Drink up!** :beers:
 
-## Running The Code :runner:
+## :runner: Running The Code 
 
 To run, once you've got everything set up and installed (:grimacing:):
 
@@ -20,7 +20,7 @@ python Run.py
 
 Let's get to business:
 
-## Setting Up The Environment :wrench:
+## :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
 
@@ -45,11 +45,11 @@ confa env -f create Conda.yml
 conda activate ML
 ```
 
-### *zip zap bippidy bap! ~* (don't run that)
+### *zip zap bippidy bap!* ~ (don't run that)
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
-## Installing The Suites :joystick:
+## :joystick: Installing The Suites 
 
 ### 1. Classify
 Comes preinstalled.  :smirk:
@@ -118,6 +118,8 @@ And if you use any part of this code — even look at it, or think about it — 
 
 Thank you to [Denis Yarats](https://cs.nyu.edu/~dy1042/), et. al., whose beautifully written [**DrQV2**](https://github.com/facebookresearch/drqv2) repo inspired much of this library!
 
+Their work:
+
 ```
 @inproceedings{yarats2021image,
   title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
@@ -130,7 +132,11 @@ Thank you to [Denis Yarats](https://cs.nyu.edu/~dy1042/), et. al., whose beautif
 
 ## Note
 
-**If you are only interested in the RL portion**, check out our UnifiedRL library. It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little :man_shrugging:
+### If you are only interested in the RL portion, 
+
+Check out our [UnifiedRL](https:github.com/agi-init/UnifiedRL) library. 
+
+It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little :man_shrugging:
 
 
 [comment]: <> (## License)
