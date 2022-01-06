@@ -12,7 +12,7 @@
 
 ## :runner: Running The Code 
 
-To run, once you've got everything set up and installed (:exclamation:):
+To run, once you've got everything set up and installed (:grimacing:):
 
 ```
 python Run.py
