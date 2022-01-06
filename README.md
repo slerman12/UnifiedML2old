@@ -80,10 +80,9 @@ And run:
 ```
 pip install git+https://github.com/deepmind/dm_control.git
 ```
+***Voila.***
 
-### *Voila.*
-
-## Exampling The Examples :point_up:
+## :point_up: Exampling The Examples 
 
 ### *Atari example:*
 ```
