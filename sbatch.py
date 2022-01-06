@@ -39,6 +39,8 @@ parser.add_argument('--V100', action='store_true', default=False,
                     help='uses V100 GPU')
 parser.add_argument('--A100', action='store_true', default=False,
                     help='uses A100 GPU')
+parser.add_argument('--ANY_BIG', action='store_true', default=False,
+                    help='uses K80, V100, or A100 GPU')
 parser.add_argument('--num-cpus', type=int, default=4,
                     help='how many CPUs to use')
 parser.add_argument('--mem', type=int, default=25,
@@ -61,8 +63,8 @@ else:
 # Sweep
 for param in args.params:
     K80 = args.K80
-    if len(args.sweep_name) > 0 and args.sweep_name in common_sweeps:
-        K80 = True if 'task=dmc/' in param.lower() else args.K80
+    # if len(args.sweep_name) > 0 and args.sweep_name in common_sweeps:
+    #     K80 = True if 'task=dmc/' in param.lower() else args.K80
 
     slurm_script = f"""#!/bin/bash
 #SBATCH {"-c {}".format(args.num_cpus) if args.cpu else "-p gpu -c {}".format(args.num_cpus)}
@@ -70,7 +72,7 @@ for param in args.params:
 {"#SBATCH -p csxu -A cxu22_lab" if args.cpu and args.lab else "#SBATCH -p csxu -A cxu22_lab --gres=gpu" if args.lab else ""}
 #SBATCH -t {"15-00:00:00" if args.lab else "5-00:00:00"} -o ./{args.name}.log -J {args.name}
 #SBATCH --mem={args.mem}gb 
-{"#SBATCH -C K80" if K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else ""}
+{"#SBATCH -C K80" if K80 else "#SBATCH -C V100" if args.V100 else "#SBATCH -C A100" if args.A100 else "#SBATCH -C K80|V100|A100" if args.ANY_BIG else ""}
 source /scratch/slerman/miniconda/bin/activate agi
 python3 {args.file} {param}
 """
