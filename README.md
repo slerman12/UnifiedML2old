@@ -101,9 +101,7 @@ python Run.py task=classify/mnist
 
 ## Citing The Hard Worker(s) Who Labored For You Day And Mostly Day
 
-For detailed documentation, check out our **Papér**:
-
-And if you use any part of this code — even look at it, or think about it — be sure to cite!
+For detailed documentation, check out our [**Papér**](https://arxiv.com):
 
 ```
 @inproceedings{yarats2021image,
@@ -114,6 +112,8 @@ And if you use any part of this code — even look at it, or think about it — 
   url={https://openreview.net}
 }
 ```
+
+And if you use any part of this code — even look at it, or think about it — be sure to cite!
 
 Thank you to [Denis Yarats](https://cs.nyu.edu/~dy1042/), et. al., whose beautifully written [**DrQV2**](https://github.com/facebookresearch/drqv2) repo inspired much of this library!
 
