@@ -18,10 +18,11 @@ agents = [
     # 'Ascend', 'AC2'
           ]
 seeds = [1, 2]
+experiment = 'New'
 
-common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed}' for task in atari_tasks for agent in agents for seed in seeds],
-                 'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed}' for task in easy + medium for agent in agents for seed in seeds],
-                 'classify': [f'task=classify/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 RL=false seed={seed}' for task in ['mnist', 'cifar10'] for agent in agents for seed in seeds]}
+common_sweeps = {'atari': [f'task=atari/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed} experiment={Exp}' for task in atari_tasks for agent in agents for seed in seeds],
+                 'dmc': [f'task=dmc/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 seed={seed} experiment={Exp}' for task in easy + medium for agent in agents for seed in seeds],
+                 'classify': [f'task=classify/{task.lower()} Agent=Agents.{agent}Agent train_steps=200000 RL=false seed={seed} experiment={Exp}' for task in ['mnist', 'cifar10'] for agent in agents for seed in seeds]}
 common_sweeps.update({'all': sum(common_sweeps.values(), [])})
 
 # Arguments
