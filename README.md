@@ -103,7 +103,7 @@ python Run.py task=classify/mnist
 
 ## Citing The Hard Worker Who Labored For You Day And Mostly Day
 
-For detailed documentation, check out our [[**Papér**](https://arxiv.com)]
+For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
 ```
 @inproceedings{yarats2021image,
