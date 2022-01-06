@@ -99,7 +99,7 @@ python Run.py task=dmc/humanoid_run
 python Run.py task=classify/mnist
 ```
 
-## Citing The Hard Worker(s) Who Labored For You Day And Mostly Day
+## Citing The Hard Worker Who Labored For You Day And Mostly Day
 
 For detailed documentation, check out our [**Papér**](https://arxiv.com):
 
@@ -113,11 +113,13 @@ For detailed documentation, check out our [**Papér**](https://arxiv.com):
 }
 ```
 
-And if you use any part of this code — even look at it, or think about it — be sure to cite!
+And if you use any part of this code — even look at it, or think about it — **be sure to cite!**
 
-Thank you to [Denis Yarats](https://cs.nyu.edu/~dy1042/), et. al., whose beautifully written [**DrQV2**](https://github.com/facebookresearch/drqv2) repo inspired much of this library!
+Also:
 
-Their work:
+An acknowledgment to:
+
+[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
 ```
 @inproceedings{yarats2021image,
@@ -128,6 +130,8 @@ Their work:
   url={https://openreview.net/forum?id=GY6-6sTvGaf}
 }
 ```
+
+Feel free to cite also the above!
 
 ## Note
 
