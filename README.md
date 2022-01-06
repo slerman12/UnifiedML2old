@@ -1,4 +1,4 @@
-# Unified ML, unified in one place, ml, it's so unified (draft)
+# Unified ML, unified in one place, ml, it's so unified (don't forget to edit this before posting!)
 
 ![alt text](evolve.gif)
 
@@ -131,7 +131,7 @@ An acknowledgment to:
 }
 ```
 
-**~Feel free to cite also the above!**
+**Feel free to cite also the above!**
 
 ## Note
 
@@ -141,6 +141,7 @@ Check out our [UnifiedRL](https:github.com/agi-init/UnifiedRL) library.
 
 It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
 
+## :thinking: More Examples
 
 [comment]: <> (## License)
 
