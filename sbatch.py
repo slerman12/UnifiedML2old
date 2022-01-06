@@ -41,7 +41,7 @@ parser.add_argument('--A100', action='store_true', default=False,
                     help='uses A100 GPU')
 parser.add_argument('--ANY_BIG', action='store_true', default=False,
                     help='uses K80, V100, or A100 GPU')
-parser.add_argument('--num-cpus', type=int, default=4,
+parser.add_argument('--num-cpus', type=int, default=10,
                     help='how many CPUs to use')
 parser.add_argument('--mem', type=int, default=25,
                     help='memory to request')
