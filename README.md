@@ -49,7 +49,7 @@ conda activate ML
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
-## :video_game: Installing The Suites 
+## :stadium: Installing The Suites 
 
 ### 1. Classify
 Comes preinstalled.  :smirk:
