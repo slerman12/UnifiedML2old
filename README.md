@@ -119,7 +119,7 @@ And if you use any part of this code — even look at it, or think about it — 
 
 An acknowledgment to:
 
-[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
+[Denis Yarats](https://cs.nyu.edu/~dy1042/), whose beautifully written [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design:
 
 ```
 @inproceedings{yarats2021image,
@@ -131,7 +131,7 @@ An acknowledgment to:
 }
 ```
 
-Feel free to cite also the above!
+**Feel free to cite also the above!**
 
 ## Note
 
