@@ -45,7 +45,7 @@ confa env -f create Conda.yml
 conda activate ML
 ```
 
-### *zip zap bippidy bap!* ~ (don't run that)
+*zip zap bippidy bap!* ~ (don't run that)
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
@@ -136,7 +136,7 @@ Their work:
 
 Check out our [UnifiedRL](https:github.com/agi-init/UnifiedRL) library. 
 
-It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little :man_shrugging:
+It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
 
 
 [comment]: <> (## License)
