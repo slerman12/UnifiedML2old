@@ -1,5 +1,6 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
-# Unified ML
+
+[comment]: <> (# Unified ML)
 
 ## :open_umbrella: Unified Learning?
 All agents support discrete and continuous control, classification, and generative modeling.
