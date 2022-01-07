@@ -106,8 +106,6 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :point_up: Examples
 
-### Experiment naming
-
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
 [comment]: <> (```./Benchmarking/<experiment>/Plots/```.)
@@ -157,6 +155,9 @@ python Run.py task=classify/mnist generate=true
 ```
 python Run.py task=atari/breakout generate=true
 ```
+
+### Experiment naming
+
 The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
 ```
