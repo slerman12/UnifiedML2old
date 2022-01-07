@@ -11,7 +11,21 @@
 
 **Drink up!** :beers:
 
-[comment]: <> (Let's get down to business:)
+## :runner: Running The Code
+
+To start a train session, once installed/set up:
+
+```
+python Run.py
+```
+
+The default agent and task are DQN and Pong respectively:
+
+```Agent=Agents.DQNAgent```
+
+```task=atari/pong```
+
+Let's get to business:
 
 ## :wrench: Setting Up The Environment 
 
@@ -76,20 +90,6 @@ And run:
 pip install git+https://github.com/deepmind/dm_control.git
 ```
 ***Voila.***
-
-## :runner: Running The Code
-
-To start a train session:
-
-```
-python Run.py
-```
-
-The default agent and task are DQN and Pong respectively:
-
-```Agent=Agents.DQNAgent```
-
-```task=atari/pong```
 
 ## :point_up: Exampling The Examples 
 
