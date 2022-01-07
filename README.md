@@ -159,7 +159,7 @@ python Plot.py <experiment1> <experiment2> <...>
 
 All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
 
-**RL**: All agents implement our "Creator" and/or "DPG" framework to support both continuous and discrete contol.
+**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
 
 **Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
 
@@ -179,7 +179,7 @@ Files are succinct, intuitive, and try to be self-explanatory.
 
 ### Desideratum, Pedagogy, and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping thanks to their transparency and minimalism of implementation.
+All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
 
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
@@ -199,7 +199,8 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 }
 ```
 
-And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**
+[comment]: <> (And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**)
+And if you use any part of this code, **be sure to cite the above!**
 
 ## Also
 
