@@ -11,17 +11,9 @@
 
 **Drink up!** :beers:
 
-## :runner: Running The Code 
-
-To run, once you've got everything set up and installed
-
-```
-python Run.py
-```
+## :wrench: Setting Up The Environment 
 
 Let's get to business:
-
-## :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
 
@@ -53,7 +45,9 @@ conda activate ML
 ## :stadium: Installing The Suites 
 
 ### 1. Classify
-Comes preinstalled.  :smirk:
+
+[comment]: <> (Comes preinstalled.  :smirk:)
+Comes preinstalled. 
 
 ### 2. Atari
 ```
@@ -83,6 +77,14 @@ pip install git+https://github.com/deepmind/dm_control.git
 ```
 ***Voila.***
 
+## :runner: Running The Code
+
+To run, once you've got everything set up and installed
+
+```
+python Run.py
+```
+
 ## :point_up: Exampling The Examples 
 
 ### *Atari example:*
@@ -102,7 +104,8 @@ python Run.py task=classify/mnist
 
 ## :thinking: More Examples
 
-## Citing The Hard Worker Who Labored For You Day And Mostly Day
+[comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
+## Citing 
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
