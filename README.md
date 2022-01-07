@@ -19,6 +19,8 @@ To run, once you've got everything set up and installed
 python Run.py
 ```
 
+Easy enough.
+
 Let's get to business:
 
 ## :wrench: Setting Up The Environment 
