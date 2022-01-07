@@ -100,21 +100,6 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :point_up: Examples
 
-### Plotting
-Plots are automatically generated during training and stored in:
-```./Benchmarking/<experiment>/Plots/```.
-
-```
-python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
-```
-
-The ```plot_per_steps=``` flag can be used to configure the training step frequency for plotting; the ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
-
-Also, manual plotting via ```Plot.py```:
-
-```
-python Plot.py <experiment1> <experiment2> <...>
-```
 
 [comment]: <> (### *Atari example:*)
 
@@ -157,6 +142,23 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 Via the ```generate=true``` flag:
 ```
 python Run.py task=classify/mnist generate=true
+```
+
+
+### Plotting
+Plots are automatically generated during training and stored in:
+```./Benchmarking/<experiment>/Plots/```.
+
+```
+python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+```
+
+The ```plot_per_steps=``` flag can be used to configure the training step frequency for plotting; the ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
+
+Also, manual plotting via ```Plot.py```:
+
+```
+python Plot.py <experiment1> <experiment2> <...>
 ```
 
 [comment]: <> (```)
