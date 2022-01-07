@@ -11,7 +11,7 @@
 
 **Drink up!** :beers:
 
-## :wrench: Setting Up The Environment 
+## :wrench: Setting Up
 
 [comment]: <> (:muscle: Let's get to business :muscle: )
 
