@@ -184,7 +184,7 @@ DQN Agent in CIFAR-10:
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
 
-*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase would augment the supervised learning. 
+*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase augments the supervised learning. 
 
 ### Generative Modeling
 
@@ -282,7 +282,7 @@ All files are designed to be useful for educational and innovational purposes in
 
 Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library. 
 
-[comment]: <> (It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~)
+It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
 
 [comment]: <> (# License)
 
