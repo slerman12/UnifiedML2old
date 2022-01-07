@@ -38,7 +38,7 @@ confa env -f create Conda.yml
 conda activate ML
 ```
 
-*zip zap bippidy bap!* ~ (don't run that)
+[comment]: <> (*zip zap bippidy bap!* ~ &#40;don't run that&#41;)
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
