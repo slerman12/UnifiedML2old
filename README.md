@@ -147,6 +147,22 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 ```
 If you use any part of this code, **be sure to cite the above!**
 
+### Also
+
+An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
+
+```
+@inproceedings{yarats2021image,
+  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
+  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},
+  booktitle={International Conference on Learning Representations},
+  year={2021},
+  url={https://openreview.net/forum?id=GY6-6sTvGaf}
+}
+```
+
+**Feel free to cite also the above!**
+
 ## :point_up: Examples 
 
 [comment]: <> (### *Atari example:*)
@@ -218,22 +234,6 @@ python Plot.py <experiment1> <experiment2> <...>
 [comment]: <> (And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**)
 
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
-
-## Also
-
-An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
-
-```
-@inproceedings{yarats2021image,
-  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
-  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},
-  booktitle={International Conference on Learning Representations},
-  year={2021},
-  url={https://openreview.net/forum?id=GY6-6sTvGaf}
-}
-```
-
-**Feel free to cite also the above!**
 
 ## Note
 
