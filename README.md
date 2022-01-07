@@ -200,7 +200,9 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 ```
 
 [comment]: <> (And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**)
-And if you use any part of this code, **be sure to cite the above!**
+
+[comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
+If you use any part of this code, **be sure to cite the above!**
 
 ## Also
 
