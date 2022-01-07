@@ -36,11 +36,10 @@ Defaults:
 
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
-Let's get to business:
-
 ## :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
+Let's get to business:
 
 ### 1. Clone The Repo
 
