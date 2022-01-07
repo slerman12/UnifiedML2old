@@ -79,7 +79,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :runner: Running The Code
 
-To start running a train session:
+To start a train session:
 
 ```
 python Run.py
@@ -95,7 +95,7 @@ The default agent and task are DQN and Pong respectively:
 
 ### *Atari example:*
 ```
-python Run.py task=atari/pong
+python Run.py task=atari/breakout
 ```
 
 ### *MuJoCo example:* 
