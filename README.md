@@ -1,7 +1,7 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 # Unified ML
 
-![alt text](evolve.gif)
+![alt text](evolve.gif  | width=100)
 
 ## Welcome ye, weary Traveller.
 
