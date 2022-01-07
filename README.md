@@ -2,9 +2,6 @@
 
 [comment]: <> (# Unified ML)
 
-## :open_umbrella: Unified Learning?
-All agents support discrete and continuous control, classification, and generative modeling.
-
 ## :runner: Running The Code
 
 To start a train session, once installed:
@@ -33,6 +30,11 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 > Where all your reinforcements and supervisions be served, a la carte!
 
 **Drink up!** :beers:
+
+## :open_umbrella: Unified Learning?
+All agents support discrete and continuous control, classification, and generative modeling.
+
+Let's get to business:
 
 ## :wrench: Setting Up The Environment 
 
