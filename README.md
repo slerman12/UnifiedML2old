@@ -1,8 +1,7 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 # Unified ML
 
-[comment]: <> (![alt text]&#40;evolve.gif&#41;)
-![test image size](evolve.gif){:class="img-responsive"}
+![alt text](evolve.gif)
 
 ## Welcome ye, weary Traveller.
 
