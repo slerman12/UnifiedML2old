@@ -105,32 +105,27 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (```)
 
-### *Humanoid example:* 
+Humanoid example: 
 ```
 python Run.py task=dmc/humanoid_run
 ```
 
-### *MNIST example:* 
-```
-python Run.py task=classify/mnist 
-```
-
-### *DrQV2 Agent in Atari*
+DrQV2 Agent in Atari:
 ```
 python Run.py Agent=Agents.DrQV2Agent task=atari/battlezone
 ```
 
-### *SPR Agent in MuJoCo*
+SPR Agent in MuJoCo:
 ```
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-### *DQN Agent in CIFAR10 Classification*
+DQN Agent in CIFAR10 Classification:
 ```
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10
 ```
 
-### *Generative modeling using MNIST*
+Generative modeling using MNIST:
 ```
 python Run.py task=classify/mnist generate=true
 ```
