@@ -267,7 +267,7 @@ Then we frame actions as "predictions" in supervised learning, and minimize erro
 For generative modeling, well, it so happens that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 ## :mortar_board: Pedagogy and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, as well as easily extendable and amenable for prototyping new ideas.
+All files are designed to be useful for educational purposes in their simplicity and structure, as well as easily extendable and amenable for prototyping and evaluating new ideas.
 
 
 ## Note
