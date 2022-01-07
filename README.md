@@ -11,7 +11,7 @@
 
 **Drink up!** :beers:
 
-Let's get down to business:
+[comment]: <> (Let's get down to business:)
 
 ## :wrench: Setting Up The Environment 
 
