@@ -20,7 +20,7 @@ All agents support discrete, continuous, classification, and generative domains,
 
 **Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
 
-**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
+**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
 
 ## :runner: Running The Code
 
