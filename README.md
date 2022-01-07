@@ -262,7 +262,7 @@ An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excel
 
 All files are designed to be useful for educational purposes in their simplicity and structure, as well as easily extendable and amenable for prototyping new ideas.
 
-### :interrobang: How is this possible?
+## :interrobang: How is this possible
 
 ## Note
 
