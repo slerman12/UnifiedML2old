@@ -2,7 +2,7 @@
 
 [comment]: <> (# Unified ML)
 
-![alt text](UnifiedML_Logo2.png)
+![alt text](UnifiedML_Logo1.png)
 
 # :runner: Running The Code
 
