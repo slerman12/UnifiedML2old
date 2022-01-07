@@ -217,7 +217,7 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
 If you use any part of this code, **be sure to cite the above!**
 
-<hr>
+<hr style="border-top:1px;" class="dotted">
 
 An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
