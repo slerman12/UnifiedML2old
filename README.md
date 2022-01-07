@@ -115,25 +115,6 @@ python Run.py task=dmc/humanoid_run
 python Run.py task=classify/mnist 
 ```
 
-## :thinking: More Docs
-
-### Plotting
-Plots are automatically generated during training and stored in: 
-```./Benchmarking/<experiment>/Plots/```.
-
-```
-python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
-```
-
-The ```plot_per_steps=``` flag can be used to configure the training step frequency for plotting; the ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
-
-Also, manual plotting via ```Plot.py```:
-
-```
-python Plot.py <experiment1> <experiment2> <...>
-```
-
-
 ### *DQN Agent in Atari*
 ```
 python Run.py Agent=Agents.DQNAgent task=atari/boxing
@@ -157,6 +138,24 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10
 ### *Generative modeling using MNIST*
 ```
 python Run.py task=classify/mnist generate=true
+```
+
+## :thinking: More Docs
+
+### Plotting
+Plots are automatically generated during training and stored in: 
+```./Benchmarking/<experiment>/Plots/```.
+
+```
+python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+```
+
+The ```plot_per_steps=``` flag can be used to configure the training step frequency for plotting; the ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
+
+Also, manual plotting via ```Plot.py```:
+
+```
+python Plot.py <experiment1> <experiment2> <...>
 ```
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
