@@ -34,6 +34,8 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 ## :open_umbrella: Unified Learning?
 All agents support discrete and continuous control, classification, and generative modeling.
 
+Yes.
+
 Let's get to business:
 
 ## :wrench: Setting Up The Environment 
