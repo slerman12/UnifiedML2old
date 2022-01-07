@@ -130,7 +130,7 @@ Generative modeling using MNIST:
 python Run.py task=classify/mnist generate=true
 ```
 
-## :thinking: More Docs
+## :thinking: More Deets
 
 ### Plotting
 Plots are automatically generated during training and stored in: 
@@ -147,6 +147,28 @@ Also, manual plotting via ```Plot.py```:
 ```
 python Plot.py <experiment1> <experiment2> <...>
 ```
+
+### Repository Structure
+
+Agents are self-contained in their respective ```./Agents``` file.
+
+```Run.py``` handles all training, evaluation, and logging.
+
+```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+
+Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+
+Most files are succinct, intuitive, and try to be self-explanatory.
+
+### Pedagogy and Research
+
+All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping thanks to their transparency and minimalism of implementation.
+
+### Unified?
+
+*Classification* datasets are treated as reinforcement learning environments, static forms of suites like Atari and DMC, and yield labels rather than rewards. *Generative* modeling reframes the Actor-Critic as a Generator-Discriminator.
+
+Please see [paper](https://arxiv.com) for more details.
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
 ## Citing 
