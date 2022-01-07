@@ -31,7 +31,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 >
 > Where all your reinforcements and supervisions be served, a la carte!
 
-**Drink up!** :beers:
+[comment]: <> (**Drink up!** :beers:)
 
 ## :wrench: Setting Up The Environment 
 
