@@ -13,11 +13,11 @@
 
 ## :wrench: Setting Up The Environment 
 
-:muscle: Let's get to business :muscle: 
+[comment]: <> (:muscle: Let's get to business :muscle: )
 
 [comment]: <> (Pretty simple:)
 
-### 1. Clone The Repo
+### 1. Cloning The Repo
 
 ```
 git clone github.com/agi-init/UnifiedML
