@@ -105,6 +105,8 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (```)
 
+### Agents and Tasks
+
 Humanoid example: 
 ```
 python Run.py task=dmc/humanoid_run
@@ -122,18 +124,18 @@ python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 
 DQN Agent in CIFAR10:
 ```
-python Run.py Agent=Agents.DQNAgent task=classify/cifar10
+python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
+
+*Note:* Without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
 
 Generative modeling using MNIST:
 ```
 python Run.py task=classify/mnist generate=true
 ```
 
-## :thinking: More Docs
-
 ### Plotting
-Plots are automatically generated during training and stored in: 
+Plots are automatically generated during training and stored in:
 ```./Benchmarking/<experiment>/Plots/```.
 
 ```
@@ -148,6 +150,8 @@ Also, manual plotting via ```Plot.py```:
 python Plot.py <experiment1> <experiment2> <...>
 ```
 
+## :thinking: More Docs
+
 ### Repository Structure
 
 Agents are self-contained in their respective ```./Agents``` file.
@@ -160,13 +164,21 @@ Architectures, losses, probability distributions, and simple helpers defined in 
 
 Files are succinct, intuitive, and try to be self-explanatory.
 
-### Pedagogy and Research
+### Desideratum, Pedagogy, and Research
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping thanks to their transparency and minimalism of implementation.
 
-[comment]: <> (### Unified?)
+### *Unified*?
 
-[comment]: <> (*Classification* datasets are treated as reinforcement learning environments, static forms of suites like Atari and DMC, and yield labels rather than rewards. *Generative* modeling reframes the Actor-Critic as a Generator-Discriminator.)
+**All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.**
+
+**RL**: All agents implement our "Creator" and/or "DPG" framework to support both continuous and discrete contol.
+
+**Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets like CIFAR-10 re-framed as tasks of that suite, and yield labels rather than rewards.
+
+All classification tasks support the ```RL=false``` flag to disable auxiliary reinforcement learning on top of supervised learning, to perform just standard classification.
+
+**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
