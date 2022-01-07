@@ -125,16 +125,16 @@ python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 
 ### Classification
 
-DQN Agent in CIFAR10:
+DQN Agent in CIFAR-10:
 ```
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
 
-*Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
+*Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets training to standard supervised-only classification.
 
 ### Generative Modeling
 
-Generative modeling can be achieved just by adding the ``generate=true``` flag.
+Generative modeling via the ``generate=true``` flag.
 ```
 python Run.py task=classify/mnist generate=true
 ```
