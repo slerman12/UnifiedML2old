@@ -122,7 +122,7 @@ SPR Agent in MuJoCo:
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-All agents support discrete and continuous control.
+All agents support all suites, discrete and continuous control.
 
 ### Classification
 
