@@ -183,7 +183,7 @@ python Run.py task=atari/breakout generate=true
 
 ## :bar_chart: Agents & Performance
 
-## Paper & Citing
+## :scroll: Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
@@ -244,11 +244,11 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-## Desideratum, Pedagogy, and Research
+## :trident: Desideratum, Pedagogy, and Research
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism.
 
-## Note
+## :loop: Note
 
 ### If you are only interested in the RL portion, 
 
