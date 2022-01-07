@@ -146,6 +146,8 @@ It does with RL to this library what PyCharm does with Python to IntelliJ, i.e.,
 
 [comment]: <> (# License)
 
+<br>
+
 ## License
 
 *MIT license included*.
