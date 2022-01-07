@@ -146,7 +146,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :point_up: Example scripts
+# :mag: Example scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
