@@ -53,7 +53,7 @@ conda activate ML
 ## :stadium: Installing The Suites 
 
 ### 1. Classify
-:white_check_mark: Comes preinstalled
+<p style="color:MediumSeaGreen;">:heavy_check_mark:</p> Comes preinstalled
 
 ### 2. Atari
 ```
