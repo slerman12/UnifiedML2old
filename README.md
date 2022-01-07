@@ -88,7 +88,7 @@ cd UnifiedML
 ## 2. Gemme Some Dependencies
 
 ```
-confa env -f create Conda.yml
+conda env -f create Conda.yml
 ```
 
 [comment]: <> (# Installing Suites)
@@ -111,6 +111,9 @@ conda activate ML
 Comes preinstalled. 
 
 ## 2. Atari
+
+You can use ```AutoROM``` if you accept the license.
+
 ```
 pip install autorom
 AutoROM --accept-license
@@ -136,6 +139,8 @@ And run:
 ```
 pip install git+https://github.com/deepmind/dm_control.git
 ```
+
+Voila.
 
 [comment]: <> (***Voila.***)
 
