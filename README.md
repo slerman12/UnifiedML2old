@@ -19,8 +19,6 @@ To start a train session, once installed:
 python Run.py
 ```
 
-The default agent and task are DQN and Pong respectively:
-
 Defaults:
 
 ```Agent=Agents.DQNAgent```
