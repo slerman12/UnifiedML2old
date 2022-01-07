@@ -127,7 +127,7 @@ SPR Agent in MuJoCo:
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-### Supervised
+### Classification
 
 DQN Agent in CIFAR-10:
 ```
@@ -136,7 +136,7 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 
 *Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets training to standard supervised-only classification.
 
-### Generative 
+### Generative Modeling
 
 Via the ```generate=true``` flag:
 ```
@@ -165,7 +165,7 @@ Also, manual plotting via ```Plot.py```:
 python Plot.py <experiment1> <experiment2> <...>
 ```
 
-## :thinking: More Details
+## :thinking: Docs
 
 ### Repository Structure
 
@@ -188,13 +188,13 @@ All files are designed to be useful for educational purposes in their simplicity
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
-## How is this possible?
+[comment]: <> (### How is this possible?)
 
-**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.
+[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.)
 
-**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
+[comment]: <> (**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
 
-**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.
+[comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
 ## Citing 
