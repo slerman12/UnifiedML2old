@@ -1,21 +1,6 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 # Unified ML
 
-![alt text](evolve.gif)
-
-## Welcome ye, weary Traveller.
-
->Stop here and rest at our local tavern,
->
-> Where all your reinforcements and supervisions be served, a la carte!
-
-**Drink up!** :beers:
-
-
-
-## :open_umbrella: Unified Learning?
-All agents support discrete RL, continuous control, classification, and generative modeling.
-
 ## :runner: Running The Code
 
 To start a train session, once installed:
@@ -33,6 +18,22 @@ Defaults:
 ```task=atari/pong```
 
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
+
+
+![alt text](evolve.gif)
+
+## Welcome ye, weary Traveller.
+
+>Stop here and rest at our local tavern,
+>
+> Where all your reinforcements and supervisions be served, a la carte!
+
+**Drink up!** :beers:
+
+
+
+## :open_umbrella: Unified Learning?
+All agents support discrete RL, continuous control, classification, and generative modeling.
 
 ## :wrench: Setting Up The Environment 
 
