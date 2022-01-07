@@ -129,7 +129,7 @@ DQN Agent in CIFAR10:
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
 
-*Note:* Without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
+*Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
 
 ### Generative Modeling
 
