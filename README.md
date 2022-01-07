@@ -171,7 +171,7 @@ python Run.py task=classify/mnist generate=true
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
 
 
-## :mag: Details
+## :thinking: Details
 
 ### Repository Structure
 
