@@ -115,11 +115,6 @@ python Run.py task=dmc/humanoid_run
 python Run.py task=classify/mnist 
 ```
 
-### *DQN Agent in Atari*
-```
-python Run.py Agent=Agents.DQNAgent task=atari/boxing
-```
-
 ### *DrQV2 Agent in Atari*
 ```
 python Run.py Agent=Agents.DrQV2Agent task=atari/battlezone
