@@ -145,6 +145,7 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
   url={https://openreview.net}
 }
 ```
+If you use any part of this code, **be sure to cite the above!**
 
 ## :point_up: Examples 
 
@@ -217,7 +218,6 @@ python Plot.py <experiment1> <experiment2> <...>
 [comment]: <> (And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**)
 
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
-If you use any part of this code, **be sure to cite the above!**
 
 ## Also
 
