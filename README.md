@@ -173,24 +173,6 @@ python Run.py task=classify/mnist generate=true
 
 [comment]: <> (## :thinking: Details)
 
-## Repository Structure
-
-Agents are self-contained in their respective ```./Agents``` file.
-
-```Run.py``` handles all training, evaluation, and logging.
-
-```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
-
-Hyper-param configurations in ```.\Hyperparams```.
-
-Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
-
-Files are succinct, intuitive, and try to be self-explanatory.
-
-## Desideratum, Pedagogy, and Research
-
-All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
-
 ## Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
@@ -235,6 +217,26 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 ```
 
 **Feel free to cite also the above!**
+
+
+
+## Repository Structure
+
+Agents are self-contained in their respective ```./Agents``` file.
+
+```Run.py``` handles all training, evaluation, and logging.
+
+```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+
+Hyper-param configurations in ```.\Hyperparams```.
+
+Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+
+Files are succinct, intuitive, and try to be self-explanatory.
+
+## Desideratum, Pedagogy, and Research
+
+All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
 
 ## Note
 
