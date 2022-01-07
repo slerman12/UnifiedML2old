@@ -20,7 +20,6 @@ python Run.py
 ```
 
 The default agent and task are DQN and Pong respectively:
-
 ```Agent=Agents.DQNAgent```
 ```task=atari/pong```
 
