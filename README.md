@@ -262,7 +262,7 @@ An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excel
 
 We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated on in our paper.
 
-Then we frame actions as "predictions" in supervised learning, and this makes it easy to optimize a standard classifier or even augment learning with an RL phase, treating reward as negative error.
+Then we frame actions as "predictions" in supervised learning, or even augment learning with an RL phase, treating reward as negative error.
 
 For generative modeling, well, it so happens that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 ## :mortar_board: Pedagogy and Research
