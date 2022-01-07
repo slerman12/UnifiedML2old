@@ -124,7 +124,7 @@ SPR Agent in MuJoCo:
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-### Classification & Generative Modeling
+### Classification
 
 DQN Agent in CIFAR-10:
 ```
@@ -133,9 +133,14 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 
 *Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets training to standard supervised-only classification.
 
-Generative modeling via the ```generate=true``` flag.
+### Generative Modeling
+
+Via the ```generate=true``` flag:
 ```
 python Run.py task=classify/mnist generate=true
+```
+```
+python Run.py task=atari/breakout generate=true
 ```
 
 ### Plotting
