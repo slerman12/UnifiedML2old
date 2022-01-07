@@ -181,6 +181,8 @@ python Run.py task=atari/breakout generate=true
 
 [comment]: <> (## :thinking: Details)
 
+## Agents & Performance
+
 ## Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
