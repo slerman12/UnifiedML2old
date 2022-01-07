@@ -19,13 +19,13 @@ To start a train session, once installed:
 python Run.py
 ```
 
+The default agent and task are DQN and Pong respectively.
+
 Defaults:
 
 ```Agent=Agents.DQNAgent```
 
 ```task=atari/pong```
-
-The default agent and task are DQN and Pong respectively.
 
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
