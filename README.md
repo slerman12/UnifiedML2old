@@ -164,14 +164,6 @@ python Plot.py <experiment1> <experiment2> <...>
 
 ## :thinking: More Details
 
-[comment]: <> (All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.)
-
-[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.)
-
-[comment]: <> (**Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
-
-[comment]: <> (**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.)
-
 ### Repository Structure
 
 Agents are self-contained in their respective ```./Agents``` file.
@@ -190,6 +182,16 @@ All files are designed to be useful for educational purposes in their simplicity
 
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
+
+## Novelty
+All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
+
+**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
+
+**Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
+
+**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
+
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
 ## Citing 
