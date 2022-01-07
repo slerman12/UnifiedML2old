@@ -248,7 +248,7 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism.
 
-## :loop: Note
+## Note
 
 ### If you are only interested in the RL portion, 
 
@@ -262,7 +262,7 @@ Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library.
 
 [comment]: <> (## License)
 
-:copyright:[*MIT License Included.*](https://github.com/agi-init/UnifiedML/MIT_LICENSE)
+[*MIT License Included.*](https://github.com/agi-init/UnifiedML/MIT_LICENSE)
 
 [comment]: <> (## Financing)
 
