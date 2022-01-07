@@ -100,7 +100,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :point_up: Examples
 
-### Experiments
+### Experiment naming
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
