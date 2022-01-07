@@ -158,7 +158,7 @@ Agents are self-contained in their respective ```./Agents``` file.
 
 Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
 
-Most files are succinct, intuitive, and try to be self-explanatory.
+Files are succinct, intuitive, and try to be self-explanatory.
 
 ### Pedagogy and Research
 
