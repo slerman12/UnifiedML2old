@@ -13,13 +13,13 @@
 
 ## :runner: Running The Code 
 
-To run, :exclamation: Once you've got everything set up and installed
+To run, :exclamation: Once you've got everything set up and installed:
 
 ```
 python Run.py
 ```
 
-Let's get to business:
+Let's get to business,
 
 ## :wrench: Setting Up The Environment 
 
