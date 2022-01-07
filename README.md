@@ -13,7 +13,7 @@
 
 ## :runner: Running The Code
 
-To start a train session, once installed/set up:
+To start a train session, once set up/installed:
 
 ```
 python Run.py
