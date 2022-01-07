@@ -16,12 +16,6 @@
 ## :open_umbrella: Unified Learning?
 All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
 
-**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
-
-**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
-
-**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
-
 ## :runner: Running The Code
 
 To start a train session, once installed:
@@ -194,6 +188,13 @@ All files are designed to be useful for educational purposes in their simplicity
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
+## How is this possible?
+
+**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.
+
+**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
+
+**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
 ## Citing 
