@@ -1,8 +1,8 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 
-# Unified ML
+[comment]: <> (# Unified ML)
 
-## :runner: Running The Code
+# :runner: Running The Code
 
 To start a train session, once installed:
 
@@ -31,12 +31,12 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 **Drink up!** :beers:
 
-## :open_umbrella: Unified Learning?
+# :open_umbrella: Unified Learning?
 All agents support discrete and continuous control, classification, and generative modeling.
 
 Let's get to business:
 
-## :wrench: Setting Up The Environment 
+# :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
 
