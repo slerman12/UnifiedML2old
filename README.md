@@ -29,7 +29,7 @@ Defaults:
 
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
-
+Let's get to business:
 
 ## :open_umbrella: Unified Learning?
 All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
@@ -39,8 +39,6 @@ All agents support discrete, continuous, classification, and generative domains,
 **Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
 
 **Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
-
-Let's get to business:
 
 ## :wrench: Setting Up The Environment 
 
