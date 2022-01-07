@@ -72,13 +72,11 @@ All agents support discrete and continuous control, classification, and generati
 
 See example scripts [below](https://github.com/slerman12/UnifiedML2#point_up-example-scripts).
 
-Let's get to business:
-
 # :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
 
-[comment]: <> (Let's get to business:)
+Let's get to business:
 
 ## 1. Clone The Repo
 
