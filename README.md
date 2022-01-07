@@ -268,7 +268,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 # :interrobang: How is this possible
 
-We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our paper.
+We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our [paper](https://arxiv.com).
 
 Then we frame actions as "predictions" in supervised learning. We can even augment supervised learning with an RL phase, treating reward as negative error.
 
