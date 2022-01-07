@@ -53,7 +53,7 @@ conda activate ML
 ## :stadium: Installing The Suites 
 
 ### 1. Classify
-Comes preinstalled.  :smirk:
+Comes preinstalled. :white_check_mark:
 
 ### 2. Atari
 ```
