@@ -32,9 +32,9 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 **Drink up!** :beers:
 
 ## :open_umbrella: Unified Learning?
-All agents support discrete and continuous control, classification, and generative modeling.
-
 Yes.
+
+All agents support discrete and continuous control, classification, and generative modeling.
 
 Let's get to business:
 
@@ -111,12 +111,6 @@ pip install git+https://github.com/deepmind/dm_control.git
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
 [comment]: <> (```./Benchmarking/<experiment>/Plots/```.)
-The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
-
-```
-python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
-```
-
 
 [comment]: <> (### *Atari example:*)
 
@@ -163,7 +157,11 @@ python Run.py task=classify/mnist generate=true
 ```
 python Run.py task=atari/breakout generate=true
 ```
+The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
+```
+python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+```
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
@@ -260,14 +258,14 @@ An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excel
 
 ## :interrobang: How is this possible
 
-We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated on in our paper.
+We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our paper.
 
-Then we frame actions as "predictions" in supervised learning, and minimize error. We can even augment supervised learning with an RL phase, treating reward as negative error.
+Then we frame actions as "predictions" in supervised learning. We can even augment supervised learning with an RL phase, treating reward as negative error.
 
-For generative modeling, well, it so happens that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
+For generative modeling, well, it turns out that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 ## :mortar_board: Pedagogy and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, as well as easily extendable and amenable for prototyping and evaluating new ideas.
+All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
 
 
 ## Note
