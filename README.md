@@ -95,7 +95,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 ```
 ***Voila.***
 
-## :point_up: Exampling The Examples 
+## :point_up: Examples 
 
 [comment]: <> (### *Atari example:*)
 
@@ -204,7 +204,7 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
 If you use any part of this code, **be sure to cite the above!**
 
-[comment]: <> (## Also)
+## Also
 
 An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
