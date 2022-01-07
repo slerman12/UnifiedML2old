@@ -31,6 +31,40 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 **Drink up!** :beers:
 
+
+## :pen: Paper & Citing
+
+For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
+
+[comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
+
+[comment]: <> (### How is this possible?)
+
+[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.)
+
+[comment]: <> (**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
+
+[comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
+
+[comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
+
+[comment]: <> (## Citing)
+
+```
+@inproceedings{yarats2021image,
+  title={bla},
+  author={Sam Lerman and Chenliang Xu},
+  booktitle={bla},
+  year={2022},
+  url={https://openreview.net}
+}
+```
+If you use any part of this code, **be sure to cite the above!**
+
+[comment]: <> (### Also)
+
+An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excellent [DrQV2 repo](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
+
 ## :open_umbrella: Unified Learning?
 Yes.
 
@@ -188,39 +222,6 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 [comment]: <> (## :thinking: Details)
 
 ## :bar_chart: Agents & Performance
-
-## :pen: Paper & Citing
-
-For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
-
-[comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
-
-[comment]: <> (### How is this possible?)
-
-[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.)
-
-[comment]: <> (**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
-
-[comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
-
-[comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
-
-[comment]: <> (## Citing)
-
-```
-@inproceedings{yarats2021image,
-  title={bla},
-  author={Sam Lerman and Chenliang Xu},
-  booktitle={bla},
-  year={2022},
-  url={https://openreview.net}
-}
-```
-If you use any part of this code, **be sure to cite the above!**
-
-[comment]: <> (### Also)
-
-An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excellent [DrQV2 repo](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
 [comment]: <> (```)
 
