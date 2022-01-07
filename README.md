@@ -264,9 +264,11 @@ All files are designed to be useful for educational purposes in their simplicity
 
 ## :interrobang: How is this possible
 
-We use our new creator-DPG framework to unify RL discrete and continuous action spaces, then we frame actions as "predictions" in supervised learning, and treat classification datasets as environment "suites."
+We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated on in our paper.
 
-For generative modeling, well, it so happens that the difference between a Generator-Discriminator and an Actor-Critic is rather nominal.
+Then we frame actions as "predictions" in supervised learning, and treat classification datasets as environmental "suites." These yield labels, but RL can also be applied by reframing reward as negative classification error (or accuracy)...
+
+For generative modeling, well, it so happens that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 
 ## Note
 
