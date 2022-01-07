@@ -100,6 +100,17 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :point_up: Examples
 
+### Experiments
+
+[comment]: <> (Plots are automatically generated during training and stored in:)
+
+[comment]: <> (```./Benchmarking/<experiment>/Plots/```.)
+The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
+
+```
+python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+```
+
 
 [comment]: <> (### *Atari example:*)
 
@@ -144,17 +155,6 @@ Via the ```generate=true``` flag:
 python Run.py task=classify/mnist generate=true
 ```
 
-
-### Plotting
-
-[comment]: <> (Plots are automatically generated during training and stored in:)
-
-[comment]: <> (```./Benchmarking/<experiment>/Plots/```.)
-The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
-
-```
-python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
-```
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
