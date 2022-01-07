@@ -26,8 +26,6 @@ python Run.py
 
 [comment]: <> (The default agent and task are DQN and Pong respectively.)
 
-Hyper-param configurations in ```.\Hyperparams```.
-
 Defaults:
 
 ```Agent=Agents.DQNAgent```
@@ -177,6 +175,8 @@ Agents are self-contained in their respective ```./Agents``` file.
 ```Run.py``` handles all training, evaluation, and logging.
 
 ```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+
+Hyper-param configurations in ```.\Hyperparams```.
 
 Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
 
