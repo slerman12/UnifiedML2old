@@ -244,7 +244,7 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-## :trident: Desideratum, Pedagogy, and Research
+## :pensive: Desideratum, Pedagogy, and Research
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism.
 
