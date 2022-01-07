@@ -14,9 +14,7 @@
 
 
 ## :open_umbrella: Unified Learning?
-All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
-
-Whaaaat.
+All agents support discrete RL, continuous control, classification, and generative modeling.
 
 ## :runner: Running The Code
 
