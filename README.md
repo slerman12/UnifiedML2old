@@ -12,7 +12,7 @@
 **Drink up!** :beers:
 
 ## Unified Learning?
-**All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.**
+All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
 
 **RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
 
