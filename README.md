@@ -171,9 +171,9 @@ python Run.py task=classify/mnist generate=true
 [comment]: <> (And if you use any part of this code, **be sure to cite the above!**)
 
 
-## :thinking: Details
+[comment]: <> (## :thinking: Details)
 
-### Repository Structure
+## Repository Structure
 
 Agents are self-contained in their respective ```./Agents``` file.
 
@@ -187,11 +187,11 @@ Architectures, losses, probability distributions, and simple helpers defined in 
 
 Files are succinct, intuitive, and try to be self-explanatory.
 
-### Desideratum, Pedagogy, and Research
+## Desideratum, Pedagogy, and Research
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
 
-### Paper
+## Paper
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
