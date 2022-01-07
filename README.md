@@ -26,6 +26,8 @@ python Run.py
 
 [comment]: <> (The default agent and task are DQN and Pong respectively.)
 
+Hyper-params in ```.\hyperparams```.
+
 Defaults:
 
 ```Agent=Agents.DQNAgent```
