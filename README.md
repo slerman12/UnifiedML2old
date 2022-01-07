@@ -139,9 +139,12 @@ Via the ```generate=true``` flag:
 ```
 python Run.py task=classify/mnist generate=true
 ```
-```
-python Run.py task=atari/breakout generate=true
-```
+
+[comment]: <> (```)
+
+[comment]: <> (python Run.py task=atari/breakout generate=true)
+
+[comment]: <> (```)
 
 ### Plotting
 Plots are automatically generated during training and stored in:
@@ -159,15 +162,15 @@ Also, manual plotting via ```Plot.py```:
 python Plot.py <experiment1> <experiment2> <...>
 ```
 
-## :thinking: More Deets
+## :thinking: More Details
 
-All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
+[comment]: <> (All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.)
 
-**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
+[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.)
 
-**Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
+[comment]: <> (**Classification** is treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
 
-**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
+[comment]: <> (**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.)
 
 ### Repository Structure
 
