@@ -97,10 +97,13 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :point_up: Exampling The Examples 
 
-### *Atari example:*
-```
-python Run.py task=atari/breakout
-```
+[comment]: <> (### *Atari example:*)
+
+[comment]: <> (```)
+
+[comment]: <> (python Run.py task=atari/breakout)
+
+[comment]: <> (```)
 
 ### *MuJoCo example:* 
 ```
@@ -151,7 +154,7 @@ python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10
 ```
 
-### *Generative model using MNIST*
+### *Generative modeling using MNIST*
 ```
 python Run.py task=classify/mnist generate=true
 ```
