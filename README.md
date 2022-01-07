@@ -181,7 +181,7 @@ python Run.py task=atari/breakout generate=true
 
 [comment]: <> (## :thinking: Details)
 
-## Agents & Performance
+## :bar_chart: Agents & Performance
 
 ## Paper & Citing
 
