@@ -262,7 +262,7 @@ Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library.
 
 [comment]: <> (## License)
 
-[*MIT License Included.*](https://github.com/agi-init/UnifiedML/MIT_LICENSE)
+:copyright:[*MIT License Included.*](https://github.com/agi-init/UnifiedML/MIT_LICENSE)
 
 [comment]: <> (## Financing)
 
