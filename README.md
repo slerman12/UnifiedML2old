@@ -1,8 +1,8 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 
-# Unified ML
+[comment]: <> (# Unified ML)
 
-## :runner: Running The Code
+# :runner: Running The Code
 
 To start a train session, once installed:
 
@@ -32,7 +32,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 **Drink up!** :beers:
 
 
-## :pen: Paper & Citing
+# :pen: Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
@@ -65,27 +65,27 @@ If you use any part of this code, **be sure to cite the above!**
 
 An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excellent [DrQV2 repo](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
-## :open_umbrella: Unified Learning?
+# :open_umbrella: Unified Learning?
 Yes.
 
 All agents support discrete and continuous control, classification, and generative modeling.
 
 Let's get to business:
 
-## :wrench: Setting Up The Environment 
+# :wrench: Setting Up The Environment 
 
 [comment]: <> (Pretty simple:)
 
 [comment]: <> (Let's get to business:)
 
-### 1. Clone The Repo
+## 1. Clone The Repo
 
 ```
 git clone github.com/agi-init/UnifiedML
 cd UnifiedML
 ```
 
-### 2. Gemme Some Dependencies
+## 2. Gemme Some Dependencies
 
 ```
 confa env -f create Conda.yml
@@ -93,7 +93,7 @@ confa env -f create Conda.yml
 
 [comment]: <> (# Installing Suites)
 
-### 3. Activate Your Conda Env.
+## 3. Activate Your Conda Env.
 
 ```
 conda activate ML
@@ -103,14 +103,14 @@ conda activate ML
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
-## :stadium: Installing The Suites 
+# :stadium: Installing The Suites 
 
-### 1. Classify
+## 1. Classify
 
 [comment]: <> (Comes preinstalled.  :smirk:)
 Comes preinstalled. 
 
-### 2. Atari
+## 2. Atari
 ```
 pip install autorom
 AutoROM --accept-license
@@ -121,7 +121,7 @@ mkdir Atari_ROMS
 AutoROM --install-dir ./Atari_ROMS
 ale-import-roms ./ATARI_ROMS
 ```
-### 3. MuJoCo
+## 3. MuJoCo
 Download MuJoCo from here: https://mujoco.org/download.
 
 Make a ```.mujoco``` folder in your home directory:
@@ -139,7 +139,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (***Voila.***)
 
-## :point_up: Example scripts
+# :point_up: Example scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
@@ -221,7 +221,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (## :thinking: Details)
 
-## :bar_chart: Agents & Performance
+# :bar_chart: Agents & Performance
 
 [comment]: <> (```)
 
@@ -259,19 +259,19 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-## :interrobang: How is this possible
+# :interrobang: How is this possible
 
 We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our paper.
 
 Then we frame actions as "predictions" in supervised learning. We can even augment supervised learning with an RL phase, treating reward as negative error.
 
 For generative modeling, well, it turns out that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
-## :mortar_board: Pedagogy and Research
+# :mortar_board: Pedagogy and Research
 
 All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
 
 
-## Note
+# Note
 
 ### If you are only interested in the RL portion, 
 
