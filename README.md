@@ -98,6 +98,54 @@ pip install git+https://github.com/deepmind/dm_control.git
 ```
 ***Voila.***
 
+
+## :thinking: Docs
+
+### Repository Structure
+
+Agents are self-contained in their respective ```./Agents``` file.
+
+```Run.py``` handles all training, evaluation, and logging.
+
+```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+
+Hyper-param configurations in ```.\Hyperparams```.
+
+Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+
+Files are succinct, intuitive, and try to be self-explanatory.
+
+### Desideratum, Pedagogy, and Research
+
+All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
+
+### Paper
+
+For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
+
+[comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
+
+[comment]: <> (### How is this possible?)
+
+[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.)
+
+[comment]: <> (**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
+
+[comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
+
+[comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
+## Citing
+
+```
+@inproceedings{yarats2021image,
+  title={bla},
+  author={Sam Lerman and Chenliang Xu},
+  booktitle={bla},
+  year={2022},
+  url={https://openreview.net}
+}
+```
+
 ## :point_up: Examples 
 
 [comment]: <> (### *Atari example:*)
@@ -165,52 +213,6 @@ Also, manual plotting via ```Plot.py```:
 python Plot.py <experiment1> <experiment2> <...>
 ```
 
-## :thinking: Docs
-
-### Repository Structure
-
-Agents are self-contained in their respective ```./Agents``` file.
-
-```Run.py``` handles all training, evaluation, and logging.
-
-```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
-
-Hyper-param configurations in ```.\Hyperparams```.
-
-Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
-
-Files are succinct, intuitive, and try to be self-explanatory.
-
-### Desideratum, Pedagogy, and Research
-
-All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
-
-### Paper
-
-For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
-
-[comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
-
-[comment]: <> (### How is this possible?)
-
-[comment]: <> (**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete action spaces.)
-
-[comment]: <> (**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.)
-
-[comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
-
-[comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
-## Citing
-
-```
-@inproceedings{yarats2021image,
-  title={bla},
-  author={Sam Lerman and Chenliang Xu},
-  booktitle={bla},
-  year={2022},
-  url={https://openreview.net}
-}
-```
 
 [comment]: <> (And if you use any part of this code — even look at it, or think about it — **be sure to cite the above!**)
 
