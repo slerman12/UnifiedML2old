@@ -105,7 +105,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (```)
 
-### Reinforcement learning
+### Reinforcement Learning
 
 Humanoid example: 
 ```
@@ -122,6 +122,8 @@ SPR Agent in MuJoCo:
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
+All agents support discrete and continuous control.
+
 ### Classification
 
 DQN Agent in CIFAR10:
@@ -131,7 +133,7 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 
 *Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
 
-### Generative modeling
+### Generative Modeling
 
 Generative modeling can be achieved just by adding the ``generate=true``` flag.
 ```
