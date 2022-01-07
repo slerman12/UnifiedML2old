@@ -266,7 +266,7 @@ All files are designed to be useful for educational purposes in their simplicity
 
 We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated on in our paper.
 
-Then we frame actions as "predictions" in supervised learning, and treat classification as an environmental "suite." 
+Then we frame actions as "predictions" in supervised learning, and this makes it easy to optimize a standard classifier or even augment learning with an RL phase. 
 
 For generative modeling, well, it so happens that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 
