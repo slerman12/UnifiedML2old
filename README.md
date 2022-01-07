@@ -153,7 +153,7 @@ python Run.py task=classify/mnist generate=true
 The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
 ```
-python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 ```
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
