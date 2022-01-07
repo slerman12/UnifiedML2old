@@ -11,6 +11,17 @@
 
 **Drink up!** :beers:
 
+
+
+## :open_umbrella: Unified Learning?
+All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
+
+**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
+
+**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
+
+**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
+
 ## :runner: Running The Code
 
 To start a train session, once installed:
@@ -30,15 +41,6 @@ Defaults:
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 Let's get to business:
-
-## :open_umbrella: Unified Learning?
-All agents support discrete, continuous, classification, and generative domains, for all suites and tasks.
-
-**RL**: All agents implement our "Creator"/"DPG" framework to support both continuous and discrete contol.
-
-**Classification**: treated as a reinforcement learning suite called "Classify" akin to Atari or DMC, with datasets re-framed as tasks that yield labels rather than rewards.
-
-**Generative modeling** reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple reformulation.
 
 ## :wrench: Setting Up The Environment 
 
