@@ -25,7 +25,7 @@ The default agent and task are DQN and Pong respectively:
 python Run.py Agent=Agents.DQNAgent task=atari/pong
 ```
 
-Plots, logs, and videos stored in: ```./Benchmarking```.
+Plots, logs, and videos stored in ```./Benchmarking```.
 
 Let's get to business:
 
