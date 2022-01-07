@@ -148,6 +148,8 @@ It does with RL to this library what PyCharm does with Python to IntelliJ, i.e.,
 
 <br>
 
+## License
+
 [[*MIT License Included*](https://github.com/agi-init/UnifiedML/MIT_LICENSE)]
 
 [comment]: <> (## Financing)
