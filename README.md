@@ -2,7 +2,7 @@
 # Unified ML
 
 ## :open_umbrella: Unified Learning?
-All agents support discrete RL, continuous control, classification, and generative modeling.
+All agents support discrete and continuous control, classification, and generative modeling.
 
 ## :runner: Running The Code
 
@@ -31,7 +31,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 >
 > Where all your reinforcements and supervisions be served, a la carte!
 
-[comment]: <> (**Drink up!** :beers:)
+**Drink up!** :beers:
 
 ## :wrench: Setting Up The Environment 
 
@@ -244,9 +244,9 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-## :pensive: Desideratum, Pedagogy, and Research
+## :mortar_board: Pedagogy and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping thanks to their transparency and minimalism.
+All files are designed to be useful for educational purposes in their simplicity and structure, and research/prototyping.
 
 ## Note
 
