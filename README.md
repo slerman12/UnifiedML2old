@@ -183,7 +183,7 @@ python Run.py task=atari/breakout generate=true
 
 ## :bar_chart: Agents & Performance
 
-## :scroll: Paper & Citing
+## :pen: Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
