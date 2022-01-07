@@ -140,7 +140,7 @@ An acknowledgment to:
 
 ### If you are only interested in the RL portion, 
 
-Check out our [UnifiedRL](https:github.com/agi-init/UnifiedRL) library. 
+Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library. 
 
 It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
 
