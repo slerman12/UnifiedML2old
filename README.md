@@ -191,7 +191,7 @@ Files are succinct, intuitive, and try to be self-explanatory.
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
 
-## Paper
+## Paper & Citing
 
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
@@ -206,7 +206,8 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 [comment]: <> (**Generative** modeling reframes the Actor-Critic as a Generator-Discriminator, a surprisingly simple RL-GAN unification.)
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
-## Citing
+
+[comment]: <> (## Citing)
 
 ```
 @inproceedings{yarats2021image,
