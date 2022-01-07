@@ -13,7 +13,7 @@
 
 ## :runner: Running The Code 
 
-To run, once you've got everything set up and installed
+To run, once you've got everything set up and installed,
 
 ```
 python Run.py
