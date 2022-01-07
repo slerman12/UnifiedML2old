@@ -104,6 +104,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 [comment]: <> (python Run.py task=atari/breakout)
 
 [comment]: <> (```)
+All agents support all suites, discrete and continuous control.
 
 ### Reinforcement Learning
 
@@ -121,8 +122,6 @@ SPR Agent in MuJoCo:
 ```
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
-
-All agents support all suites, discrete and continuous control.
 
 ### Classification
 
