@@ -25,6 +25,8 @@ The default agent and task are DQN and Pong respectively:
 python Run.py Agent=Agents.DQNAgent task=atari/pong
 ```
 
+Plotting/Benchmarking in ```./Benchmarking```.
+
 Let's get to business:
 
 ## :wrench: Setting Up The Environment 
