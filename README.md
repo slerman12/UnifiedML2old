@@ -9,7 +9,7 @@
 >
 > Where all your reinforcements and supervisions be served, a la carte!
 
-**Drink up!** :beers:
+**Drink up!** :beers: And make merry!
 
 ## :runner: Running The Code 
 
