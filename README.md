@@ -212,21 +212,29 @@ For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 ```
 If you use any part of this code, **be sure to cite the above!**
 
-### Also
+[comment]: <> (### Also)
 
-An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
+[comment]: <> (An acknowledgment to [[Denis Yarats]&#40;https://cs.nyu.edu/~dy1042/&#41;], whose excellent [**DrQV2 repo**]&#40;https://github.com/facebookresearch/drqv2&#41; inspired much of this library and its design.)
 
-```
-@inproceedings{yarats2021image,
-  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
-  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},
-  booktitle={International Conference on Learning Representations},
-  year={2021},
-  url={https://openreview.net/forum?id=GY6-6sTvGaf}
-}
-```
+[comment]: <> (```)
 
-**Feel free to cite also the above!**
+[comment]: <> (@inproceedings{yarats2021image,)
+
+[comment]: <> (  title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},)
+
+[comment]: <> (  author={Denis Yarats and Ilya Kostrikov and Rob Fergus},)
+
+[comment]: <> (  booktitle={International Conference on Learning Representations},)
+
+[comment]: <> (  year={2021},)
+
+[comment]: <> (  url={https://openreview.net/forum?id=GY6-6sTvGaf})
+
+[comment]: <> (})
+
+[comment]: <> (```)
+
+[comment]: <> (**Feel free to cite also the above!**)
 
 
 
