@@ -122,13 +122,13 @@ Plots are automatically generated during training and stored in:
 python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 ```
 
-The ```plot_per_steps=``` flag can configure the training step interval at which plots are generated.
+The ```plot_per_steps=``` flag can be used to configure the training step frequency for plotting.
 
-The ```experiment=``` flag can differentiate distinct experiments.
+The ```experiment=``` flag can differentiate distinct experiment data files.
 
-You can optionally control which experiments' data is automatically plotted with the ```plotting.plot_experiments=``` flag, as above.
+You can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
-Manual plotting is also available via the ```Plot.py``` file:
+Manual plotting via ```Plot.py```:
 
 ```
 python Plot.py <experiment1> <experiment2> <...>
