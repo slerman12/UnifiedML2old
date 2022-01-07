@@ -25,6 +25,7 @@ Defaults:
 
 ```task=atari/pong```
 
+The default agent and task are DQN and Pong respectively.
 
 Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
