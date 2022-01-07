@@ -130,7 +130,7 @@ Generative modeling using MNIST:
 python Run.py task=classify/mnist generate=true
 ```
 
-## :thinking: More Deets
+## :thinking: More Docs
 
 ### Plotting
 Plots are automatically generated during training and stored in: 
