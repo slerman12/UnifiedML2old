@@ -266,7 +266,7 @@ All files are designed to be useful for educational purposes in their simplicity
 
 We use our new creator-DPG framework to unify RL discrete and continuous action spaces, then we frame actions as "predictions" in supervised learning, and treat classification datasets as environment "suites."
 
-For generative modeling, well, it turns it the difference between a Generator-Discriminator and an Actor-Critic is rather nominal.
+For generative modeling, well, it so happens that the difference between a Generator-Discriminator and an Actor-Critic is rather nominal.
 
 ## Note
 
