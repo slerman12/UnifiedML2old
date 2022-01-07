@@ -120,7 +120,7 @@ SPR Agent in MuJoCo:
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-DQN Agent in CIFAR10 Classification:
+DQN Agent in CIFAR10:
 ```
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10
 ```
