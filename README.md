@@ -59,7 +59,7 @@ confa env -f create Conda.yml
 
 [comment]: <> (# Installing Suites)
 
-### 3. Make sure your conda env is activated.
+### 3. Activate Your Conda Env.
 
 ```
 conda activate ML
