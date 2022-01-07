@@ -105,12 +105,12 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (```)
 
-### *MuJoCo example:* 
+### *Humanoid example:* 
 ```
 python Run.py task=dmc/humanoid_run
 ```
 
-### *Classify example:* 
+### *MNIST example:* 
 ```
 python Run.py task=classify/mnist 
 ```
@@ -130,7 +130,7 @@ python Run.py Agent=Agents.DrQV2Agent task=atari/battlezone
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
 
-### *DQN Agent in Classification*
+### *DQN Agent in CIFAR10 Classification*
 ```
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10
 ```
