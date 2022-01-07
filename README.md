@@ -115,7 +115,7 @@ python Run.py task=dmc/humanoid_run
 python Run.py task=classify/mnist 
 ```
 
-## :thinking: More Examples
+## :thinking: More Docs
 
 ### Plotting
 Plots are automatically generated during training and stored in: 
