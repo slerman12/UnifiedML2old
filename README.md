@@ -2,6 +2,8 @@
 
 [comment]: <> (# Unified ML)
 
+![alt text](UnifiedML_Logo1.png)
+
 # :runner: Running The Code
 
 To start a train session, once installed:
