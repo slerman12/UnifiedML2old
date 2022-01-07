@@ -185,6 +185,8 @@ Files are succinct, intuitive, and try to be self-explanatory.
 
 All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism of implementation.
 
+### Paper
+
 For detailed documentation, check out our [[**Papér**](https://arxiv.com)].
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
