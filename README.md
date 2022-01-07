@@ -13,7 +13,7 @@
 
 ## :wrench: Setting Up The Environment 
 
-:muscle: Let's get to business :muscle: 
+:muscle: Let's get to business 
 
 [comment]: <> (Pretty simple:)
 
