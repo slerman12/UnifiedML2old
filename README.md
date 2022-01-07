@@ -105,7 +105,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (***Voila.***)
 
-## :point_up: Examples
+## :point_up: Example Scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
