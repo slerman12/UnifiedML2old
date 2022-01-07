@@ -70,6 +70,8 @@ Yes.
 
 All agents support discrete and continuous control, classification, and generative modeling.
 
+See example scripts below.
+
 Let's get to business:
 
 # :wrench: Setting Up The Environment 
