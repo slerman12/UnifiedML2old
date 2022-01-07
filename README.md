@@ -246,7 +246,7 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 ## :mortar_board: Pedagogy and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, and research/prototyping.
+All files are designed to be useful for educational purposes in their simplicity and structure, as well as easily extendable and amenable for research/prototyping.
 
 ## Note
 
