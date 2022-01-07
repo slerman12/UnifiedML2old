@@ -246,7 +246,7 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 ## :pensive: Desideratum, Pedagogy, and Research
 
-All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping in their transparency and minimalism.
+All files are designed to be useful for educational purposes in their simplicity and structure, and research advancements/prototyping thanks to their transparency and minimalism.
 
 ## Note
 
