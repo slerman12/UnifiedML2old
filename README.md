@@ -99,7 +99,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 ***Voila.***
 
 
-## :thinking: Docs
+## :thinking: Details
 
 ### Repository Structure
 
