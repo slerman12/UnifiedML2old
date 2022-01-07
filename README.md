@@ -76,7 +76,7 @@ See example scripts [below](https://github.com/slerman12/UnifiedML2#point_up-exa
 
 [comment]: <> (Pretty simple:)
 
-Let's get to business:
+Let's get to business.
 
 ## 1. Clone The Repo
 
