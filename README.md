@@ -102,7 +102,8 @@ And run:
 ```
 pip install git+https://github.com/deepmind/dm_control.git
 ```
-***Voila.***
+
+[comment]: <> (***Voila.***)
 
 ## :point_up: Examples
 
