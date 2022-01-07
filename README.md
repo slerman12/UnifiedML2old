@@ -9,11 +9,11 @@
 >
 > Where all your reinforcements and supervisions be served, a la carte!
 
-[comment]: <> (**Drink up!** :beers:)
+**Drink up!** :beers:
 
 ## :runner: Running The Code 
 
-To run, :exclamation: Once you've got everything set up and installed
+To run, once you've got everything set up and installed
 
 ```
 python Run.py
@@ -53,7 +53,7 @@ conda activate ML
 ## :stadium: Installing The Suites 
 
 ### 1. Classify
-:white_check_mark: Comes preinstalled
+Comes preinstalled.  :smirk:
 
 ### 2. Atari
 ```
