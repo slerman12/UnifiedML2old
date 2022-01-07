@@ -220,19 +220,19 @@ An acknowledgment to [[Denis Yarats](https://cs.nyu.edu/~dy1042/)], whose excell
 
 
 
-## Repository Structure
+[comment]: <> (## Repository Structure)
 
-Agents are self-contained in their respective ```./Agents``` file.
+[comment]: <> (Agents are self-contained in their respective ```./Agents``` file.)
 
-```Run.py``` handles all training, evaluation, and logging.
+[comment]: <> (```Run.py``` handles all training, evaluation, and logging.)
 
-```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+[comment]: <> (```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.)
 
-Hyper-param configurations in ```.\Hyperparams```.
+[comment]: <> (Hyper-param configurations in ```.\Hyperparams```.)
 
-Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+[comment]: <> (Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.)
 
-Files are succinct, intuitive, and try to be self-explanatory.
+[comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
 ## Desideratum, Pedagogy, and Research
 
