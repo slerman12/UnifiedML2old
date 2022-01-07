@@ -105,7 +105,7 @@ conda activate ML
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
-# :stadium: Installing The Suites 
+# :joystick: Installing The Suites 
 
 ## 1. Classify
 
