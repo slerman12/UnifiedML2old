@@ -105,7 +105,7 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 [comment]: <> (```)
 
-### Reinforcement Learning
+### Reinforcement learning
 
 Humanoid example: 
 ```
@@ -131,7 +131,7 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 
 *Note:* without ```RL=false```, additional RL would augment the supervised learning by treating reward as negative error. ```RL=false``` sets the training to standard supervised-only classification.
 
-### Generative Modeling
+### Generative modeling
 
 Generative modeling can be achieved just by adding the ``generate=true``` flag.
 ```
