@@ -79,11 +79,17 @@ pip install git+https://github.com/deepmind/dm_control.git
 
 ## :runner: Running The Code
 
-To run, once you've got everything set up and installed
+To start running a train session:
 
 ```
 python Run.py
 ```
+
+The default agent and task are DQN and Pong respectively:
+
+```Agent=Agents.DQNAgent```
+
+```task=atari/pong```
 
 ## :point_up: Exampling The Examples 
 
@@ -99,10 +105,56 @@ python Run.py task=dmc/humanoid_run
 
 ### *Classify example:* 
 ```
-python Run.py task=classify/mnist
+python Run.py task=classify/mnist 
 ```
 
 ## :thinking: More Examples
+
+### Plotting
+Plots are automatically generated during training and stored in: 
+```./Benchmarking/<experiment>/Plots/```.
+
+```
+python Run.py plot_per_steps=5000 experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
+```
+
+The ```plot_per_steps=``` flag can configure the training step interval at which plots are generated.
+
+The ```experiment=``` flag can differentiate distinct experiments.
+
+You can optionally control which experiments' data is automatically plotted with the ```plotting.plot_experiments=``` flag, as above.
+
+Manual plotting is also available via the ```Plot.py``` file:
+
+```
+python Plot.py <experiment1> <experiment2> <...>
+```
+
+
+### *DQN Agent in Atari*
+```
+python Run.py Agent=Agents.DQNAgent task=atari/boxing
+```
+
+### *DrQV2 Agent in Atari*
+```
+python Run.py Agent=Agents.DrQV2Agent task=atari/battlezone
+```
+
+### *SPR Agent in MuJoCo*
+```
+python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
+```
+
+### *DQN Agent in Classification*
+```
+python Run.py Agent=Agents.DQNAgent task=classify/cifar10
+```
+
+### *Generative model using MNIST*
+```
+python Run.py task=classify/mnist generate=true
+```
 
 [comment]: <> (## Citing The Hard Worker Who Labored For You Day And Mostly Day)
 ## Citing 
