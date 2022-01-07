@@ -220,7 +220,7 @@ If you use any part of this code, **be sure to cite the above!**
 
 [comment]: <> (### Also)
 
-[comment]: <> (An acknowledgment to [[Denis Yarats]&#40;https://cs.nyu.edu/~dy1042/&#41;], whose excellent [**DrQV2 repo**]&#40;https://github.com/facebookresearch/drqv2&#41; inspired much of this library and its design.)
+An acknowledgment to Denis Yarats, whose excellent [**DrQV2 repo**](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
 [comment]: <> (```)
 
