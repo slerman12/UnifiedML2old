@@ -142,7 +142,7 @@ And run:
 pip install git+https://github.com/deepmind/dm_control.git
 ```
 
-to install DMC.
+to finish the install.
 
 Voila.
 
