@@ -1,15 +1,15 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 
 [comment]: <> (# Unified ML)
-
-![alt text](UnifiedML_Logo1.png)
-
 # Quick links?
 
 - [Citing](https://github.com/slerman12/UnifiedML2#pen-paper--citing)
 - [Setup and install](#-wrench--setting-up-the-environment)
 - [Examples](#-mag--example-scripts)
 - [Agents and performances](#-bar-chart--agents---performance)
+
+
+![alt text](UnifiedML_Logo1.png)
 
 # :runner: Running The Code
 
