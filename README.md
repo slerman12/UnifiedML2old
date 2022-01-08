@@ -2,17 +2,18 @@
 
 [comment]: <> (# Unified ML)
 
-![alt text](UnifiedML_Logo1.png)
-
 [comment]: <> (# Quick links?)
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-[comment]: <> (- [Setup and install]&#40;#-wrench--setting-up-the-environment&#41;)
+- [Setup](#-wrench--setting-up-the-environment)
 
-[comment]: <> (- [Examples]&#40;#-mag--example-scripts&#41;)
+- [Examples](#-mag--example-scripts)
 
-[comment]: <> (- [Agents and performances]&#40;#-bar-chart--agents---performance&#41;)
+- [Agents and performances](#-bar-chart--agents---performance)
+
+
+![alt text](UnifiedML_Logo1.png)
 
 # :runner: Running The Code
 
