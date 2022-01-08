@@ -6,9 +6,10 @@
 
 # Quick links?
 
-- [Setup & Install](#-wrench--setting-up-the-environment)
+- [Citing](#-pen--paper---citing)
+- [Setup and install](#-wrench--setting-up-the-environment)
 - [Examples](#-mag--example-scripts)
-- [Agents & Performances](#-bar-chart--agents---performance)
+- [Agents and performances](#-bar-chart--agents---performance)
 
 # :runner: Running The Code
 
