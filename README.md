@@ -16,7 +16,7 @@
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-# :mage: Let The Journey Begin
+# :runner: Let The Journey Begin
 
 To start a train session, once installed:
 
