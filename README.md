@@ -1,7 +1,7 @@
 [comment]: <> (# Unified ML, unified in one place, ml, it's so unified )
 
 [comment]: <> (# Unified ML)
-# Quick links?
+# Quick links
 
 - [Citing](https://github.com/slerman12/UnifiedML2#pen-paper--citing)
 - [Setup and install](#-wrench--setting-up-the-environment)
