@@ -112,7 +112,7 @@ conda activate ML
 [comment]: <> (Comes preinstalled.  :smirk:)
 Comes preinstalled. 
 
-## 2. Atari
+## 2. Atari Arcade
 
 You can use ```AutoROM``` if you accept the license.
 
