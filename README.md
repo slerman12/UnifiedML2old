@@ -243,7 +243,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (## :thinking: Details)
 
-# :bar_chart: Agents & Performances
+# :horse_racing: Agents & Performances
 
 [comment]: <> (```)
 
