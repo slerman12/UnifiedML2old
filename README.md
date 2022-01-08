@@ -265,15 +265,15 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 [comment]: <> (**Feel free to cite also the above!**)
 
 # :paperclips: Repository Structure
-Agents are self-contained in their respective ```./Agents``` file.
+* Agents are self-contained in their respective ```./Agents``` file.
 
-```Run.py``` handles all training, evaluation, and logging.
+* ```Run.py``` handles all training, evaluation, and logging.
 
-```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
+* ```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
 
-Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+* Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
 
-Hyper-param default configurations in ```.\Hyperparams```.
+* Hyper-param default configurations in ```.\Hyperparams```.
 
 Files are succinct, intuitive, and try to be self-explanatory.
 
