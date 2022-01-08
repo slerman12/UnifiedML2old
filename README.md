@@ -16,7 +16,7 @@
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-# :runner: Running in a nutshell
+# :runner: Running Quick-Dive
 
 To start a train session, once installed:
 
