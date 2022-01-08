@@ -73,7 +73,7 @@ For detailed documentation, see our [**:scroll: Papér**](https://arxiv.com)
   url={https://openreview.net}
 }
 ```
-If you use any part of this code, **be sure to cite the above!**
+**If you use any part of this code, be sure to cite the above!**
 
 [comment]: <> (### Also)
 
