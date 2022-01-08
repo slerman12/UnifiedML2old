@@ -16,7 +16,7 @@
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-# :mage: Let The Journey Begin
+# :runner: Let The Journey Begin
 
 To start a train session, once installed:
 
@@ -48,7 +48,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 # :pen: Paper & Citing
 
-For detailed documentation, see our [paper](https://arxiv.com).
+For detailed documentation, see our [[**Papér**](https://arxiv.com)].
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
