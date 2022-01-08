@@ -126,7 +126,7 @@ mkdir Atari_ROMS
 AutoROM --install-dir ./Atari_ROMS
 ale-import-roms ./ATARI_ROMS
 ```
-## 3. MuJoCo
+## 3. DeepMind Control
 Download MuJoCo from here: https://mujoco.org/download.
 
 Make a ```.mujoco``` folder in your home directory:
@@ -174,7 +174,7 @@ DrQV2 Agent in Atari:
 python Run.py Agent=Agents.DrQV2Agent task=atari/battlezone
 ```
 
-SPR Agent in MuJoCo:
+SPR Agent in DeepMind Control:
 ```
 python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ```
