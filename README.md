@@ -4,17 +4,18 @@
 
 
 
+- [Setup](#-wrench--setting-up-the-environment)
+
+- [Examples](#-mag--example-scripts)
+
+- [Agents and performances](#-bar-chart--agents---performance)
+
 ![alt text](UMLpretty.png)
 
 [comment]: <> (# Quick links?)
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-- [Setup](#-wrench--setting-up-the-environment)
-
-- [Examples](#-mag--example-scripts)
-
-- [Agents and performances](#-bar-chart--agents---performance)
 # :runner: Running The Code
 
 To start a train session, once installed:
