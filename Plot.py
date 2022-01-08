@@ -52,7 +52,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
     csv_names = glob.glob('./Benchmarking/**/*.csv', recursive=True)
 
     csv_list = []
-    max_csv_list = []  # Unused
+    # max_csv_list = []  # Unused
     found_suite_tasks = set()
     found_suites = set()
 
@@ -107,7 +107,7 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         return
 
     df = pd.concat(csv_list, ignore_index=True)
-    max_df = pd.concat(max_csv_list, ignore_index=True)  # Unused
+    # max_df = pd.concat(max_csv_list, ignore_index=True)  # Unused
     found_suite_tasks = np.sort(list(found_suite_tasks))
 
     # PLOTTING (tasks)
