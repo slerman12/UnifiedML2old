@@ -264,14 +264,6 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (**Feel free to cite also the above!**)
 
-# :interrobang: How is this possible
-
-We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our [paper](https://arxiv.com).
-
-Then we frame actions as "predictions" in supervised learning. We can even augment supervised learning with an RL phase, treating reward as negative error.
-
-For generative modeling, well, it turns out that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
-
 # :paperclips: Repository Structure
 Agents are self-contained in their respective ```./Agents``` file.
 
@@ -284,6 +276,14 @@ Agents are self-contained in their respective ```./Agents``` file.
 Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
 
 Files are succinct, intuitive, and try to be self-explanatory.
+
+# :interrobang: How is this possible
+
+We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our [paper](https://arxiv.com).
+
+Then we frame actions as "predictions" in supervised learning. We can even augment supervised learning with an RL phase, treating reward as negative error.
+
+For generative modeling, well, it turns out that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 
 # :mortar_board: Pedagogy and Research
 
