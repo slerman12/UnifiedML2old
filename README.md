@@ -271,9 +271,9 @@ Agents are self-contained in their respective ```./Agents``` file.
 
 ```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
 
-[comment]: <> (Hyper-param configurations in ```.\Hyperparams```.)
-
 Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
+
+Hyper-param default configurations defined in ```.\Hyperparams```.
 
 Files are succinct, intuitive, and try to be self-explanatory.
 
