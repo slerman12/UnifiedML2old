@@ -4,7 +4,7 @@
 
 
 
-![alt text](UMLpretty.png)
+![alt text](UMLbanner.png)
 
 [comment]: <> (# Quick links?)
 
