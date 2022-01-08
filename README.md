@@ -299,9 +299,9 @@ Architectures, losses, probability distributions, and simple helpers defined in 
 
 Hyper-param default configurations in ```.\Hyperparams```.
 
-# :mortar_board: Pedagogy and Research
-
 Files are succinct, intuitive, and try to be self-explanatory.
+
+# :mortar_board: Pedagogy and Research
 
 All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
 
