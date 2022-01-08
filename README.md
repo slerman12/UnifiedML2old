@@ -160,7 +160,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :mag: Sample scripts
+# :book: Sample scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
