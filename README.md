@@ -300,7 +300,7 @@ Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library.
 
 It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
 
-# :paperclips: Repository Structure
+# :paperclips: Structure
 
 * Agents are self-contained in their respective ```./Agents``` file.
 
