@@ -2,6 +2,10 @@
 
 [comment]: <> (# Unified ML)
 
+
+
+![alt text](UnifiedML_Logo1.png)
+
 [comment]: <> (# Quick links?)
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
@@ -11,10 +15,6 @@
 - [Examples](#-mag--example-scripts)
 
 - [Agents and performances](#-bar-chart--agents---performance)
-
-
-![alt text](UnifiedML_Logo1.png)
-
 # :runner: Running The Code
 
 To start a train session, once installed:
