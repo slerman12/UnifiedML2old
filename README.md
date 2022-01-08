@@ -4,6 +4,12 @@
 
 ![alt text](UnifiedML_Logo1.png)
 
+# Quick links?
+
+- [Setup & Install](#-wrench--setting-up-the-environment)
+- [Examples](#-mag--example-scripts)
+- [Agents & Performances](#-bar-chart--agents---performance)
+
 # :runner: Running The Code
 
 To start a train session, once installed:
@@ -231,7 +237,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (## :thinking: Details)
 
-# :bar_chart: Agents & Performance
+# :bar_chart: Agents & Performances
 
 [comment]: <> (```)
 
