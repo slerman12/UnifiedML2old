@@ -189,7 +189,7 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
 
 [comment]: <> (*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase joins the supervised learning with <img src="https://latex.codecogs.com/gif.latex?reward=-error"/>. )
-*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase joins the supervised learning with ```reward = -error```.
+*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase joins the supervised learning plase s.t. ```reward = -error```.
 
 ### Generative Modeling
 
