@@ -299,7 +299,7 @@ Architectures, losses, probability distributions, and simple helpers defined in 
 
 Hyper-param default configurations in ```.\Hyperparams```.
 
-Files are succinct, intuitive, and try to be self-explanatory.
+[comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
 # :mortar_board: Pedagogy and Research
 
