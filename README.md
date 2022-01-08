@@ -2,7 +2,7 @@
 
 [comment]: <> (# Unified ML)
 
-## Quick links
+### Quick links
 
 - [Setup](#-wrench--setting-up-the-environment)
 
