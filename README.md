@@ -273,7 +273,7 @@ Agents are self-contained in their respective ```./Agents``` file.
 
 Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
 
-Hyper-param default configurations defined in ```.\Hyperparams```.
+Hyper-param default configurations in ```.\Hyperparams```.
 
 Files are succinct, intuitive, and try to be self-explanatory.
 
