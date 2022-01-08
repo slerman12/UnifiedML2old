@@ -313,6 +313,7 @@ Architectures, losses, probability distributions, and simple helpers defined in 
 Hyper-param default configurations in ```.\Hyperparams```.
 
 Files are succinct, intuitive, and try to be self-explanatory.
+
 [comment]: <> (# License)
 
 <hr class="solid">
