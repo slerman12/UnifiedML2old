@@ -6,7 +6,7 @@
 
 # Quick links?
 
-- [Citing](#-pen--paper---citing)
+- [Citing](https://github.com/slerman12/UnifiedML2#pen-paper--citing)
 - [Setup and install](#-wrench--setting-up-the-environment)
 - [Examples](#-mag--example-scripts)
 - [Agents and performances](#-bar-chart--agents---performance)
