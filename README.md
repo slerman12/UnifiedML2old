@@ -2,7 +2,7 @@
 
 [comment]: <> (# Unified ML)
 
-
+## Quick links
 
 - [Setup](#-wrench--setting-up-the-environment)
 
@@ -12,7 +12,7 @@
 
 ![alt text](UMLpretty.png)
 
-[comment]: <> (# Quick links?)
+
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
