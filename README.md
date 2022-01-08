@@ -82,7 +82,7 @@ Yes.
 
 All agents support discrete and continuous control, classification, and generative modeling.
 
-See example scripts [below](https://github.com/slerman12/UnifiedML2#point_up-example-scripts).
+See example scripts [below](https://github.com/slerman12/UnifiedML2#point_up-simple-scripts).
 
 # :wrench: Setting Up The Environment 
 
@@ -158,7 +158,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :mag: Example scripts
+# :mag: Simple scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
