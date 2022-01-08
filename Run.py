@@ -63,6 +63,9 @@ def main(args):
         if agent.step % args.plot_per_steps == 0:
             instantiate(args.plotting)
 
+        if converged:
+            break
+
         # Rollout
         experiences, logs, _ = env.rollout(agent.train(), steps=1)  # agent.train() just sets agent.training to True
 
@@ -78,9 +81,6 @@ def main(args):
 
             if args.save_session:
                 Utils.save(args.save_path, agent=agent, replay=replay)
-
-        if converged:
-            break
 
         converged = agent.step >= args.train_steps
         training = agent.step > args.seed_steps or env.depleted
