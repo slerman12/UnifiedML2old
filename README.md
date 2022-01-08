@@ -142,7 +142,7 @@ And run:
 pip install git+https://github.com/deepmind/dm_control.git
 ```
 
-to finish the install.
+to install DeepMind Control.
 
 Voila.
 
