@@ -2,6 +2,9 @@
 
 [comment]: <> (# Unified ML)
 
+![alt text](UMLpretty.png)
+
+
 ### Quick links
 
 - [Setup](#-wrench--setting-up-the-environment)
@@ -9,9 +12,6 @@
 - [Examples](#-mag--example-scripts)
 
 - [Agents and performances](#-bar-chart--agents---performance)
-
-![alt text](UMLpretty.png)
-
 
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
