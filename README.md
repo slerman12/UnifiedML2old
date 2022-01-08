@@ -287,6 +287,20 @@ Then we frame actions as "predictions" in supervised learning. We can even augme
 
 For generative modeling, well, it turns out that the difference between a Generator-Discriminator and Actor-Critic is rather nominal.
 
+[comment]: <> (# :paperclips: Repository Structure)
+
+[comment]: <> (Agents are self-contained in their respective ```./Agents``` file.)
+
+[comment]: <> (```Run.py``` handles all training, evaluation, and logging.)
+
+[comment]: <> (```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.)
+
+[comment]: <> (Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.)
+
+[comment]: <> (Hyper-param default configurations in ```.\Hyperparams```.)
+
+[comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
+
 # :mortar_board: Pedagogy and Research
 
 All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
@@ -299,20 +313,6 @@ All files are designed to be useful for educational and innovational purposes in
 Check out our [**UnifiedRL**](https:github.com/agi-init/UnifiedRL) library. 
 
 It does with RL to this library what PyCharm does with Python to IntelliJ, i.e., waters it down mildly and rebrands a little.~
-
-# :paperclips: Repository Structure
-
-* Agents are self-contained in their respective ```./Agents``` file.
-
-* ```Run.py``` handles all training, evaluation, and logging.
-
-* ```./Datasets``` includes ```Environment.py```, which handles the environment "roll out," and ```ExperienceReplay.py``` which stores and retrieves data using parallel CPU workers.
-
-* Architectures, losses, probability distributions, and simple helpers defined in ```./Blocks```, ```./Losses```, ```Distributions.py``` and ```Utils.py``` respectively.
-
-* Hyper-param default configurations in ```.\Hyperparams```.
-
-[comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
 [comment]: <> (# License)
 
