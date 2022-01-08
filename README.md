@@ -5,7 +5,7 @@
 ![alt text](UMLpretty.png)
 
 
-### Quick links
+### Quick Links
 
 - [Setup](#-wrench--setting-up-the-environment)
 
