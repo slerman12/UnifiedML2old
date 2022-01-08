@@ -7,7 +7,7 @@
 
 ### Quick Links
 
-- [Setup](#-wrench--setting-up-the-environment)
+- [Setup](#-wrench--setting-up)
 
 - [Examples](#-mag--example-scripts)
 
@@ -16,7 +16,7 @@
 
 [comment]: <> (- [Citing]&#40;https://github.com/slerman12/UnifiedML2#pen-paper--citing&#41;)
 
-# :runner: Running The Code
+# :runner: Running
 
 To start a train session, once installed:
 
