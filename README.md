@@ -158,7 +158,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :mag: Simple scripts
+# :mag: Training scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
