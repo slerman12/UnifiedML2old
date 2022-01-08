@@ -4,7 +4,7 @@
 
 
 
-![alt text](UnifiedML_Paint_slant.png)
+![alt text](UnifiedML_slick.png)
 
 [comment]: <> (# Quick links?)
 
