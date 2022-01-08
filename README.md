@@ -280,7 +280,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (* Hyper-param default configurations in ```.\Hyperparams```.)
 
-# :interrobang: How is this possible
+# :trident: How is this possible
 
 We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our [paper](https://arxiv.com).
 
@@ -302,7 +302,7 @@ For generative modeling, well, it turns out that the difference between a Genera
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-# :mortar_board: Pedagogy and Research
+# :crystal_ball: Pedagogy and Research
 
 All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
 
