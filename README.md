@@ -48,7 +48,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 # :pen: Paper & Citing
 
-For detailed documentation, see our [[**Papér**](https://arxiv.com)].
+For detailed documentation, [see our **Papér** :scroll:](https://arxiv.com).
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
