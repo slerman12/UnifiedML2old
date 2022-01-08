@@ -48,7 +48,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 # :pen: Paper & Citing
 
-For detailed documentation, [**see our :scroll:**](https://arxiv.com) 
+For detailed documentation, see our [[**Papér**](https://arxiv.com)].
 
 [comment]: <> (Please see [paper]&#40;https://arxiv.com&#41; for more details.)
 
@@ -79,14 +79,14 @@ If you use any part of this code, **be sure to cite the above!**
 
 An acknowledgment to [Denis Yarats](https://github.com/denisyarats), whose excellent [DrQV2 repo](https://github.com/facebookresearch/drqv2) inspired much of this library and its design.
 
-# :tent: Unified Learning?
-Unified, in one tent.
+# :open_umbrella: Unified Learning?
+Yes.
 
 All agents support discrete and continuous control, classification, and generative modeling.
 
 See example scripts [below](https://github.com/slerman12/UnifiedML2#point_up-simple-scripts).
 
-# :hammer_and_pick: Setting Up 
+# :wrench: Setting Up 
 
 [comment]: <> (Pretty simple:)
 
@@ -117,7 +117,7 @@ conda activate ML
 
 [comment]: <> (### *THERE, HAPPY!??*)
 
-# :stadium: Installing The Suites 
+# :joystick: Installing The Suites 
 
 ## 1. Classify
 
@@ -160,7 +160,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :book: Sample scripts
+# :mag: Sample scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
 
@@ -243,7 +243,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (## :thinking: Details)
 
-# :horse_racing: Agents & Performances
+# :bar_chart: Agents & Performances
 
 [comment]: <> (```)
 
@@ -280,7 +280,7 @@ python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 
 [comment]: <> (* Hyper-param default configurations in ```.\Hyperparams```.)
 
-# :trident: How is this possible
+# :interrobang: How is this possible
 
 We use our new Creator framework to unify RL discrete and continuous action spaces, as elaborated in our [paper](https://arxiv.com).
 
@@ -302,7 +302,7 @@ For generative modeling, well, it turns out that the difference between a Genera
 
 [comment]: <> (Files are succinct, intuitive, and try to be self-explanatory.)
 
-# :crystal_ball: Pedagogy and Research
+# :mortar_board: Pedagogy and Research
 
 All files are designed to be useful for educational and innovational purposes in their simplicity and structure.
 
