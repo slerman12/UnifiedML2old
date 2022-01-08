@@ -2,7 +2,7 @@
 
 [comment]: <> (# Unified ML)
 
-![alt text](UnifiedML_cool2.png)
+![alt text](UMLbanner.png)
 
 
 ### Quick Links
