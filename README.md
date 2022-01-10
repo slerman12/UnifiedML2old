@@ -2,7 +2,7 @@
 
 [comment]: <> (# Unified ML)
 
-![alt text](UMLColors_bare_main.png)
+![alt text](UML_bare_main.png)
 
 
 ### Quick Links
