@@ -37,13 +37,13 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 ![alt text](evolve.gif)
 
-## Welcome ye, weary Traveller.
+[comment]: <> (## Welcome ye, weary Traveller.)
 
 >Stop here and rest at our local tavern,
 >
 > Where all your reinforcements and supervisions be served, à la carte!
 
-**Drink up!** :beers:
+[comment]: <> (**Drink up!** :beers:)
 
 
 # :pen: Paper & Citing
