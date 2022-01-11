@@ -39,7 +39,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 
 [comment]: <> (## Welcome ye, weary Traveller.)
 
->Stop here and rest at our local tavern,
+>Stop here and rest at our local inn,
 >
 > Where all your reinforcements and supervisions be served, à la carte!
 
