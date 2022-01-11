@@ -243,3 +243,6 @@ class ReNormalize(nn.Module):
         y = y - y.min(-1, keepdim=True)[0]
         y = y / y.max(-1, keepdim=True)[0]
         return y.view(*x.shape)
+
+
+# TODO GeneralizedRecurrenceEstimator  Generalized Advantage estimaor (GAE) () except with scalar OR vector sequences

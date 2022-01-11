@@ -186,7 +186,10 @@ class SPRAgent(torch.nn.Module):
                            self.critic,
                            self.dynamics, self.projector, self.predictor)
 
+            # Update encoder, critic, dynamics targets
+            self.encoder.update_target_params()
             self.critic.update_target_params()
+            self.projector.update_target_params()
 
             if not self.discrete:
                 # Actor loss
