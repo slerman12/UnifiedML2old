@@ -196,7 +196,10 @@ class DynoSOARAgent(torch.nn.Module):
                            self.critic,
                            self.dynamics, self.projector, self.obs_predictor, self.reward_predictor)
 
+            # Update encoder, critic, dynamics targets
+            self.encoder.update_target_params()
             self.critic.update_target_params()
+            self.projector.update_target_params()
 
             obs = obs.detach()
             discount = torch.ones_like(discount)
