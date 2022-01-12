@@ -237,7 +237,7 @@ python Run.py task=atari/breakout offline=true
 
 Assumes a replay [is saved](saving).
 
-### Experiment naming
+### Experiment naming, plotting
 
 The ```experiment=``` flag can help differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
