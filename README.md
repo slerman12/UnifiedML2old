@@ -235,7 +235,7 @@ From a saved experience replay, sans additional rollouts:
 python Run.py task=atari/breakout offline=true
 ```
 
-Assumes a replay is saved (see [Saving](saving)).
+Assumes a replay is saved ([Saving](saving)).
 
 ### Experiment naming
 
