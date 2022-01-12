@@ -55,11 +55,11 @@ class SPRAgent(torch.nn.Module):
                                              optim_lr=lr)
 
         self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=False,
+                                  depth=2, layer_norm=True,
                                   target_tau=target_tau, optim_lr=lr)
 
         self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=False,
+                                  depth=2, layer_norm=True,
                                   optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
@@ -68,7 +68,7 @@ class SPRAgent(torch.nn.Module):
         self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Data augmentation
-        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
+        self.aug = RandomShiftsAug(pad=4)
 
         # Birth
 
