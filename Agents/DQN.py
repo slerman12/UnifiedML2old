@@ -40,7 +40,7 @@ class DQNAgent(torch.nn.Module):
 
         self.num_actions = num_actions  # Num actions sampled per actor
 
-        if generate:
+        if generate:  # TODO
             self.discrete = False
             self.RL = True
             self.action_dim = obs_shape[-3] * obs_shape[-2] * obs_shape[-1]

@@ -221,7 +221,7 @@ Via the ```generate=true``` flag:
 python Run.py task=classify/mnist generate=true
 ```
 
-Can also work with RL (implicitly treats RL as offline, and assumes a replay is saved):
+Can also work with RL (implicitly treats RL as offline, and assumes a replay is saved that can be loaded):
 
 ```
 python Run.py task=atari/breakout generate=true
@@ -249,13 +249,13 @@ A unique experiment for benchmarking and saving purposes, is distinguished by: `
 
 ### Saving
 
-Agents can be saved periodically or loaded with the ```save=true``` or ```load=true``` flags.
+Agents can be saved or loaded with the ```save=true``` or ```load=true``` flags.
 
 ```
 python Run.py save=true load=true
 ```
 
-An experience replay can be saved periodically or loaded with the ```replay.save=true``` or ```replay.load=true``` flags.
+An experience replay can be saved or loaded with the ```replay.save=true``` or ```replay.load=true``` flags.
 
 ```
 python Run.py replay.save=true replay.load=true
