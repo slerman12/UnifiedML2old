@@ -20,7 +20,7 @@ class EnsembleQCritic(nn.Module):
     returns a Normal distribution over the ensemble.
     """
     def __init__(self, repr_shape, feature_dim, hidden_dim, action_dim, ensemble_size=2, l2_norm=False,
-                 discrete=False, target_tau=None, optim_lr=None):
+                 sigmoid=False, discrete=False, target_tau=None, optim_lr=None):
         super().__init__()
 
         self.discrete = discrete
@@ -34,7 +34,7 @@ class EnsembleQCritic(nn.Module):
         in_dim = feature_dim if discrete else feature_dim + action_dim
         out_dim = action_dim if discrete else 1
 
-        self.Q_head = Utils.Ensemble([MLP(in_dim, out_dim, hidden_dim, 2, l2_norm=l2_norm)
+        self.Q_head = Utils.Ensemble([MLP(in_dim, out_dim, hidden_dim, 2, binary=sigmoid, l2_norm=l2_norm)
                                      for _ in range(ensemble_size)], 0)
 
         self.init(optim_lr, target_tau)

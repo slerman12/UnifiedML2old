@@ -24,12 +24,13 @@ class DQNAgent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, RL, device, log,  # On-boarding
+                 discrete, RL, generate, device, log,  # On-boarding
                  num_actors=5, num_actions=2):  # DQN (for non-discrete support)
         super().__init__()
 
         self.discrete = discrete  # Continuous supported
         self.RL = RL  # And classification too...
+        self.generate = generate  # And generative modeling
         self.device = device
         self.log = log
         self.birthday = time.time()
@@ -38,6 +39,11 @@ class DQNAgent(torch.nn.Module):
         self.action_dim = action_shape[-1]
 
         self.num_actions = num_actions  # Num actions sampled per actor
+
+        if generate:
+            self.discrete = False
+            self.RL = True
+            self.action_dim = obs_shape[-3] * obs_shape[-2] * obs_shape[-1]
 
         # Models
         self.encoder = CNNEncoder(obs_shape, optim_lr=lr)
@@ -50,7 +56,8 @@ class DQNAgent(torch.nn.Module):
                                        optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
-                                      discrete=discrete, optim_lr=lr, target_tau=target_tau)
+                                      sigmoid=generate, discrete=discrete,
+                                      optim_lr=lr, target_tau=target_tau)
 
         self.actor = CategoricalCriticActor(stddev_schedule)
 
@@ -95,11 +102,18 @@ class DQNAgent(torch.nn.Module):
         obs, action, reward, discount, next_obs, label, *traj, step = Utils.to_torch(
             batch, self.device)
 
-        # "Envision" / "Imagine"
+        # "Envision"
 
         # Augment
         obs = self.aug(obs)
         next_obs = self.aug(next_obs)
+
+        # Actor-Critic -> Generator-Discriminator conversion
+        if self.generate:
+            action = obs.clone()
+            obs._uniform()
+            next_obs[:] = label[:] = float('nan')
+            reward[:] = 0
 
         # "Journal teachings"
 
@@ -153,6 +167,13 @@ class DQNAgent(torch.nn.Module):
             obs = self.encoder(obs)
             with torch.no_grad():
                 next_obs = self.encoder(next_obs)
+
+            # "Imagine"
+
+            # Generative modeling
+            if self.generate:
+                action[:len(obs) // 2] = torch.round(self.actor(obs[:len(obs) // 2]) * 255 + 255) / 2  # Generate
+                reward[:len(obs) // 2] = 1  # Discriminate
 
             # "Predict" / "Discern" / "Learn" / "Grow"
 

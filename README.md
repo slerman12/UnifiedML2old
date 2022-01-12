@@ -55,6 +55,7 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 >
 > Where all your reinforcements and supervisions be served, à la carte!
 
+**Drink up!** :beers:
 
 # :pen: Paper & Citing
 
@@ -219,17 +220,48 @@ Via the ```generate=true``` flag:
 ```
 python Run.py task=classify/mnist generate=true
 ```
+
+Can also work with RL (implicitly treats RL as offline, and assumes a replay is saved):
+
 ```
 python Run.py task=atari/breakout generate=true
 ```
 
+### Offline RL
+
+From a saved experience replay, sans additional rollouts:
+
+```
+python Run.py task=atari/breakout offline=true
+```
+
+Assumes a replay is saved (see [Saving](saving)).
+
 ### Experiment naming
 
-The ```experiment=``` flag can differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
+The ```experiment=``` flag can help differentiate a distinct experiment; you can optionally control which experiment data is automatically plotted with ```plotting.plot_experiments=```.
 
 ```
 python Run.py experiment=ExpName1 "plotting.plot_experiments=['ExpName1']"
 ```
+
+A unique experiment for benchmarking and saving purposes, is distinguished by: ```experiment=```, ```Agent=```, ```task=```, and ```seed=```.
+
+### Saving
+
+Agents can be saved or loaded with the ```save=true``` or ```load=true``` flags.
+
+```
+python Run.py save=true load=true
+```
+
+Analogously, an experience replay can be saved or loaded with the ```replay.save=true``` or ```replay.load=true``` flags.
+
+```
+python Run.py replay.save=true replay.load=true
+```
+
+Agents and replays save to ```./Checkpoints``` and ```./Datasets/Memory``` respectively per a unique experiment.
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
