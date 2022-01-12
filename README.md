@@ -255,7 +255,7 @@ Agents can be saved or loaded with the ```save=true``` or ```load=true``` flags.
 python Run.py save=true load=true
 ```
 
-Analogously, an experience replay can be saved or loaded with the ```replay.save=true``` or ```replay.load=true``` flags.
+An experience replay can be saved or loaded with the ```replay.save=true``` or ```replay.load=true``` flags.
 
 ```
 python Run.py replay.save=true replay.load=true
