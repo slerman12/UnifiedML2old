@@ -68,7 +68,7 @@ class SPRAgent(torch.nn.Module):
         self.actor = CategoricalCriticActor(stddev_schedule)
 
         # Data augmentation
-        self.aug = RandomShiftsAug(pad=4)
+        self.aug = torch.nn.Sequential(RandomShiftsAug(pad=4), IntensityAug(0.05))
 
         # Birth
 
