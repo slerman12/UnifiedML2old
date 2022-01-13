@@ -288,18 +288,21 @@ Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer```
 
 It is possible to train multiple instances of the same agent in parallel by loading the agent's weights before every update with the ```load_every=``` flag. 
 
-For example, running an agent that does environment interactions in tandem with one that does offline updates that share an experience replay and weights:
+For example, running an agent that does environment interactions in tandem with one that does offline updates that share an experience replay and weights.
+
+In a concurrent process:
 
 ```
 python Run.py replay.save=true load_every=true 
 ```
-Then, in a concurrent process:
+
+and
 
 ```
 python Run.py offline=true replay.load=true replay.save=true load_every=true
 ```
 
-Since both share the same experiment name, they will save and load from the same agent and replay, thereby enabling distributional training.
+Since both share the same experiment name, they will save and load from the same agent and replay, thereby producing distributional training.
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
