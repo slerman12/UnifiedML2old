@@ -218,7 +218,7 @@ python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 Or:
 
 ```
-python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false replay.load=true offline=true
+python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false offline=true
 ```
 
 Loads the dataset from an existing saved replay. The ```offline=true``` flag disables environmental rollouts. Rollouts, rather than all-in-one loading, can be useful for intractably large datasets or curriculum learning. 
