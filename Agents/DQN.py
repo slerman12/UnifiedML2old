@@ -7,6 +7,8 @@ import time
 import torch
 from torch.nn.functional import cross_entropy
 
+from torchvision.utils import save_image
+
 import Utils
 
 from Blocks.Augmentations import IntensityAug, RandomShiftsAug
@@ -40,7 +42,7 @@ class DQNAgent(torch.nn.Module):
 
         self.num_actions = num_actions  # Num actions sampled per actor
 
-        if generate:  # TODO
+        if self.generate:
             self.discrete = False
             self.RL = True
             self.action_dim = obs_shape[-3] * obs_shape[-2] * obs_shape[-1]
@@ -110,7 +112,7 @@ class DQNAgent(torch.nn.Module):
 
         # Actor-Critic -> Generator-Discriminator conversion
         if self.generate:
-            action = obs.clone()
+            action = obs.clone().flatten(-3)
             obs._uniform()
             next_obs[:] = label[:] = float('nan')
             reward[:] = 0
@@ -172,8 +174,17 @@ class DQNAgent(torch.nn.Module):
 
             # Generative modeling
             if self.generate:
-                action[:len(obs) // 2] = torch.round(self.actor(obs[:len(obs) // 2]) * 255 + 255) / 2  # Generate
+                # "Candidate generations"
+                creations = self.creator(obs[:len(obs) // 2], self.step).mean
+
+                generated_image = self.actor(self.critic(obs[:len(obs) // 2]._uniform(), creations), self.step).best
+                generated_image = torch.round(generated_image * 255 + 255) / 2
+
+                action[:len(obs) // 2] = generated_image
                 reward[:len(obs) // 2] = 1  # Discriminate
+
+                generated_image = action[:len(obs) // 2].view(-1, *obs.shape[1:])
+                save_image(generated_image[0], f'./Benchmarking/generated_image_{self.step}.png')
 
             # "Predict" / "Discern" / "Learn" / "Grow"
 
