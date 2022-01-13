@@ -274,7 +274,7 @@ An experience replay can be saved or loaded with the ```replay.save=true``` or `
 python Run.py replay.save=true replay.load=true
 ```
 
-Agents and replays save to ```./Checkpoints``` and ```./Datasets/Memory``` respectively per a unique experiment.
+Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer``` respectively per a unique experiment.
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
