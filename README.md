@@ -171,7 +171,7 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :file: Key files
+# :file_cabinet: Key files
 
 ```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.
 
