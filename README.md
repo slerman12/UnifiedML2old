@@ -286,7 +286,7 @@ Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer```
 
 ### Distributional
 
-It is possible to train multiple instances of the same agent in parallel by loading the agent's weights before every update with the ```load_every=``` flag. 
+It is possible to train multiple instances of the same agent with the ```load_every=``` flag. 
 
 For example, you can run the following in concurrent processes:
 
