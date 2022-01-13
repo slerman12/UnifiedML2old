@@ -288,7 +288,7 @@ Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer```
 
 It is possible to train multiple instances of the same agent in parallel by loading the agent's weights before every update with the ```load_every=``` flag. 
 
-For example, running an agent that does environment interactions in tandem with one that does offline updates that share an experience replay and weights, as follows.
+For example, running an agent that does environment interactions in tandem with one that does offline updates that share an experience replay and weights, as follows:
 
 In a concurrent process:
 
