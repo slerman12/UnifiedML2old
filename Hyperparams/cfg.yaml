@@ -36,6 +36,7 @@ plot_per_steps: 20000
 device: cuda
 num_workers: 10
 RL: true
+generate: false
 # Experiment
 Agent: Agents.DQNAgent
 seed: 1
@@ -66,6 +67,7 @@ agent:
   target_tau: 0.01
   discrete: ${discrete}
   RL: ${RL}
+  generate: ${generate}
   device: ${device}
   log: ${agent_log}
 

@@ -25,7 +25,7 @@ class SPRAgent(torch.nn.Module):
                  obs_shape, action_shape, feature_dim, hidden_dim,  # Architecture
                  lr, target_tau,  # Optimization
                  explore_steps, stddev_schedule, stddev_clip,  # Exploration
-                 discrete, RL, device, log,  # On-boarding
+                 discrete, RL, generate, device, log,  # On-boarding
                  depth=5  # SPR
                  ):
         super().__init__()
