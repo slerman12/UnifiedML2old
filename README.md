@@ -171,13 +171,13 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-# :file_cabinet: Key files
+[comment]: <> (# :file_cabinet: Key files)
 
-```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.
+[comment]: <> (```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.)
 
-```Environment.py``` handles rollouts.
+[comment]: <> (```Environment.py``` handles rollouts.)
 
-```./Agents``` contains self-contained agents.
+[comment]: <> (```./Agents``` contains self-contained agents.)
 
 # :mag: Sample scripts
 
@@ -284,23 +284,27 @@ python Run.py replay.save=true replay.load=true
 
 Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer``` respectively per a unique experiment.
 
-### Distributional
+[comment]: <> (### Distributional)
 
-It is possible to train multiple instances of the same agent with the ```load_every=``` flag. 
+[comment]: <> (It is possible to train multiple instances of the same agent with the ```load_every=``` flag. )
 
-For example, you can run the following in concurrent processes:
+[comment]: <> (For example, you can run the following in concurrent processes:)
 
-```
-python Run.py replay.save=true load_every=true 
-```
+[comment]: <> (```)
 
-and
+[comment]: <> (python Run.py replay.save=true load_every=true )
 
-```
-python Run.py offline=true replay.load=true replay.save=true load_every=true
-```
+[comment]: <> (```)
 
-Since both share the same experiment name, they will save and load from the same agent and replay, thereby recreating distributional training.
+[comment]: <> (and)
+
+[comment]: <> (```)
+
+[comment]: <> (python Run.py offline=true replay.load=true replay.save=true load_every=true)
+
+[comment]: <> (```)
+
+[comment]: <> (Since both share the same experiment name, they will save and load from the same agent and replay, thereby recreating distributional training.)
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
