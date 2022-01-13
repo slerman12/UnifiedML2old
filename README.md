@@ -300,7 +300,7 @@ and
 python Run.py offline=true replay.load=true replay.save=true load_every=true
 ```
 
-Since both share the same experiment name, they will save and load from the same agent and replay, thereby producing distributional training.
+Since both share the same experiment name, they will save and load from the same agent and replay, thereby recreating distributional training.
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
