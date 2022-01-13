@@ -288,7 +288,7 @@ Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer```
 
 It is possible to train multiple instances of the same agent in parallel by loading the agent's weights before every update with the ```load_every=``` flag. 
 
-For example, in concurrent processes:
+For example, you can run the following in concurrent processes:
 
 ```
 python Run.py replay.save=true load_every=true 
