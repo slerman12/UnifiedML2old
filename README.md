@@ -221,7 +221,7 @@ Or:
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false offline=true
 ```
 
-```offline=true``` flag loads data from an existing saved replay instead of rollouts. Rollouts, rather than all-in-one loading, are useful for intractably large or dynamic datasets or curriculum learning. 
+```offline=true``` flag loads data from an existing saved replay instead of rollouts. Rollouts, rather than all-in-one loading, may be useful for intractably large or dynamic datasets or curriculum learning. 
 
 [comment]: <> (Rollouts fill up data in an online fashion, piecemeal, until depletion &#40;all data is processed&#41; and gather metadata like past predictions, which may be useful for curriculum learning.)
 
