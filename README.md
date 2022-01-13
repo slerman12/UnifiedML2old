@@ -207,12 +207,23 @@ python Run.py Agent=Agents.SPRAgent task=dmc/humanoid_walk
 ### Classification
 
 DQN Agent in CIFAR-10:
+
 ```
 python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false
 ```
 
 [comment]: <> (*Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase joins the supervised learning with <img src="https://latex.codecogs.com/gif.latex?reward=-error"/>. )
 *Note:* ```RL=false``` sets training to standard supervised-only classification. Without ```RL=false```, an additional RL phase joins the supervised learning plase s.t. ```reward = -error```.
+
+Or:
+
+```
+python Run.py Agent=Agents.DQNAgent task=classify/cifar10 RL=false replay.load=true offline=true
+```
+
+This immediately loads the dataset from an existing saved replay. The ```offline=true``` flag avoids extra environmental rollouts. Rollouts, rather than all-in-one loading, can be useful for intractably large datasets or curriculum learning. 
+
+[comment]: <> (Rollouts fill up data in an online fashion, piecemeal, until depletion &#40;all data is processed&#41; and gather metadata like past predictions, which may be useful for curriculum learning.)
 
 ### Generative Modeling
 
@@ -221,11 +232,13 @@ Via the ```generate=true``` flag:
 python Run.py task=classify/mnist generate=true
 ```
 
-Can also work with RL (implicitly treats RL as offline, and assumes a replay is saved that can be loaded):
+Can also work with RL:
 
 ```
 python Run.py task=atari/breakout generate=true
 ```
+
+Implicitly treats as offline, and assumes a replay is saved that can be loaded.
 
 ### Offline RL
 

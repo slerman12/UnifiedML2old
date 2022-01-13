@@ -21,7 +21,7 @@ import seaborn as sns
 
 
 def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
-         include_train=False, steps=2000000):  # TODO
+         include_train=False, steps=np.inf):  # TODO
     include_train = False
 
     path = Path(path)
