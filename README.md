@@ -49,13 +49,13 @@ Plots, logs, and videos are automatically stored in: ```./Benchmarking```.
 [comment]: <> (> Where all your reinforcements and supervisions be served, à la carte!)
 
 
->**Welcome ye, weary Traveller.**
->
+Welcome ye, weary Traveller.
+
 >Stop here and rest at our local tavern,
 >
 > Where all your reinforcements and supervisions be served, à la carte!
 
-Drink up! :beers:
+**Drink up!** :beers:
 
 # :pen: Paper & Citing
 
@@ -171,6 +171,14 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
+# :file: Key files
+
+```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.
+
+```Environment.py``` handles rollouts.
+
+```./Agents``` contains self-contained agents.
+
 # :mag: Sample scripts
 
 [comment]: <> (Plots are automatically generated during training and stored in:)
@@ -275,6 +283,23 @@ python Run.py replay.save=true replay.load=true
 ```
 
 Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer``` respectively per a unique experiment.
+
+### Distributional
+
+It is possible to train multiple instances of the same agent in parallel by loading the agent's weights before every update with the ```load_every=``` flag. 
+
+For example, running an agent that does environment interactions in tandem with one that does offline updates that share an experience replay and weights:
+
+```
+python Run.py replay.save=true load_every=true 
+```
+Then, in a concurrent process:
+
+```
+python Run.py offline=true replay.load=true replay.save=true load_every=true
+```
+
+Since both share the same experiment name, they will save and load from the same agent and replay, thereby enabling distributional training.
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
