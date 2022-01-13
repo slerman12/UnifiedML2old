@@ -21,7 +21,7 @@ import seaborn as sns
 
 
 def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
-         include_train=False):  # TODO
+         include_train=False, steps=2000000):  # TODO
     include_train = False
 
     path = Path(path)
@@ -129,6 +129,9 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])
                              for col_name in task_data.columns]
 
+        if steps < np.inf:
+            task_data = task_data[task_data['Step'] <= steps]
+
         row = i // num_cols
         col = i % num_cols
         ax = axs[row, col] if num_rows > 1 and num_cols > 1 else axs[col] if num_cols > 1 \
@@ -170,6 +173,9 @@ def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_t
         # Capitalize column names
         task_data.columns = [' '.join([c_name.capitalize() for c_name in col_name.split('_')])
                              for col_name in task_data.columns]
+
+        if steps < np.inf:
+            task_data = task_data[task_data['Step'] <= steps]
 
         # Human-normalize Atari
         if suite.lower() == 'atari':

@@ -101,6 +101,7 @@ plotting:
   plot_agents: null
   plot_suites: null
   plot_tasks: null
+  steps: ${train_steps}
 
 hydra:
   run:

@@ -42,7 +42,7 @@ class SPRAgent(torch.nn.Module):
         self.depth = depth
 
         # Models
-        self.encoder = CNNEncoder(obs_shape, renormalize=False, optim_lr=lr, target_tau=target_tau)
+        self.encoder = CNNEncoder(obs_shape, renormalize=True, optim_lr=lr, target_tau=target_tau)
 
         # Continuous actions creator
         self.creator = None if self.discrete \
@@ -51,16 +51,13 @@ class SPRAgent(torch.nn.Module):
                                         optim_lr=lr)
 
         self.dynamics = ResidualBlockEncoder(self.encoder.repr_shape, self.action_dim,
-                                             renormalize=False, pixels=False, isotropic=True,
+                                             renormalize=True, pixels=False, isotropic=True,
                                              optim_lr=lr)
 
-        self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=False,
+        self.projector = MLPBlock(self.encoder.flattened_dim, hidden_dim, hidden_dim, hidden_dim, depth=2,
                                   target_tau=target_tau, optim_lr=lr)
 
-        self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim,
-                                  depth=2, layer_norm=False,
-                                  optim_lr=lr)
+        self.predictor = MLPBlock(hidden_dim, hidden_dim, hidden_dim, hidden_dim, depth=2, optim_lr=lr)
 
         self.critic = EnsembleQCritic(self.encoder.repr_shape, feature_dim, hidden_dim, self.action_dim,
                                       discrete=discrete, optim_lr=lr, target_tau=target_tau)
