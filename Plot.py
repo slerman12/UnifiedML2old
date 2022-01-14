@@ -20,8 +20,8 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None,
-         include_train=False, steps=np.inf):  # TODO
+def plot(path, plot_experiments=None, plot_agents=None, plot_suites=None, plot_tasks=None, steps=np.inf,
+         include_train=False):  # TODO
     include_train = False
 
     path = Path(path)

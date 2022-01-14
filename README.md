@@ -171,13 +171,13 @@ Voila.
 
 [comment]: <> (***Voila.***)
 
-[comment]: <> (# :file_cabinet: Key files)
+# :file_cabinet: Key files
 
-[comment]: <> (```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.)
+```Run.py``` handles training and evaluation loops, saving, distributional training, logging, plotting.
 
-[comment]: <> (```Environment.py``` handles rollouts.)
+```Environment.py``` handles rollouts.
 
-[comment]: <> (```./Agents``` contains self-contained agents.)
+```./Agents``` contains self-contained agents.
 
 # :mag: Sample scripts
 
@@ -304,7 +304,7 @@ Agents and replays save to ```./Checkpoints``` and ```./Datasets/ReplayBuffer```
 
 [comment]: <> (```)
 
-[comment]: <> (Since both share the same experiment name, they will save and load from the same agent and replay, thereby recreating distributional training.)
+[comment]: <> (Since both share the same experiment name, they will save and load from the same agent and replay, thereby emulating distributional training.)
 
 [comment]: <> (Also, manual plotting via ```Plot.py```:)
 
